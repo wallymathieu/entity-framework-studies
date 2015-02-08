@@ -1,0 +1,14 @@
+*.orig
+*.suo
+*.user
+*.*~
+*.pidb
+bin/
+obj/
+_ReSharper*/
+build/
+AwesomeNHApp.userprefs
+*.sublime-workspace
+packages/
+.db.sqlite
+.vs

@@ -1,0 +1,48 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.22512.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Web", "Web\Web.csproj", "{5623D5A6-938D-4E24-BB83-1263EFC06A58}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DbMigrations", "DbMigrations\DbMigrations.csproj", "{E09166D7-F356-44A6-A540-D88B7CF68AD8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Core", "Core\Core.csproj", "{169AB275-721F-49B8-97FE-35D07DA1B6C9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests", "Tests\Tests.csproj", "{F672502B-5D9C-4BDF-B7C6-93BB98FD5215}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{EC54B05A-CE3C-4226-9EE9-FA63B172C69D}"
+	ProjectSection(SolutionItems) = preProject
+		.nuget\packages.config = .nuget\packages.config
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{5623D5A6-938D-4E24-BB83-1263EFC06A58}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5623D5A6-938D-4E24-BB83-1263EFC06A58}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5623D5A6-938D-4E24-BB83-1263EFC06A58}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5623D5A6-938D-4E24-BB83-1263EFC06A58}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E09166D7-F356-44A6-A540-D88B7CF68AD8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E09166D7-F356-44A6-A540-D88B7CF68AD8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E09166D7-F356-44A6-A540-D88B7CF68AD8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E09166D7-F356-44A6-A540-D88B7CF68AD8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{169AB275-721F-49B8-97FE-35D07DA1B6C9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{169AB275-721F-49B8-97FE-35D07DA1B6C9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{169AB275-721F-49B8-97FE-35D07DA1B6C9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{169AB275-721F-49B8-97FE-35D07DA1B6C9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F672502B-5D9C-4BDF-B7C6-93BB98FD5215}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F672502B-5D9C-4BDF-B7C6-93BB98FD5215}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F672502B-5D9C-4BDF-B7C6-93BB98FD5215}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F672502B-5D9C-4BDF-B7C6-93BB98FD5215}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		EnterpriseLibraryConfigurationToolBinariesPath = packages\Unity.2.1.505.2\lib\NET35
+	EndGlobalSection
+EndGlobal
