@@ -56,11 +56,7 @@ namespace SomeBasicEFApp.Tests
 				_session.Dispose();
 			}
 		}
-		[TestFixtureTearDown]
-		public void TestFixtureTearDown()
-		{
-			if (File.Exists("CustomerDataTests.db")) { File.Delete("CustomerDataTests.db"); }
-		}
+
 		[TestFixtureSetUp]
 		public void TestFixtureSetup()
 		{
@@ -100,7 +96,7 @@ namespace SomeBasicEFApp.Tests
 				{
 					var product = session.Products.Single(p => p.Id == productId);
 					var order = session.Orders.Single(o => o.Id == orderId);
-					//order.Products.Add(product);
+					session.ProductOrders.Add(new ProductOrder { Order = order, Product = product });
 				});
 
 				import.ParseIntProperty("Order", "Customer", (orderId, customerId) =>

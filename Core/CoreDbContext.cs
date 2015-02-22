@@ -26,9 +26,11 @@ namespace SomeBasicEFApp.Core
 		public DbSet<Order> Orders { get; set; }
 		public DbSet<Product> Products { get; set; }
 
+		public DbSet<ProductOrder> ProductOrders { get; set; }
+
 		protected override void OnModelCreating(DbModelBuilder modelBuilder)
 		{
-			modelBuilder.Conventions.Remove<PluralizingTableNameConvention>();
+//			modelBuilder.Conventions.Remove<PluralizingTableNameConvention>();
 		}
 	}
 }

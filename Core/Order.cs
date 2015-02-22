@@ -11,9 +11,9 @@ namespace SomeBasicEFApp.Core
 
         public virtual int Id { get; set; }
 
-        //public virtual IList<Product> Products { get; set; }
-
         public virtual int Version { get; set; }
 
-    }
+		public virtual IList<ProductOrder> ProductOrders { get; set; }
+
+	}
 }

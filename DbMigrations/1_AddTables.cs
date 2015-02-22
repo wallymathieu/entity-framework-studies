@@ -25,24 +25,25 @@ namespace SomeBasicEFApp.DbMigrations
     {
         public override void Up()
         {
-            Create.Table("Customer")
+            Create.Table("Customers")
                 .WithIdColumn()
                 .WithVersionColumn()
                 .WithColumn("FirstName").AsString()
                 .WithColumn("LastName").AsString();
 
-            Create.Table("Order")
+            Create.Table("Orders")
                 .WithIdColumn()
                 .WithVersionColumn()
                 .WithColumn("OrderDate").AsDateTime()
                 .WithColumn("Customer_id").AsInt32().Nullable();
 
-            Create.Table("OrdersToProduct")
-                .WithColumn("Order_id").AsInt32().NotNullable()
+            Create.Table("ProductOrders")
+				.WithIdColumn()
+				.WithColumn("Order_id").AsInt32().NotNullable()
                 .WithColumn("Product_id").AsInt32().NotNullable()
                 ;
 
-            Create.Table("Product")
+            Create.Table("Products")
                 .WithIdColumn()
                 .WithVersionColumn()
                 .WithColumn("Cost").AsFloat()
