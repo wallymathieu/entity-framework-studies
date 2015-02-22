@@ -54,7 +54,7 @@ namespace SomeBasicEFApp.DbMigrations
         {
             Delete.Table("Customers");
             Delete.Table("Orders");
-            Delete.Table("OrdersToProducts");
+            Delete.Table("ProductOrders");
             Delete.Table("Products");
         }
     }
