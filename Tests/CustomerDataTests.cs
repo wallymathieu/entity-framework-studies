@@ -44,7 +44,7 @@ namespace SomeBasicEFApp.Tests
 		[SetUp]
 		public void Setup()
 		{
-			_session = new Session(new ConsoleMapPath()).CreateSession("entityframework.mdf");
+			_session = new Session(new ConsoleMapPath()).CreateSession("CustomerDataTests.db");
 		}
 
 
@@ -59,35 +59,21 @@ namespace SomeBasicEFApp.Tests
 		[TestFixtureTearDown]
 		public void TestFixtureTearDown()
 		{
-			int count = 10;
-			while (count-- > 0)
-			{
-				Task.Delay(100).Wait();
-				if (File.Exists("entityframework.mdf"))
-				{
-					try
-					{
-						File.Delete("entityframework.mdf");
-						break;
-					}
-					catch (IOException e)
-					{
-					}
-				}
-			}
+			if (File.Exists("CustomerDataTests.db")) { File.Delete("CustomerDataTests.db"); }
 		}
 		[TestFixtureSetUp]
 		public void TestFixtureSetup()
 		{
-			//CreateDb.CreateSqlDatabase("entityframework.mdf");
-			var sessions = new Session(new ConsoleMapPath());
+			if (File.Exists("CustomerDataTests.db")) { File.Delete("CustomerDataTests.db"); }
 
-            new Migrator("entityframework.mdf").Migrate();
+			new Migrator("CustomerDataTests.db").Migrate();
+			var sessions = new Session(new ConsoleMapPath());
 			var doc = XDocument.Load(Path.Combine("TestData", "TestData.xml"));
+			var import = new XmlImport(doc, "http://tempuri.org/Database.xsd");
 			var customer = new List<Customer>();
-			using (var session = sessions.CreateSession("entityframework.mdf"))
+			using (var session = sessions.CreateSession("CustomerDataTests.db"))
 			{
-				XmlImport.Parse(doc, new[] { typeof(Customer), typeof(Order), typeof(Product) },
+				import.Parse(new[] { typeof(Customer), typeof(Order), typeof(Product) },
 								(type, obj) =>
 								{
 									switch (type.Name)
@@ -105,24 +91,22 @@ namespace SomeBasicEFApp.Tests
 											break;
 									}
 
-								}, "http://tempuri.org/Database.xsd");
+								});
 				session.SaveChanges();
 			}
-			using (var session = sessions.CreateSession("entityframework.mdf"))
+			using (var session = sessions.CreateSession("CustomerDataTests.db"))
 			{
-
-				XmlImport.ParseConnections(doc, "OrderProduct", "Product", "Order", (productId, orderId) =>
+				import.ParseConnections("OrderProduct", "Product", "Order", (productId, orderId) =>
 				{
 					var product = session.Products.Single(p => p.Id == productId);
 					var order = session.Orders.Single(o => o.Id == orderId);
-					order.Products.Add(product);
-				}, "http://tempuri.org/Database.xsd");
+					//order.Products.Add(product);
+				});
 
-				XmlImport.ParseIntProperty(doc, "Order", "Customer",
-				(orderId, customerId) =>
+				import.ParseIntProperty("Order", "Customer", (orderId, customerId) =>
 				{
 					session.Orders.Single(o => o.Id == orderId).Customer = session.Customers.Single(c => c.Id == customerId);
-				}, "http://tempuri.org/Database.xsd");
+				});
 
 				session.SaveChanges();
 			}
