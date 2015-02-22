@@ -21,30 +21,12 @@ namespace SomeBasicEFApp.Core
         }
         public CoreDbContext CreateWebSessionFactory()
         {
-            //var file = WebPath();
-            var dm = new CoreDbContext();
-            return dm;
-            //throw new NotImplementedException();
-			//return Fluently.Configure()
-			//  .Database(
-			//    SQLiteConfiguration.Standard
-			//      .UsingFile(file))
-			//  .Mappings(m => m.FluentMappings.AddFromAssemblyOf<Customer>())
-			//  .BuildSessionFactory();
+			throw new NotImplementedException();
 		}
-        public CoreDbContext CreateTestSessionFactory(string file)
+        public CoreDbContext CreateSession(string file)
         {
-            var dm = new CoreDbContext();
+            var dm = new CoreDbContext("(LocalDB)\\MSSQLLocalDB;attachdbfilename=|DataDirectory|\\" + file);
 			return dm;
-			//throw new NotImplementedException();
-            //return Fluently.Configure()
-            //  .Database(
-            //    SQLiteConfiguration.Standard.UsingFile(file))//NOTE:why not use in memory? some queries wont work for nhibernate
-            //  .Mappings(m => m.FluentMappings.AddFromAssemblyOf<Customer>())
-            //  .ExposeConfiguration(cfg =>
-            //      new SchemaExport(cfg).Execute(true, true, false)
-            //  )
-            //  .BuildSessionFactory();
         }
     }
 }

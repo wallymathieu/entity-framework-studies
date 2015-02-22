@@ -39,15 +39,21 @@ task :all => [:build, "migrations:run"]
 # Below: migrations, not part of the regular build
 namespace :migrations do
   pwd = File.dirname(__FILE__)
-  def sqlite
-     "#{NuGet::migrate_path} /connection \"Data Source=#{File.join(pwd,".db.sqlite")};Version=3;\" /db sqlite /target DbMigrations.dll"
+  def ef_mdf
+    file = File.join(pwd,"entityframework.mdf").gsub("/","\\")
+    str = ["Data Source=(LocalDB)\\v11.0;",
+      "AttachDbFilename=#{file}",
+      "Integrated Security=True"
+    ].join(";")
+    #--conn "Data Source=(LocalDB)\v11.0;AttachDbFilename=..\bin\Debug\FMDB.mdf;Integrated Security=True" --db=sqlserver2012
+     "#{NuGet::migrate_path} /connection \"#{str}\" /db SqlServer2012 /target DbMigrations.dll"
   end
   
   desc "Run migrations"
   task :run, [:version]=> [:build] do |t,args|
     #to migrate back, you can use "rake migrations:run[1]", where 1 is the desired version
     args.with_defaults(:version => nil)
-    runcmd = sqlite
+    runcmd = ef_mdf
     version = args[:version]
     if version
       runcmd += " --version "+version
@@ -64,7 +70,7 @@ namespace :migrations do
   desc "Dry run migrations"
   task :dryrun => [:build,:path] do |t,args|
     cd File.join("DbMigrations","bin","debug") do
-    sh "#{sqlite} --preview" do |ok, res|
+    sh "#{ef_mdf} --preview" do |ok, res|
       if ! ok
         raise "failed to run migrations (status = #{res.exitstatus})"
       end
