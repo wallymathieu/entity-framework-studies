@@ -26,8 +26,7 @@ desc "test using console"
 test_runner :test => [:build] do |runner|
   runner.exe =NuGet::nunit_86_path
   #{}"  /framework=net-4.5 "  
-  files = [File.join(File.dirname(__FILE__),"Tests","bin","Debug","Tests.dll"),
-    File.join(File.dirname(__FILE__),"CoreXml","bin","Debug","CoreXml.dll")]
+  files = [File.join(File.dirname(__FILE__),"Tests","bin","Debug","Tests.dll")]
   runner.files = files 
 end
 
@@ -45,7 +44,6 @@ namespace :migrations do
       "AttachDbFilename=#{file}",
       "Integrated Security=True"
     ].join(";")
-    #--conn "Data Source=(LocalDB)\v11.0;AttachDbFilename=..\bin\Debug\FMDB.mdf;Integrated Security=True" --db=sqlserver2012
      "#{NuGet::migrate_path} /connection \"#{str}\" /db SqlServer2012 /target DbMigrations.dll"
   end
   

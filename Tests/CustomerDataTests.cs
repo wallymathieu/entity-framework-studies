@@ -4,9 +4,9 @@ using SomeBasicEFApp.Core;
 using Microsoft.Practices.Unity;
 using NUnit.Framework;
 using Order = SomeBasicEFApp.Core.Order;
-using System.Data.Entity;
 using System.Linq;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace SomeBasicEFApp.Tests
 {
@@ -46,21 +46,36 @@ namespace SomeBasicEFApp.Tests
 		[SetUp]
 		public void Setup()
 		{
-			_session = _unityContainer.Resolve<Session>().CreateSession("CustomerDataTests.db");
+			_session = _unityContainer.Resolve<Session>().CreateSession("entityframework.mdf");
 		}
 
 
 		[TearDown]
 		public void TearDown()
 		{
-			_session.Dispose();
+			if (_session != null)
+			{
+				_session.Dispose();
+			}
 		}
 		[TestFixtureTearDown]
 		public void TestFixtureTearDown()
 		{
-			if (File.Exists("entityframework.mdf"))
+			int count = 10;
+			while (count-- > 0)
 			{
-				File.Delete("entityframework.mdf");
+				Task.Delay(100).Wait();
+				if (File.Exists("entityframework.mdf"))
+				{
+					try
+					{
+						File.Delete("entityframework.mdf");
+						break;
+					}
+					catch (IOException e)
+					{
+					}
+				}
 			}
 		}
 		[TestFixtureSetUp]
@@ -93,6 +108,7 @@ namespace SomeBasicEFApp.Tests
 									}
 
 								}, "http://tempuri.org/Database.xsd");
+				session.SaveChanges();
 			}
 			using (var session = _unityContainer.Resolve<Session>().CreateSession("entityframework.mdf"))
 			{
