@@ -25,7 +25,11 @@ namespace SomeBasicEFApp.Core
 		}
         public CoreDbContext CreateSession(string file)
         {
-            var dm = new CoreDbContext("(LocalDB)\\MSSQLLocalDB;attachdbfilename=|DataDirectory|\\" + file);
+			var str = string.Join(";", new[]{"Data Source=(LocalDB)\\v11.0;",
+	  "AttachDbFilename="+Path.Combine(Directory.GetCurrentDirectory() ,file),
+	  "Integrated Security=True"
+	});
+			var dm = new CoreDbContext(str);
 			return dm;
         }
     }
