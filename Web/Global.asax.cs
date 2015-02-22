@@ -4,7 +4,6 @@ using System.Web.Mvc;
 using System.Web.Routing;
 using SomeBasicEFApp.Code;
 using SomeBasicEFApp.Core;
-using Microsoft.Practices.Unity;
 
 namespace SomeBasicEFApp
 {
@@ -37,9 +36,6 @@ namespace SomeBasicEFApp
 
             RegisterGlobalFilters(GlobalFilters.Filters);
             RegisterRoutes(RouteTable.Routes);
-
-            var container = new UnityContainer().RegisterCore(Runtime.Web);
-            DependencyResolver.SetResolver(new UnityDependencyResolver(container));
         }
     }
 }

@@ -1,7 +1,6 @@
 ﻿using System.IO;
 using System.Xml.Linq;
 using SomeBasicEFApp.Core;
-using Microsoft.Practices.Unity;
 using NUnit.Framework;
 using Order = SomeBasicEFApp.Core.Order;
 using System.Linq;
@@ -15,7 +14,6 @@ namespace SomeBasicEFApp.Tests
 	{
 
 		private CoreDbContext _session;
-		private IUnityContainer _unityContainer;
 
 
 		[Test]
@@ -46,7 +44,7 @@ namespace SomeBasicEFApp.Tests
 		[SetUp]
 		public void Setup()
 		{
-			_session = _unityContainer.Resolve<Session>().CreateSession("entityframework.mdf");
+			_session = new Session(new ConsoleMapPath()).CreateSession("entityframework.mdf");
 		}
 
 
@@ -82,12 +80,12 @@ namespace SomeBasicEFApp.Tests
 		public void TestFixtureSetup()
 		{
 			//CreateDb.CreateSqlDatabase("entityframework.mdf");
-			_unityContainer = new UnityContainer().RegisterCore(Runtime.Console);
+			var sessions = new Session(new ConsoleMapPath());
 
-			new Migrator("entityframework.mdf").Migrate();
+            new Migrator("entityframework.mdf").Migrate();
 			var doc = XDocument.Load(Path.Combine("TestData", "TestData.xml"));
 			var customer = new List<Customer>();
-			using (var session = _unityContainer.Resolve<Session>().CreateSession("entityframework.mdf"))
+			using (var session = sessions.CreateSession("entityframework.mdf"))
 			{
 				XmlImport.Parse(doc, new[] { typeof(Customer), typeof(Order), typeof(Product) },
 								(type, obj) =>
@@ -110,7 +108,7 @@ namespace SomeBasicEFApp.Tests
 								}, "http://tempuri.org/Database.xsd");
 				session.SaveChanges();
 			}
-			using (var session = _unityContainer.Resolve<Session>().CreateSession("entityframework.mdf"))
+			using (var session = sessions.CreateSession("entityframework.mdf"))
 			{
 
 				XmlImport.ParseConnections(doc, "OrderProduct", "Product", "Order", (productId, orderId) =>

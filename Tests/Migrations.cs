@@ -4,7 +4,6 @@ using System.IO;
 using System.Xml.Linq;
 using SomeBasicEFApp.Core;
 using SomeBasicEFApp.DbMigrations;
-using Microsoft.Practices.Unity;
 using NUnit.Framework;
 using Order = SomeBasicEFApp.Core.Order;
 using System.Text;
