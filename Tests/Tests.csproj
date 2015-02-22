@@ -96,7 +96,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CustomerDataTests.cs" />
-    <Compile Include="MigrationsTests.cs" />
+    <Compile Include="Migrations.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="XmlImport.cs" />
   </ItemGroup>
@@ -149,12 +149,9 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="entityframework.mdf">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
+    <Content Include="entityframework.mdf" />
     <Content Include="entityframework_log.ldf">
       <DependentUpon>entityframework.mdf</DependentUpon>
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
