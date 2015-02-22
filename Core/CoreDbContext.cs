@@ -1,8 +1,11 @@
 namespace SomeBasicEFApp.Core
 {
+	using System;
 	using System.Data.Common;
 	using System.Data.Entity;
 	using System.Data.Entity.ModelConfiguration.Conventions;
+	using System.Linq;
+
 	//public class SQLiteConfiguration : DbConfiguration
 	//{
 	//	public SQLiteConfiguration()
@@ -31,6 +34,19 @@ namespace SomeBasicEFApp.Core
 		protected override void OnModelCreating(DbModelBuilder modelBuilder)
 		{
 //			modelBuilder.Conventions.Remove<PluralizingTableNameConvention>();
+		}
+
+		public Customer GetCustomer(int v)
+		{
+			return Customers.SingleOrDefault(c => c.Id == v);
+		}
+		public Product GetProduct(int v)
+		{
+			return Products.SingleOrDefault(p => p.Id == v);
+		}
+		public Order GetOrder(int v)
+		{
+			return Orders.SingleOrDefault(o => o.Id == v);
 		}
 	}
 }

@@ -19,7 +19,7 @@ namespace SomeBasicEFApp.Tests
 		[Test]
 		public void CanGetCustomerById()
 		{
-			var customer = _session.Customers.SingleOrDefault(c => c.Id == 1);
+			var customer = _session.GetCustomer(1);
 
 			Assert.IsNotNull(customer);
 		}
@@ -36,10 +36,21 @@ namespace SomeBasicEFApp.Tests
 		[Test]
 		public void CanGetProductById()
 		{
-			var product = _session.Products.SingleOrDefault(c => c.Id == 1);
+			var product = _session.GetProduct(1);
 
 			Assert.IsNotNull(product);
 		}
+		[Test]
+		public void OrderContainsProduct()
+		{
+			Assert.True(_session.GetOrder(1).ProductOrders.Any(p => p.Product.Id == 1));
+		}
+		[Test]
+		public void OrderHasACustomer()
+		{
+			Assert.IsNotNullOrEmpty(_session.GetOrder(1).Customer.Firstname);
+		}
+
 
 		[SetUp]
 		public void Setup()
