@@ -12,13 +12,13 @@ namespace SomeBasicEFApp.Controllers
 
 		public ActionResult Index()
 		{
-			var contexts = from context in Session.Customers
+			var contexts = from context in EFSession.Customers
 						   select context;
 			return View(contexts.ToArray());
 		}
 		public ActionResult Get(int id)
 		{
-			return View(Session.Customers.SingleOrDefault(c => c.Id == id));
+            return View(EFSession.Customers.SingleOrDefault(c => c.Id == id));
 		}
 		public ActionResult Create()
 		{
@@ -27,8 +27,8 @@ namespace SomeBasicEFApp.Controllers
 		[ActionName("Create"), AcceptVerbs(HttpVerbs.Post)]
 		public ActionResult CreatePost(Customer context)
 		{
-			Session.Customers.Add(context);
-			Session.SaveChanges();
+            EFSession.Customers.Add(context);
+            EFSession.SaveChanges();
 			return Redirect("/Customer");
 		}
 	}

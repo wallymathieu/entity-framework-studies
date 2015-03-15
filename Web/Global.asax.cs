@@ -4,6 +4,8 @@ using System.Web.Mvc;
 using System.Web.Routing;
 using SomeBasicEFApp.Code;
 using SomeBasicEFApp.Core;
+using System.Web.Http;
+using SomeBasicNHApp;
 
 namespace SomeBasicEFApp
 {
@@ -15,7 +17,7 @@ namespace SomeBasicEFApp
         public static void RegisterGlobalFilters(GlobalFilterCollection filters)
         {
             filters.Add(new HandleErrorAttribute());
-            filters.Add(new NHibernateActionFilter());
+            filters.Add(new EFMvcActionFilter());
         }
 
         public static void RegisterRoutes(RouteCollection routes)
@@ -33,7 +35,7 @@ namespace SomeBasicEFApp
         protected void Application_Start()
         {
             AreaRegistration.RegisterAllAreas();
-
+            GlobalConfiguration.Configure(WebApiConfig.Register);
             RegisterGlobalFilters(GlobalFilters.Filters);
             RegisterRoutes(RouteTable.Routes);
         }

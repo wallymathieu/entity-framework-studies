@@ -20,7 +20,6 @@ namespace SomeBasicEFApp.Core
 	//}
 	public partial class CoreDbContext : DbContext
 	{
-
 		public CoreDbContext(DbConnection connString)
 			: base(connString, true)
 		{

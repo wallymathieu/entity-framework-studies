@@ -4,9 +4,9 @@ using SomeBasicEFApp.Core;
 
 namespace SomeBasicEFApp.Code
 {
-    public class NHibernateActionFilter : ActionFilterAttribute
+    public class EFMvcActionFilter : ActionFilterAttribute
     {
-        public const string Name = "NHibernateSession";
+        public const string Name = "EFSession";
 
         public override void OnActionExecuting(ActionExecutingContext filterContext)
         {

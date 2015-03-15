@@ -1,4 +1,5 @@
 ﻿using SomeBasicEFApp.Core;
+using SomeBasicNHApp.Code;
 using System.Web;
 using System.Web.Mvc;
 
@@ -6,17 +7,17 @@ namespace SomeBasicEFApp.Code
 {
 	public class SessionController : Controller
     {
-        public HttpSessionStateBase HttpSession
+        public SessionController()
         {
-            get { return base.Session; }
         }
 
-        public new CoreDbContext Session
+        public CoreDbContext EFSession
         {
             get
             {
-                return (CoreDbContext)this.HttpContext.Items[NHibernateActionFilter.Name];
+                return new SessionContext(this.HttpContext).Session;
             }
         }
+
     }
 }
