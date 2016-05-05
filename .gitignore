@@ -12,3 +12,15 @@ AwesomeNHApp.userprefs
 packages/
 .db.sqlite
 .vs
+
+
+# Paket dependency manager
+.paket/paket.exe
+
+# FAKE - F# Make
+.fake/
+
+# Test result
+TestResults.xml
+
+*.userprefs

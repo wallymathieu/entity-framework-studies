@@ -1,14 +1,2 @@
-version: 1.0.{build}
-configuration: Release
-before_build:
-  - nuget restore entity-framework-studies.sln
-services:
-  - mssql2012sp1
-build:
-  project: entity-framework-studies.sln
-  verbosity: minimal
-  publish_nuget: false
-nuget:
-  account_feed: false
-  project_feed: false
-  disable_publish_on_pr: true
+build_script:
+  - build.cmd build
