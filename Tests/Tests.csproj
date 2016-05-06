@@ -8,7 +8,7 @@
     <ProjectGuid>{F672502B-5D9C-4BDF-B7C6-93BB98FD5215}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>SomeBasicNHApp.Tests</RootNamespace>
+    <RootNamespace>SomeBasicEFApp.Tests</RootNamespace>
     <AssemblyName>Tests</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
@@ -63,6 +63,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CustomerDataTests.cs" />
+    <Compile Include="ExecuteAndRedirectOutput.cs" />
     <Compile Include="Migrations.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="XmlImport.cs" />

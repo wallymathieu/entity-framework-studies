@@ -20,17 +20,17 @@ using FluentMigrator.Builders.Create.Table;
 
 namespace SomeBasicEFApp.DbMigrations
 {
-	internal static class MigrationExtensions
-	{
-		public static ICreateTableColumnOptionOrWithColumnSyntax WithIdColumn(this ICreateTableWithColumnSyntax tableWithColumnSyntax)
-		{
-			return tableWithColumnSyntax
-				.WithColumn("Id")
-				.AsInt32()
-				.NotNullable()
-				.PrimaryKey()
-				.Identity();
-		}
+    internal static class MigrationExtensions
+    {
+        public static ICreateTableColumnOptionOrWithColumnSyntax WithIdColumn(this ICreateTableWithColumnSyntax tableWithColumnSyntax)
+        {
+            return tableWithColumnSyntax
+                .WithColumn("Id")
+                .AsInt32()
+                .NotNullable()
+                .PrimaryKey()
+                .Identity();
+        }
         public static ICreateTableColumnOptionOrWithColumnSyntax WithVersionColumn(this ICreateTableWithColumnSyntax tableWithColumnSyntax)
         {
             return tableWithColumnSyntax
@@ -38,11 +38,11 @@ namespace SomeBasicEFApp.DbMigrations
                 .AsInt32()
                 .NotNullable();
         }
-		public static ICreateTableColumnOptionOrWithColumnSyntax WithTimeStamps(this ICreateTableWithColumnSyntax tableWithColumnSyntax)
-		{
-			return tableWithColumnSyntax
-				.WithColumn("CreatedAt").AsDateTime().NotNullable()
-				.WithColumn("ModifiedAt").AsDateTime().NotNullable();
-		}
-	}
+        public static ICreateTableColumnOptionOrWithColumnSyntax WithTimeStamps(this ICreateTableWithColumnSyntax tableWithColumnSyntax)
+        {
+            return tableWithColumnSyntax
+                .WithColumn("CreatedAt").AsDateTime().NotNullable()
+                .WithColumn("ModifiedAt").AsDateTime().NotNullable();
+        }
+    }
 }

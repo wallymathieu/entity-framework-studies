@@ -38,8 +38,8 @@ namespace SomeBasicEFApp.DbMigrations
                 .WithColumn("Customer_id").AsInt32().Nullable();
 
             Create.Table("ProductOrders")
-				.WithIdColumn()
-				.WithColumn("Order_id").AsInt32().NotNullable()
+                .WithIdColumn()
+                .WithColumn("Order_id").AsInt32().NotNullable()
                 .WithColumn("Product_id").AsInt32().NotNullable()
                 ;
 

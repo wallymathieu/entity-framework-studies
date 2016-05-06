@@ -5,11 +5,10 @@ using NUnit.Framework;
 using Order = SomeBasicEFApp.Core.Order;
 using System.Linq;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace SomeBasicEFApp.Tests
 {
-	[TestFixture]
+    [TestFixture]
 	public class CustomerDataTests
 	{
 

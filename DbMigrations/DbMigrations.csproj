@@ -8,7 +8,7 @@
     <ProjectGuid>{E09166D7-F356-44A6-A540-D88B7CF68AD8}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>AwesomeNHApp.DbMigrations</RootNamespace>
+    <RootNamespace>SomeBasicEFApp.DbMigrations</RootNamespace>
     <AssemblyName>DbMigrations</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
