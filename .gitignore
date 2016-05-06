@@ -5,6 +5,7 @@
 *.pidb
 bin/
 obj/
+
 _ReSharper*/
 build/
 AwesomeNHApp.userprefs
