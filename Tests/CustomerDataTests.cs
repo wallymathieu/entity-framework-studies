@@ -84,13 +84,13 @@ namespace SomeBasicEFApp.Tests
 								{
 									switch (type.Name)
 									{
-										case "Customer":
+										case nameof(Customer):
 											session.Customers.Add((Customer)obj);
 											break;
-										case "Order":
+										case nameof(Order):
 											session.Orders.Add((Order)obj);
 											break;
-										case "Product":
+										case nameof(Product):
 											session.Products.Add((Product)obj);
 											break;
 										default:
