@@ -1,119 +1,153 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Linq;
-using System.Net;
-using System.Net.Http;
-using System.Web.Http;
-using System.Web.Http.ModelBinding;
-using System.Web.Http.OData;
-using System.Web.Http.OData.Query;
-using System.Web.Http.OData.Routing;
-using SomeBasicEFApp.Core;
-using Microsoft.Data.OData;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
+using SomeBasicEFApp.Web.Data;
+using SomeBasicEFApp.Web.Entities;
 
-namespace SomeBasicEFApp.Controllers
+namespace SomeBasicEFApp.Web.Controllers
 {
-    public class ProductsController : ODataController
+    public class ProductsController : Controller
     {
-        private static ODataValidationSettings _validationSettings = new ODataValidationSettings();
+        private readonly CoreDbContext _context;
 
-        // GET: odata/Products
-        public IHttpActionResult GetProducts(ODataQueryOptions<Product> queryOptions)
+        public ProductsController(CoreDbContext context)
         {
-            // validate the query.
-            try
-            {
-                queryOptions.Validate(_validationSettings);
-            }
-            catch (ODataException ex)
-            {
-                return BadRequest(ex.Message);
-            }
-
-            // return Ok<IEnumerable<Product>>(products);
-            return StatusCode(HttpStatusCode.NotImplemented);
+            _context = context;    
         }
 
-        // GET: odata/Products(5)
-        public IHttpActionResult GetProduct([FromODataUri] int key, ODataQueryOptions<Product> queryOptions)
+        // GET: Products
+        public async Task<IActionResult> Index()
         {
-            // validate the query.
-            try
-            {
-                queryOptions.Validate(_validationSettings);
-            }
-            catch (ODataException ex)
-            {
-                return BadRequest(ex.Message);
-            }
-
-            // return Ok<Product>(product);
-            return StatusCode(HttpStatusCode.NotImplemented);
+            return View(await _context.Products.ToListAsync());
         }
 
-        // PUT: odata/Products(5)
-        public IHttpActionResult Put([FromODataUri] int key, Delta<Product> delta)
+        // GET: Products/Details/5
+        public async Task<IActionResult> Details(int? id)
         {
-            Validate(delta.GetEntity());
-
-            if (!ModelState.IsValid)
+            if (id == null)
             {
-                return BadRequest(ModelState);
+                return NotFound();
             }
 
-            // TODO: Get the entity here.
-
-            // delta.Put(product);
-
-            // TODO: Save the patched entity.
-
-            // return Updated(product);
-            return StatusCode(HttpStatusCode.NotImplemented);
-        }
-
-        // POST: odata/Products
-        public IHttpActionResult Post(Product product)
-        {
-            if (!ModelState.IsValid)
+            var product = await _context.Products
+                .SingleOrDefaultAsync(m => m.Id == id);
+            if (product == null)
             {
-                return BadRequest(ModelState);
+                return NotFound();
             }
 
-            // TODO: Add create logic here.
-
-            // return Created(product);
-            return StatusCode(HttpStatusCode.NotImplemented);
+            return View(product);
         }
 
-        // PATCH: odata/Products(5)
-        [AcceptVerbs("PATCH", "MERGE")]
-        public IHttpActionResult Patch([FromODataUri] int key, Delta<Product> delta)
+        // GET: Products/Create
+        public IActionResult Create()
         {
-            Validate(delta.GetEntity());
+            return View();
+        }
 
-            if (!ModelState.IsValid)
+        // POST: Products/Create
+        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
+        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create([Bind("Cost,Name,Id,Version")] Product product)
+        {
+            if (ModelState.IsValid)
             {
-                return BadRequest(ModelState);
+                _context.Add(product);
+                await _context.SaveChangesAsync();
+                return RedirectToAction("Index");
+            }
+            return View(product);
+        }
+
+        // GET: Products/Edit/5
+        public async Task<IActionResult> Edit(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
             }
 
-            // TODO: Get the entity here.
-
-            // delta.Patch(product);
-
-            // TODO: Save the patched entity.
-
-            // return Updated(product);
-            return StatusCode(HttpStatusCode.NotImplemented);
+            var product = await _context.Products.SingleOrDefaultAsync(m => m.Id == id);
+            if (product == null)
+            {
+                return NotFound();
+            }
+            return View(product);
         }
 
-        // DELETE: odata/Products(5)
-        public IHttpActionResult Delete([FromODataUri] int key)
+        // POST: Products/Edit/5
+        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
+        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(int id, [Bind("Cost,Name,Id,Version")] Product product)
         {
-            // TODO: Add delete logic here.
+            if (id != product.Id)
+            {
+                return NotFound();
+            }
 
-            // return StatusCode(HttpStatusCode.NoContent);
-            return StatusCode(HttpStatusCode.NotImplemented);
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    _context.Update(product);
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!ProductExists(product.Id))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+                return RedirectToAction("Index");
+            }
+            return View(product);
+        }
+
+        // GET: Products/Delete/5
+        public async Task<IActionResult> Delete(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var product = await _context.Products
+                .SingleOrDefaultAsync(m => m.Id == id);
+            if (product == null)
+            {
+                return NotFound();
+            }
+
+            return View(product);
+        }
+
+        // POST: Products/Delete/5
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteConfirmed(int id)
+        {
+            var product = await _context.Products.SingleOrDefaultAsync(m => m.Id == id);
+            _context.Products.Remove(product);
+            await _context.SaveChangesAsync();
+            return RedirectToAction("Index");
+        }
+
+        private bool ProductExists(int id)
+        {
+            return _context.Products.Any(e => e.Id == id);
         }
     }
 }

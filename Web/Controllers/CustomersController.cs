@@ -1,133 +1,153 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Linq;
-using System.Net;
-using System.Net.Http;
-using System.Web.Http;
-using System.Web.Http.ModelBinding;
-using System.Web.Http.OData;
-using System.Web.Http.OData.Query;
-using System.Web.Http.OData.Routing;
-using SomeBasicEFApp.Core;
-using Microsoft.Data.OData;
-using SomeBasicNHApp.Code;
-using System.Web;
-using SomeBasicEFApp.Code;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
+using SomeBasicEFApp.Web.Data;
+using SomeBasicEFApp.Web.Entities;
 
-namespace SomeBasicNHApp.Controllers
+namespace SomeBasicEFApp.Web.Controllers
 {
-    public class CustomersController : ODataController, IDisposable
+    public class CustomersController : Controller
     {
-        private static ODataValidationSettings _validationSettings = new ODataValidationSettings();
-        private CoreDbContext _session;
-        private CoreDbContext session { get { return _session ?? (_session = new Session(new WebMapPath()).CreateWebSessionFactory()); } }
-        public CustomersController()
+        private readonly CoreDbContext _context;
+
+        public CustomersController(CoreDbContext context)
         {
+            _context = context;    
         }
 
-        // GET: odata/Customers
-        public IHttpActionResult GetCustomers(ODataQueryOptions<Customer> queryOptions)
+        // GET: Customers
+        public async Task<IActionResult> Index()
         {
-            // validate the query.
-            try
-            {
-                queryOptions.Validate(_validationSettings);
-            }
-            catch (ODataException ex)
-            {
-                return BadRequest(ex.Message);
-            }
-            return Ok<IEnumerable<Customer>>(queryOptions.ApplyTo(session.Customers.AsQueryable()) as IQueryable<Customer>);
+            return View(await _context.Customers.ToListAsync());
         }
 
-        // GET: odata/Customers(5)
-        public IHttpActionResult GetCustomer([FromODataUri] int key, ODataQueryOptions<Customer> queryOptions)
+        // GET: Customers/Details/5
+        public async Task<IActionResult> Details(int? id)
         {
-            // validate the query.
-            try
+            if (id == null)
             {
-                queryOptions.Validate(_validationSettings);
+                return NotFound();
             }
-            catch (ODataException ex)
+
+            var customer = await _context.Customers
+                .SingleOrDefaultAsync(m => m.Id == id);
+            if (customer == null)
             {
-                return BadRequest(ex.Message);
+                return NotFound();
             }
-            return Ok<Customer>(session.Customers.SingleOrDefault(c => c.Id == key));
+
+            return View(customer);
         }
 
-        // PUT: odata/Customers(5)
-        public IHttpActionResult Put([FromODataUri] int key, Delta<Customer> delta)
+        // GET: Customers/Create
+        public IActionResult Create()
         {
-            Validate(delta.GetEntity());
-
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            // TODO: Get the entity here.
-
-            // delta.Put(customer);
-
-            // TODO: Save the patched entity.
-
-            // return Updated(customer);
-            return StatusCode(HttpStatusCode.NotImplemented);
+            return View();
         }
 
-        // POST: odata/Customers
-        public IHttpActionResult Post(Customer customer)
+        // POST: Customers/Create
+        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
+        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create([Bind("Id,Firstname,Lastname,Version")] Customer customer)
         {
-            if (!ModelState.IsValid)
+            if (ModelState.IsValid)
             {
-                return BadRequest(ModelState);
+                _context.Add(customer);
+                await _context.SaveChangesAsync();
+                return RedirectToAction("Index");
             }
-
-            // TODO: Add create logic here.
-
-            // return Created(customer);
-            return StatusCode(HttpStatusCode.NotImplemented);
+            return View(customer);
         }
 
-        // PATCH: odata/Customers(5)
-        [AcceptVerbs("PATCH", "MERGE")]
-        public IHttpActionResult Patch([FromODataUri] int key, Delta<Customer> delta)
+        // GET: Customers/Edit/5
+        public async Task<IActionResult> Edit(int? id)
         {
-            Validate(delta.GetEntity());
-
-            if (!ModelState.IsValid)
+            if (id == null)
             {
-                return BadRequest(ModelState);
+                return NotFound();
             }
 
-            // TODO: Get the entity here.
-
-            // delta.Patch(customer);
-
-            // TODO: Save the patched entity.
-
-            // return Updated(customer);
-            return StatusCode(HttpStatusCode.NotImplemented);
-        }
-
-        // DELETE: odata/Customers(5)
-        public IHttpActionResult Delete([FromODataUri] int key)
-        {
-            // TODO: Add delete logic here.
-
-            // return StatusCode(HttpStatusCode.NoContent);
-            return StatusCode(HttpStatusCode.NotImplemented);
-        }
-
-        protected override void Dispose(bool disposing)
-        {
-            if (_session != null)
+            var customer = await _context.Customers.SingleOrDefaultAsync(m => m.Id == id);
+            if (customer == null)
             {
-                _session.Dispose();
-                _session = null;
+                return NotFound();
             }
-            base.Dispose(disposing);
+            return View(customer);
+        }
+
+        // POST: Customers/Edit/5
+        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
+        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Firstname,Lastname,Version")] Customer customer)
+        {
+            if (id != customer.Id)
+            {
+                return NotFound();
+            }
+
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    _context.Update(customer);
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!CustomerExists(customer.Id))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+                return RedirectToAction("Index");
+            }
+            return View(customer);
+        }
+
+        // GET: Customers/Delete/5
+        public async Task<IActionResult> Delete(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var customer = await _context.Customers
+                .SingleOrDefaultAsync(m => m.Id == id);
+            if (customer == null)
+            {
+                return NotFound();
+            }
+
+            return View(customer);
+        }
+
+        // POST: Customers/Delete/5
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteConfirmed(int id)
+        {
+            var customer = await _context.Customers.SingleOrDefaultAsync(m => m.Id == id);
+            _context.Customers.Remove(customer);
+            await _context.SaveChangesAsync();
+            return RedirectToAction("Index");
+        }
+
+        private bool CustomerExists(int id)
+        {
+            return _context.Customers.Any(e => e.Id == id);
         }
     }
 }

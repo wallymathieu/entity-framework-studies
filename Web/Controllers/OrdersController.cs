@@ -1,119 +1,153 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Linq;
-using System.Net;
-using System.Net.Http;
-using System.Web.Http;
-using System.Web.Http.ModelBinding;
-using System.Web.Http.OData;
-using System.Web.Http.OData.Query;
-using System.Web.Http.OData.Routing;
-using SomeBasicEFApp.Core;
-using Microsoft.Data.OData;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
+using SomeBasicEFApp.Web.Data;
+using SomeBasicEFApp.Web.Entities;
 
-namespace SomeBasicEFApp.Controllers
+namespace SomeBasicEFApp.Web.Controllers
 {
-    public class OrdersController : ODataController
+    public class OrdersController : Controller
     {
-        private static ODataValidationSettings _validationSettings = new ODataValidationSettings();
+        private readonly CoreDbContext _context;
 
-        // GET: odata/Orders
-        public IHttpActionResult GetOrders(ODataQueryOptions<Order> queryOptions)
+        public OrdersController(CoreDbContext context)
         {
-            // validate the query.
-            try
-            {
-                queryOptions.Validate(_validationSettings);
-            }
-            catch (ODataException ex)
-            {
-                return BadRequest(ex.Message);
-            }
-
-            // return Ok<IEnumerable<Order>>(orders);
-            return StatusCode(HttpStatusCode.NotImplemented);
+            _context = context;    
         }
 
-        // GET: odata/Orders(5)
-        public IHttpActionResult GetOrder([FromODataUri] int key, ODataQueryOptions<Order> queryOptions)
+        // GET: Orders
+        public async Task<IActionResult> Index()
         {
-            // validate the query.
-            try
-            {
-                queryOptions.Validate(_validationSettings);
-            }
-            catch (ODataException ex)
-            {
-                return BadRequest(ex.Message);
-            }
-
-            // return Ok<Order>(order);
-            return StatusCode(HttpStatusCode.NotImplemented);
+            return View(await _context.Orders.ToListAsync());
         }
 
-        // PUT: odata/Orders(5)
-        public IHttpActionResult Put([FromODataUri] int key, Delta<Order> delta)
+        // GET: Orders/Details/5
+        public async Task<IActionResult> Details(int? id)
         {
-            Validate(delta.GetEntity());
-
-            if (!ModelState.IsValid)
+            if (id == null)
             {
-                return BadRequest(ModelState);
+                return NotFound();
             }
 
-            // TODO: Get the entity here.
-
-            // delta.Put(order);
-
-            // TODO: Save the patched entity.
-
-            // return Updated(order);
-            return StatusCode(HttpStatusCode.NotImplemented);
-        }
-
-        // POST: odata/Orders
-        public IHttpActionResult Post(Order order)
-        {
-            if (!ModelState.IsValid)
+            var order = await _context.Orders
+                .SingleOrDefaultAsync(m => m.Id == id);
+            if (order == null)
             {
-                return BadRequest(ModelState);
+                return NotFound();
             }
 
-            // TODO: Add create logic here.
-
-            // return Created(order);
-            return StatusCode(HttpStatusCode.NotImplemented);
+            return View(order);
         }
 
-        // PATCH: odata/Orders(5)
-        [AcceptVerbs("PATCH", "MERGE")]
-        public IHttpActionResult Patch([FromODataUri] int key, Delta<Order> delta)
+        // GET: Orders/Create
+        public IActionResult Create()
         {
-            Validate(delta.GetEntity());
+            return View();
+        }
 
-            if (!ModelState.IsValid)
+        // POST: Orders/Create
+        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
+        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create([Bind("OrderDate,Id,Version")] Order order)
+        {
+            if (ModelState.IsValid)
             {
-                return BadRequest(ModelState);
+                _context.Add(order);
+                await _context.SaveChangesAsync();
+                return RedirectToAction("Index");
+            }
+            return View(order);
+        }
+
+        // GET: Orders/Edit/5
+        public async Task<IActionResult> Edit(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
             }
 
-            // TODO: Get the entity here.
-
-            // delta.Patch(order);
-
-            // TODO: Save the patched entity.
-
-            // return Updated(order);
-            return StatusCode(HttpStatusCode.NotImplemented);
+            var order = await _context.Orders.SingleOrDefaultAsync(m => m.Id == id);
+            if (order == null)
+            {
+                return NotFound();
+            }
+            return View(order);
         }
 
-        // DELETE: odata/Orders(5)
-        public IHttpActionResult Delete([FromODataUri] int key)
+        // POST: Orders/Edit/5
+        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
+        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(int id, [Bind("OrderDate,Id,Version")] Order order)
         {
-            // TODO: Add delete logic here.
+            if (id != order.Id)
+            {
+                return NotFound();
+            }
 
-            // return StatusCode(HttpStatusCode.NoContent);
-            return StatusCode(HttpStatusCode.NotImplemented);
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    _context.Update(order);
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!OrderExists(order.Id))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+                return RedirectToAction("Index");
+            }
+            return View(order);
+        }
+
+        // GET: Orders/Delete/5
+        public async Task<IActionResult> Delete(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var order = await _context.Orders
+                .SingleOrDefaultAsync(m => m.Id == id);
+            if (order == null)
+            {
+                return NotFound();
+            }
+
+            return View(order);
+        }
+
+        // POST: Orders/Delete/5
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteConfirmed(int id)
+        {
+            var order = await _context.Orders.SingleOrDefaultAsync(m => m.Id == id);
+            _context.Orders.Remove(order);
+            await _context.SaveChangesAsync();
+            return RedirectToAction("Index");
+        }
+
+        private bool OrderExists(int id)
+        {
+            return _context.Orders.Any(e => e.Id == id);
         }
     }
 }
