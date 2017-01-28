@@ -1,5 +1,5 @@
 language: csharp
-dotnet: 1.0.0-preview2-003121
+dotnet: 1.0.0-preview2-003156
 
 matrix:
   include:
