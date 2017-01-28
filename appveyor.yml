@@ -1,5 +1,4 @@
 build_script:
-  - dotnet build
   - dotnet restore
   - cd Web
   - dotnet build
