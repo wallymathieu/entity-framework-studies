@@ -7,6 +7,7 @@ using System.Linq;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using System;
+using System.Reflection;
 
 namespace SomeBasicEFApp.Tests
 {
@@ -70,7 +71,9 @@ namespace SomeBasicEFApp.Tests
 
         private static DbContextOptions Setup(DbContextOptions options)
         {
-            var doc = XDocument.Load(Path.Combine("TestData", "TestData.xml"));
+            var doc = XDocument.Load(Path.Combine(
+                Path.GetDirectoryName(typeof(CustomerDataTests).GetTypeInfo().Assembly.Location),
+                "TestData", "TestData.xml"));
             var import = new XmlImport(doc, "http://tempuri.org/Database.xsd");
             var customer = new List<Customer>();
             using (var session = new CoreDbContext(options))
