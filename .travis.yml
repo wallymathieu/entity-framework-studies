@@ -8,6 +8,9 @@ matrix:
       sudo: required
       mono: latest
 
+before_install:
+  - sudo apt-get install dotnet-dev-1.0.0-preview2.1-003155
+
 script: 
   - dotnet restore
   - cd Web
