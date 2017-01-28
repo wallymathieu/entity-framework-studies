@@ -12,15 +12,10 @@ namespace SomeBasicEFApp.Tests
 {
     public class CustomerDataTests:IDisposable
     {
-
         private CoreDbContext _session;
         public CustomerDataTests()
         {
-            var options = new DbContextOptionsBuilder()
-                .UseInMemoryDatabase(databaseName: "customer_data_tests")
-                .Options;
-
-            _session = new CoreDbContext(options);
+            _session = new CoreDbContext(options.Value);
         }
 
         [Fact]
@@ -50,22 +45,26 @@ namespace SomeBasicEFApp.Tests
         [Fact]
         public void OrderContainsProduct()
         {
-            Assert.True(_session.GetOrder(1).ProductOrders.Any(p => p.Product.Id == 1));
+            var o = _session.GetOrder(1);
+            Assert.NotNull(o.ProductOrders);
+            Assert.True(o.ProductOrders.Any(p => p.Product.Id == 1));
         }
         [Fact]
         public void OrderHasACustomer()
         {
-            Assert.NotEmpty(_session.GetOrder(1).Customer.Firstname);
+            var o = _session.GetOrder(1);
+            Assert.NotNull(o.Customer);
+            Assert.NotEmpty(o.Customer.Firstname);
         }
 
+        private static string rnd=> Guid.NewGuid().ToString("N");
+        private static Lazy<DbContextOptions> options=new Lazy<DbContextOptions>(()=>
+            Setup(new DbContextOptionsBuilder()
+                .UseInMemoryDatabase(databaseName: $"customer_data_tests_{rnd}")
+                .Options));
 
-
-        private static void TestFixtureSetup(DbContextOptions options)
+        private static DbContextOptions Setup(DbContextOptions options)
         {
-            using (var dbContext=new CoreDbContext(options))
-            {
-                dbContext.Database.Migrate();
-            }
             var doc = XDocument.Load(Path.Combine("TestData", "TestData.xml"));
             var import = new XmlImport(doc, "http://tempuri.org/Database.xsd");
             var customer = new List<Customer>();
@@ -96,18 +95,20 @@ namespace SomeBasicEFApp.Tests
             {
                 import.ParseConnections("OrderProduct", "Product", "Order", (productId, orderId) =>
                 {
-                    var product = session.Products.Single(p => p.Id == productId);
-                    var order = session.Orders.Single(o => o.Id == orderId);
+                    var product = session.GetProduct(productId);
+                    var order = session.GetOrder(orderId);
                     session.ProductOrders.Add(new ProductOrder { Order = order, Product = product });
                 });
 
                 import.ParseIntProperty("Order", "Customer", (orderId, customerId) =>
                 {
-                    session.Orders.Single(o => o.Id == orderId).Customer = session.Customers.Single(c => c.Id == customerId);
+                    var order = session.GetOrder(orderId);
+                    order.Customer = session.GetCustomer(customerId);
                 });
 
                 session.SaveChanges();
             }
+            return options;
         }
 
         public void Dispose()
