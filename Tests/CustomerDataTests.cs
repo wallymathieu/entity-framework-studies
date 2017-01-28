@@ -45,14 +45,19 @@ namespace SomeBasicEFApp.Tests
         [Fact]
         public void OrderContainsProduct()
         {
-            var o = _session.GetOrder(1);
+            var o = _session.Orders
+                    .Include(order=>order.ProductOrders)
+                        .ThenInclude(po=>po.Product)
+                    .Single(order=>order.Id==1);
             Assert.NotNull(o.ProductOrders);
             Assert.True(o.ProductOrders.Any(p => p.Product.Id == 1));
         }
         [Fact]
         public void OrderHasACustomer()
         {
-            var o = _session.GetOrder(1);
+            var o = _session.Orders
+                    .Include(order=>order.Customer)
+                    .Single(order=>order.Id==1);
             Assert.NotNull(o.Customer);
             Assert.NotEmpty(o.Customer.Firstname);
         }
