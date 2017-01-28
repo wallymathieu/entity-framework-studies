@@ -1,12 +1,12 @@
 language: csharp
+dotnet: 1.0.0-preview2-003121
+
 matrix:
   include:
     - os: linux # Ubuntu 14.04
       dist: trusty
       sudo: required
-      dotnet: 1.0.0-preview2-003121
-      
-sudo: false 
+      mono: latest
 
 script: 
   - dotnet restore
