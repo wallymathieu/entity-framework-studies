@@ -5,3 +5,7 @@ build_script:
   - cd ..
   - cd Tests
   - dotnet build
+  - cd ..
+test_script:
+  - cd Tests
+  - dotnet test
