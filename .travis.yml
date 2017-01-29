@@ -7,11 +7,7 @@ mono:
 os:
   - linux
 script: 
-  - cd Web
   - dotnet restore
-  - dotnet build
-  - cd ..
   - cd Tests
-  - dotnet restore
   - dotnet build
   - dotnet test
