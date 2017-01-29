@@ -8,6 +8,6 @@ os:
   - linux
 script: 
   - dotnet restore
-  - cd Tests
-  - dotnet build
-  - dotnet test
+  - dotnet build Web
+  - dotnet build Tests
+  - dotnet test Tests
