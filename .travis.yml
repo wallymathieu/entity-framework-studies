@@ -1,35 +1,13 @@
 language: csharp
-sudo: required
+sudo: false
 dist: trusty
-addons:
-  apt:
-    packages:
-    - gettext
-    - libcurl4-openssl-dev
-    - libicu-dev
-    - libssl-dev
-    - libunwind8
-    - zlib1g
-env:
-  global:
-    - DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
-    - DOTNET_CLI_TELEMETRY_OPTOUT: 1
+dotnet: 1.0.0-preview2.1-003177
 mono:
   - latest
 os:
   - linux
-before_install:
-  - sudo sh -c 'echo "deb [arch=amd64] https://apt-mo.trafficmanager.net/repos/dotnet-release/ trusty main" > /etc/apt/sources.list.d/dotnetdev.list'
-  - sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 417A0893
-  - sudo apt-get update
-install:
-  - sudo apt-get install dotnet-dev-1.0.0-preview2.1-003177
 script: 
-  - cd Web
   - dotnet restore
-  - dotnet build
-  - cd ..
-  - cd Tests
-  - dotnet restore
-  - dotnet build
-  - dotnet test
+  - dotnet build Web
+  - dotnet build Tests
+  - dotnet test Tests
