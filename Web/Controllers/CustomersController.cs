@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using SomeBasicEFApp.Web.Data;
 using SomeBasicEFApp.Web.Entities;
+using SomeBasicEFApp.Web.ValueTypes;
 
 namespace SomeBasicEFApp.Web.Controllers
 {
@@ -26,11 +27,11 @@ namespace SomeBasicEFApp.Web.Controllers
         }
 
         // GET: Customers/Details/5
-        public async Task<IActionResult> Details(int? id)
+        public async Task<IActionResult> Details(CustomerId? id)
         {
             if (id == null)
             {
-                return NotFound();
+                return BadRequest();
             }
 
             var customer = await _context.Customers
@@ -66,11 +67,11 @@ namespace SomeBasicEFApp.Web.Controllers
         }
 
         // GET: Customers/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+        public async Task<IActionResult> Edit(CustomerId? id)
         {
             if (id == null)
             {
-                return NotFound();
+                return BadRequest();
             }
 
             var customer = await _context.Customers.SingleOrDefaultAsync(m => m.Id == id);
@@ -86,11 +87,11 @@ namespace SomeBasicEFApp.Web.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Firstname,Lastname,Version")] Customer customer)
+        public async Task<IActionResult> Edit(CustomerId id, [Bind("Id,Firstname,Lastname,Version")] Customer customer)
         {
             if (id != customer.Id)
             {
-                return NotFound();
+                customer.Id = id;
             }
 
             if (ModelState.IsValid)
@@ -117,11 +118,11 @@ namespace SomeBasicEFApp.Web.Controllers
         }
 
         // GET: Customers/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+        public async Task<IActionResult> Delete(CustomerId? id)
         {
             if (id == null)
             {
-                return NotFound();
+                return BadRequest();
             }
 
             var customer = await _context.Customers
@@ -137,7 +138,7 @@ namespace SomeBasicEFApp.Web.Controllers
         // POST: Customers/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        public async Task<IActionResult> DeleteConfirmed(CustomerId id)
         {
             var customer = await _context.Customers.SingleOrDefaultAsync(m => m.Id == id);
             _context.Customers.Remove(customer);
@@ -145,7 +146,7 @@ namespace SomeBasicEFApp.Web.Controllers
             return RedirectToAction("Index");
         }
 
-        private bool CustomerExists(int id)
+        private bool CustomerExists(CustomerId id)
         {
             return _context.Customers.Any(e => e.Id == id);
         }

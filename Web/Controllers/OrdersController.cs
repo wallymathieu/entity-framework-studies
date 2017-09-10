@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using SomeBasicEFApp.Web.Data;
 using SomeBasicEFApp.Web.Entities;
+using SomeBasicEFApp.Web.ValueTypes;
 
 namespace SomeBasicEFApp.Web.Controllers
 {
@@ -26,11 +27,11 @@ namespace SomeBasicEFApp.Web.Controllers
         }
 
         // GET: Orders/Details/5
-        public async Task<IActionResult> Details(int? id)
+        public async Task<IActionResult> Details(OrderId? id)
         {
             if (id == null)
             {
-                return NotFound();
+                return BadRequest();
             }
 
             var order = await _context.Orders
@@ -66,11 +67,11 @@ namespace SomeBasicEFApp.Web.Controllers
         }
 
         // GET: Orders/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+        public async Task<IActionResult> Edit(OrderId? id)
         {
             if (id == null)
             {
-                return NotFound();
+                return BadRequest();
             }
 
             var order = await _context.Orders.SingleOrDefaultAsync(m => m.Id == id);
@@ -86,11 +87,11 @@ namespace SomeBasicEFApp.Web.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("OrderDate,Id,Version")] Order order)
+        public async Task<IActionResult> Edit(OrderId id, [Bind("OrderDate,Id,Version")] Order order)
         {
             if (id != order.Id)
             {
-                return NotFound();
+                return BadRequest();
             }
 
             if (ModelState.IsValid)
@@ -117,11 +118,11 @@ namespace SomeBasicEFApp.Web.Controllers
         }
 
         // GET: Orders/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+        public async Task<IActionResult> Delete(OrderId? id)
         {
             if (id == null)
             {
-                return NotFound();
+                return BadRequest();
             }
 
             var order = await _context.Orders
@@ -137,7 +138,7 @@ namespace SomeBasicEFApp.Web.Controllers
         // POST: Orders/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        public async Task<IActionResult> DeleteConfirmed(OrderId id)
         {
             var order = await _context.Orders.SingleOrDefaultAsync(m => m.Id == id);
             _context.Orders.Remove(order);
@@ -145,7 +146,7 @@ namespace SomeBasicEFApp.Web.Controllers
             return RedirectToAction("Index");
         }
 
-        private bool OrderExists(int id)
+        private bool OrderExists(OrderId id)
         {
             return _context.Orders.Any(e => e.Id == id);
         }

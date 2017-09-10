@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using SomeBasicEFApp.Web.Data;
 using SomeBasicEFApp.Web.Entities;
+using SomeBasicEFApp.Web.ValueTypes;
 
 namespace SomeBasicEFApp.Web.Controllers
 {
@@ -26,11 +27,11 @@ namespace SomeBasicEFApp.Web.Controllers
         }
 
         // GET: Products/Details/5
-        public async Task<IActionResult> Details(int? id)
+        public async Task<IActionResult> Details(ProductId? id)
         {
             if (id == null)
             {
-                return NotFound();
+                return BadRequest();
             }
 
             var product = await _context.Products
@@ -66,11 +67,11 @@ namespace SomeBasicEFApp.Web.Controllers
         }
 
         // GET: Products/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+        public async Task<IActionResult> Edit(ProductId? id)
         {
             if (id == null)
             {
-                return NotFound();
+                return BadRequest();
             }
 
             var product = await _context.Products.SingleOrDefaultAsync(m => m.Id == id);
@@ -86,11 +87,11 @@ namespace SomeBasicEFApp.Web.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Cost,Name,Id,Version")] Product product)
+        public async Task<IActionResult> Edit(ProductId id, [Bind("Cost,Name,Id,Version")] Product product)
         {
             if (id != product.Id)
             {
-                return NotFound();
+                product.Id = id;
             }
 
             if (ModelState.IsValid)
@@ -117,7 +118,7 @@ namespace SomeBasicEFApp.Web.Controllers
         }
 
         // GET: Products/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+        public async Task<IActionResult> Delete(ProductId? id)
         {
             if (id == null)
             {
@@ -137,7 +138,7 @@ namespace SomeBasicEFApp.Web.Controllers
         // POST: Products/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        public async Task<IActionResult> DeleteConfirmed(ProductId id)
         {
             var product = await _context.Products.SingleOrDefaultAsync(m => m.Id == id);
             _context.Products.Remove(product);
@@ -145,7 +146,7 @@ namespace SomeBasicEFApp.Web.Controllers
             return RedirectToAction("Index");
         }
 
-        private bool ProductExists(int id)
+        private bool ProductExists(ProductId id)
         {
             return _context.Products.Any(e => e.Id == id);
         }

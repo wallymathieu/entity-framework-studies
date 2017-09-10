@@ -8,10 +8,11 @@ using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Reflection;
+using SomeBasicEFApp.Web.ValueTypes;
 
 namespace SomeBasicEFApp.Tests
 {
-    public class CustomerDataTests:IDisposable
+    public class CustomerDataTests : IDisposable
     {
         private CoreDbContext _session;
         public CustomerDataTests()
@@ -22,7 +23,7 @@ namespace SomeBasicEFApp.Tests
         [Fact]
         public void CanGetCustomerById()
         {
-            var customer = _session.GetCustomer(1);
+            var customer = _session.GetCustomer(new CustomerId("1"));
 
             Assert.NotNull(customer);
         }
@@ -39,7 +40,7 @@ namespace SomeBasicEFApp.Tests
         [Fact]
         public void CanGetProductById()
         {
-            var product = _session.GetProduct(1);
+            var product = _session.GetProduct(new ProductId("1"));
 
             Assert.NotNull(product);
         }
@@ -47,27 +48,27 @@ namespace SomeBasicEFApp.Tests
         public void OrderContainsProduct()
         {
             var o = _session.Orders
-                    .Include(order=>order.ProductOrders)
-                        .ThenInclude(po=>po.Product)
-                    .Single(order=>order.Id==1);
+                    .Include(order => order.ProductOrders)
+                        .ThenInclude(po => po.Product)
+                    .Single(order => order.Id == new OrderId("1"));
             Assert.NotNull(o.ProductOrders);
-            Assert.True(o.ProductOrders.Any(p => p.Product.Id == 1));
+            Assert.True(o.ProductOrders.Any(p => p.Product.Id == new ProductId("1")));
         }
         [Fact]
         public void OrderHasACustomer()
         {
             var o = _session.Orders
-                    .Include(order=>order.Customer)
-                    .Single(order=>order.Id==1);
+                    .Include(order => order.Customer)
+                    .Single(order => order.Id == new OrderId("1"));
             Assert.NotNull(o.Customer);
             Assert.NotEmpty(o.Customer.Firstname);
         }
 
-        private static string rnd=> Guid.NewGuid().ToString("N");
-        private static Lazy<DbContextOptions> options=new Lazy<DbContextOptions>(()=>
-            Setup(new DbContextOptionsBuilder()
-                .UseInMemoryDatabase(databaseName: $"customer_data_tests_{rnd}")
-                .Options));
+        private static string rnd => Guid.NewGuid().ToString("N");
+        private static Lazy<DbContextOptions> options = new Lazy<DbContextOptions>(() =>
+              Setup(new DbContextOptionsBuilder()
+                  .UseInMemoryDatabase(databaseName: $"customer_data_tests_{rnd}")
+                  .Options));
 
         private static DbContextOptions Setup(DbContextOptions options)
         {
@@ -103,15 +104,15 @@ namespace SomeBasicEFApp.Tests
             {
                 import.ParseConnections("OrderProduct", "Product", "Order", (productId, orderId) =>
                 {
-                    var product = session.GetProduct(productId);
-                    var order = session.GetOrder(orderId);
+                    var product = session.GetProduct(new ProductId(productId.ToString()));
+                    var order = session.GetOrder(new OrderId(orderId.ToString()));
                     session.ProductOrders.Add(new ProductOrder { Order = order, Product = product });
                 });
 
                 import.ParseIntProperty("Order", "Customer", (orderId, customerId) =>
                 {
-                    var order = session.GetOrder(orderId);
-                    order.Customer = session.GetCustomer(customerId);
+                    var order = session.GetOrder(new OrderId(orderId.ToString()));
+                    order.Customer = session.GetCustomer(new CustomerId(customerId.ToString()));
                 });
 
                 session.SaveChanges();

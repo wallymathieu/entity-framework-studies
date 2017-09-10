@@ -4,27 +4,27 @@ using Saithe;
 
 namespace SomeBasicEFApp.Web.ValueTypes
 {
-    [TypeConverter(typeof(ValueTypeConverter<CustomerId>))]
-    public struct CustomerId : IEquatable<CustomerId>
+    [TypeConverter(typeof(ValueTypeConverter<OrderId>))]
+    public struct OrderId : IEquatable<OrderId>
     {
         public readonly string Value;
 
-        public CustomerId(string value)
+        public OrderId(string value)
         {
             this.Value = value;
         }
 
-        public readonly static CustomerId Empty = new CustomerId();
+        public readonly static OrderId Empty = new OrderId();
 
-        public bool Equals(CustomerId other)
+        public bool Equals(OrderId other)
         {
             if (ReferenceEquals(null, other)) return false;
             return Equals(Value, other.Value);
         }
         public override bool Equals(object obj)
         {
-            if (obj is CustomerId)
-                return Equals((CustomerId)obj);
+            if (obj is OrderId)
+                return Equals((OrderId)obj);
             return false;
         }
         public override int GetHashCode()
@@ -36,15 +36,15 @@ namespace SomeBasicEFApp.Web.ValueTypes
         public override string ToString()
         {
             return Value != null
-                ? $"c-{Value}"
+                ? $"o-{Value}"
                 : string.Empty;
         }
 
-        public static bool operator ==(CustomerId a, CustomerId b)
+        public static bool operator ==(OrderId a, OrderId b)
         {
             return a.Equals(b);
         }
-        public static bool operator !=(CustomerId a, CustomerId b)
+        public static bool operator !=(OrderId a, OrderId b)
         {
             return !(a == b);
         }
