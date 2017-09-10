@@ -1,7 +1,7 @@
 language: csharp
 sudo: false
 dist: trusty
-dotnet: 1.0.0-preview2.1-003177
+dotnet: 2.0.0
 mono:
   - latest
 os:
