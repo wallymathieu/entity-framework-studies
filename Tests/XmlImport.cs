@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Reflection;
 using System.Xml.Linq;
+using SomeBasicEFApp.Web;
 
 namespace SomeBasicEFApp.Tests
 {
@@ -28,7 +29,14 @@ namespace SomeBasicEFApp.Tests
                     {
                         if (onIgnore != null) onIgnore(type, propertyInfo);
                     }
-                    else
+                    else if (propertyInfo.PropertyType.IsValueType
+                             && propertyInfo.PropertyType.Assembly == typeof(CustomerId).Assembly
+                             && propertyInfo.PropertyType.Name.EndsWith("Id", StringComparison.Ordinal)
+                            )
+                    {
+                        var value = Activator.CreateInstance(propertyInfo.PropertyType, new[] { propElement.Value });
+                        propertyInfo.SetValue(customerObj, value, null);
+                    }else
                     {
                         var value = Convert.ChangeType(propElement.Value, propertyInfo.PropertyType, CultureInfo.InvariantCulture.NumberFormat);
                         propertyInfo.SetValue(customerObj, value, null);

@@ -100,21 +100,23 @@ namespace SomeBasicEFApp.Tests
                                 });
                 session.SaveChanges();
             }
+
             using (var session = new CoreDbContext(options))
             {
                 import.ParseConnections("OrderProduct", "Product", "Order", (productId, orderId) =>
                 {
-                    var product = session.GetProduct(new ProductId(productId.ToString()));
-                    var order = session.GetOrder(new OrderId(orderId.ToString()));
-                    session.ProductOrders.Add(new ProductOrder { Order = order, Product = product });
+                    session.ProductOrders.Add(new ProductOrder { 
+                        OrderId = new OrderId(orderId.ToString()), 
+                        ProductId = new ProductId(productId.ToString())
+                    });
                 });
-
+/*
                 import.ParseIntProperty("Order", "Customer", (orderId, customerId) =>
                 {
                     var order = session.GetOrder(new OrderId(orderId.ToString()));
-                    order.Customer = session.GetCustomer(new CustomerId(customerId.ToString()));
+                    order.CustomerId = new CustomerId(customerId.ToString());
                 });
-
+*/
                 session.SaveChanges();
             }
             return options;
