@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using SomeBasicEFApp.Web.Data;
 using SomeBasicEFApp.Web.Entities;
-using SomeBasicEFApp.Web.ValueTypes;
+using SomeBasicEFApp.Web;
 
 namespace SomeBasicEFApp.Web.Controllers
 {

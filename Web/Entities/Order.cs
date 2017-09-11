@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using SomeBasicEFApp.Web.ValueTypes;
+using SomeBasicEFApp.Web;
 
 namespace SomeBasicEFApp.Web.Entities
 {

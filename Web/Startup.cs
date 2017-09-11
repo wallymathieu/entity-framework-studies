@@ -5,7 +5,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using SomeBasicEFApp.Web.Data;
-
+using Swashbuckle.AspNetCore.Swagger;
 namespace SomeBasicEFApp.Web
 {
     public class Startup
@@ -32,6 +32,13 @@ namespace SomeBasicEFApp.Web
 
 
             services.AddMvc();
+
+            services.AddSwaggerGen((c) => {
+                c.SwaggerDoc("v1", new Info { 
+                    Version="v1",
+                    Title="Current"
+                });
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -52,6 +59,10 @@ namespace SomeBasicEFApp.Web
             }
 
             app.UseStaticFiles();
+            app.UseSwagger();
+            app.UseSwaggerUI((c) => {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
+            });
 
             // Add external authentication middleware below. To configure them please see https://go.microsoft.com/fwlink/?LinkID=532715
 

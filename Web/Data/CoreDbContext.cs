@@ -1,7 +1,7 @@
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using SomeBasicEFApp.Web.Entities;
-using SomeBasicEFApp.Web.ValueTypes;
+using SomeBasicEFApp.Web;
 
 namespace SomeBasicEFApp.Web.Data
 {

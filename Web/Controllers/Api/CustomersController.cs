@@ -1,32 +1,34 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using SomeBasicEFApp.Web.Data;
 using SomeBasicEFApp.Web.Entities;
 using SomeBasicEFApp.Web;
 
-namespace SomeBasicEFApp.Web.Controllers
+namespace Web.Controllers.Api
 {
+    [Route("api/[controller]")]
     public class CustomersController : Controller
     {
         private readonly CoreDbContext _context;
 
         public CustomersController(CoreDbContext context)
         {
-            _context = context;    
+            _context = context;
         }
 
         // GET: Customers
+        [HttpGet]
+        [Produces(typeof(Customer[]))]
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Customers.ToListAsync());
+            return Ok(await _context.Customers.ToListAsync());
         }
 
         // GET: Customers/Details/5
+        [HttpGet("{id}")]
+        [Produces(typeof(Customer))]
         public async Task<IActionResult> Details(CustomerId? id)
         {
             if (id == null)
@@ -44,18 +46,12 @@ namespace SomeBasicEFApp.Web.Controllers
             return View(customer);
         }
 
-        // GET: Customers/Create
-        public IActionResult Create()
-        {
-            return View();
-        }
-
         // POST: Customers/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Firstname,Lastname,Version")] Customer customer)
+        public async Task<IActionResult> Create([Bind("Firstname,Lastname")] Customer customer)
         {
             if (ModelState.IsValid)
             {
@@ -66,33 +62,14 @@ namespace SomeBasicEFApp.Web.Controllers
             return View(customer);
         }
 
-        // GET: Customers/Edit/5
-        public async Task<IActionResult> Edit(CustomerId? id)
-        {
-            if (id == null)
-            {
-                return BadRequest();
-            }
-
-            var customer = await _context.Customers.SingleOrDefaultAsync(m => m.Id == id);
-            if (customer == null)
-            {
-                return NotFound();
-            }
-            return View(customer);
-        }
-
         // POST: Customers/Edit/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
+        [HttpPut("{id}")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(CustomerId id, [Bind("Id,Firstname,Lastname,Version")] Customer customer)
+        public async Task<IActionResult> Edit(CustomerId id, [Bind("Firstname,Lastname")] Customer customer)
         {
-            if (id != customer.Id)
-            {
-                customer.Id = id;
-            }
+            customer.Id = id;
 
             if (ModelState.IsValid)
             {
@@ -114,29 +91,12 @@ namespace SomeBasicEFApp.Web.Controllers
                 }
                 return RedirectToAction("Index");
             }
-            return View(customer);
+            return Ok(customer);
         }
 
-        // GET: Customers/Delete/5
-        public async Task<IActionResult> Delete(CustomerId? id)
-        {
-            if (id == null)
-            {
-                return BadRequest();
-            }
-
-            var customer = await _context.Customers
-                .SingleOrDefaultAsync(m => m.Id == id);
-            if (customer == null)
-            {
-                return NotFound();
-            }
-
-            return View(customer);
-        }
 
         // POST: Customers/Delete/5
-        [HttpPost, ActionName("Delete")]
+        [HttpDelete("{id}")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(CustomerId id)
         {

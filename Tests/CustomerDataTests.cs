@@ -8,7 +8,7 @@ using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Reflection;
-using SomeBasicEFApp.Web.ValueTypes;
+using SomeBasicEFApp.Web;
 
 namespace SomeBasicEFApp.Tests
 {
