@@ -4,11 +4,11 @@ using SomeBasicEFApp.Web.Entities;
 
 namespace SomeBasicEFApp.Web.Commands
 {
-    public class HandleCreateProductCommand
+    public class CreateProductCommandHandler
     {
         private readonly CoreDbContext _context;
 
-        public HandleCreateProductCommand(CoreDbContext context) => _context = context;
+        public CreateProductCommandHandler(CoreDbContext context) => _context = context;
 
         public async Task<Product> Handle(CreateProductCommand product)
         {
