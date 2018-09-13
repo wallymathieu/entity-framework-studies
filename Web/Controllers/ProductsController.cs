@@ -36,8 +36,7 @@ namespace SomeBasicEFApp.Web.Controllers
                 return NotFound();
             }
 
-            var product = await _context.Products
-                .SingleOrDefaultAsync(m => m.Id == id);
+            var product = await _context.GetProductAsync(id.Value);
             if (product == null)
             {
                 return NotFound();
@@ -73,7 +72,7 @@ namespace SomeBasicEFApp.Web.Controllers
                 return NotFound();
             }
 
-            var product = await _context.Products.SingleOrDefaultAsync(m => m.Id == id);
+            var product = await _context.GetProductAsync(id.Value);
             if (product == null)
             {
                 return NotFound();
@@ -124,8 +123,7 @@ namespace SomeBasicEFApp.Web.Controllers
                 return NotFound();
             }
 
-            var product = await _context.Products
-                .SingleOrDefaultAsync(m => m.Id == id);
+            var product = await _context.GetProductAsync(id.Value);
             if (product == null)
             {
                 return NotFound();
@@ -139,7 +137,7 @@ namespace SomeBasicEFApp.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var product = await _context.Products.SingleOrDefaultAsync(m => m.Id == id);
+            var product = await _context.GetProductAsync(id);
             _context.Products.Remove(product);
             await _context.SaveChangesAsync();
             return RedirectToAction("Index");

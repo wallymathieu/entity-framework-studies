@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using Web.ValueTypes;
+using SomeBasicEFApp.Web.ValueTypes;
 
 namespace SomeBasicEFApp.Web.Entities
 {
