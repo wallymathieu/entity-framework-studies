@@ -33,7 +33,7 @@ namespace SomeBasicEFApp.Web.Controllers.Api
         [ProducesResponseType(statusCode: 400, type: typeof(ErrorModel))]
         public async Task<IActionResult> Post(ProductModel model)
         {// here you normally want filtering based on query parameters (in order to get better perf)
-            var handler = new HandleCreateProductCommand(_context);
+            var handler = new CreateProductCommandHandler(_context);
             var product = await handler.Handle(new CreateProductCommand
             {
                 Name = model.Name,

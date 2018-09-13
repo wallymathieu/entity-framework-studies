@@ -14,12 +14,12 @@ namespace SomeBasicEFApp.Web.Controllers
     public class ProductsController : Controller
     {
         private readonly CoreDbContext _context;
-        private HandleCreateProductCommand _handleCreateProductCommand;
+        private CreateProductCommandHandler _handleCreateProductCommand;
 
         public ProductsController(CoreDbContext context)
         {
             _context = context;
-            _handleCreateProductCommand = new HandleCreateProductCommand(_context);
+            _handleCreateProductCommand = new CreateProductCommandHandler(_context);
         }
 
         // GET: Products
