@@ -11,3 +11,7 @@ script:
   - dotnet build Web
   - dotnet build Tests
   - dotnet test Tests
+branches:
+  only:
+    - master
+    - dotnetcore
