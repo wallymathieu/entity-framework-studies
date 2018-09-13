@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Web.ValueTypes;
 
 namespace SomeBasicEFApp.Web.Entities
 {
@@ -13,5 +14,7 @@ namespace SomeBasicEFApp.Web.Entities
         public virtual int Id { get; set; }
 
         public virtual int Version { get; set; }
+
+        public ProductId GetId() => new ProductId(Id);
     }
 }

@@ -1,14 +1,12 @@
 using System.Linq;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using SomeBasicEFApp.Web.Entities;
 namespace SomeBasicEFApp.Web.Data
 {
-    public partial class CoreDbContext : DbContext
+    public partial class CoreDbContext : IdentityDbContext<ApplicationUser>
     {
         public CoreDbContext(DbContextOptions options) : base(options)
-        {
-        }
-        public CoreDbContext()
         {
         }
         public DbSet<Customer> Customers { get; set; }

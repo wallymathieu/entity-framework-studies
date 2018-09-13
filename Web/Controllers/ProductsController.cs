@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using SomeBasicEFApp.Web.Commands;
 using SomeBasicEFApp.Web.Data;
 using SomeBasicEFApp.Web.Entities;
 
@@ -13,10 +14,12 @@ namespace SomeBasicEFApp.Web.Controllers
     public class ProductsController : Controller
     {
         private readonly CoreDbContext _context;
+        private HandleCreateProductCommand _handleCreateProductCommand;
 
         public ProductsController(CoreDbContext context)
         {
-            _context = context;    
+            _context = context;
+            _handleCreateProductCommand = new HandleCreateProductCommand(_context);
         }
 
         // GET: Products
@@ -50,16 +53,13 @@ namespace SomeBasicEFApp.Web.Controllers
         }
 
         // POST: Products/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Cost,Name,Id,Version")] Product product)
+        public async Task<IActionResult> Create([Bind("Cost,Name")] Product product)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(product);
-                await _context.SaveChangesAsync();
+                await _handleCreateProductCommand.Handle(product);
                 return RedirectToAction("Index");
             }
             return View(product);

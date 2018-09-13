@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Web.ValueTypes;
 
 namespace SomeBasicEFApp.Web.Entities
 {
@@ -15,5 +16,6 @@ namespace SomeBasicEFApp.Web.Entities
 
 		public virtual IList<ProductOrder> ProductOrders { get; set; }
 
-	}
+        public OrderId GetId() => new OrderId(Id);
+    }
 }

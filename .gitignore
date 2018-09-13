@@ -275,3 +275,6 @@ __pycache__/
 # !tools/packages.config
 
 .DS_Store
+
+.vscode
+
