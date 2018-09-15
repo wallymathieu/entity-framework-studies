@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using SomeBasicEFApp.Web.Data;
 using SomeBasicEFApp.Web.Entities;
+using SomeBasicEFApp.Web.ValueTypes;
 
 namespace SomeBasicEFApp.Web.Controllers
 {
@@ -33,8 +34,7 @@ namespace SomeBasicEFApp.Web.Controllers
                 return NotFound();
             }
 
-            var customer = await _context.Customers
-                .SingleOrDefaultAsync(m => m.Id == id);
+            var customer = await _context.GetCustomerAsync(id.Value);
             if (customer == null)
             {
                 return NotFound();
@@ -54,7 +54,7 @@ namespace SomeBasicEFApp.Web.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Firstname,Lastname,Version")] Customer customer)
+        public async Task<IActionResult> Create([Bind("Firstname,Lastname")] Customer customer)
         {
             if (ModelState.IsValid)
             {
@@ -73,7 +73,7 @@ namespace SomeBasicEFApp.Web.Controllers
                 return NotFound();
             }
 
-            var customer = await _context.Customers.SingleOrDefaultAsync(m => m.Id == id);
+            var customer = await _context.GetCustomerAsync(id.Value);
             if (customer == null)
             {
                 return NotFound();
@@ -124,8 +124,7 @@ namespace SomeBasicEFApp.Web.Controllers
                 return NotFound();
             }
 
-            var customer = await _context.Customers
-                .SingleOrDefaultAsync(m => m.Id == id);
+            var customer = await _context.GetCustomerAsync(id.Value);
             if (customer == null)
             {
                 return NotFound();
@@ -139,7 +138,7 @@ namespace SomeBasicEFApp.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var customer = await _context.Customers.SingleOrDefaultAsync(m => m.Id == id);
+            var customer = await _context.GetCustomerAsync(id);
             _context.Customers.Remove(customer);
             await _context.SaveChangesAsync();
             return RedirectToAction("Index");

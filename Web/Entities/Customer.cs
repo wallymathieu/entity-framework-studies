@@ -1,6 +1,8 @@
-﻿namespace SomeBasicEFApp.Web.Entities
+﻿using SomeBasicEFApp.Web.ValueTypes;
+
+namespace SomeBasicEFApp.Web.Entities
 {
-    public class Customer : IIdentifiableByNumber
+    public class Customer
     {
         public virtual int Id { get; set; }
 
@@ -11,6 +13,6 @@
         public virtual System.Collections.Generic.IList<Order> Orders { get; set; }
 
         public virtual int Version { get; set; }
-
+        public CustomerId GetId() => new CustomerId(Id);
     }
 }

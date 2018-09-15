@@ -1,8 +1,9 @@
 ﻿using System.Collections.Generic;
+using SomeBasicEFApp.Web.ValueTypes;
 
 namespace SomeBasicEFApp.Web.Entities
 {
-    public class Product : IIdentifiableByNumber
+    public class Product
     {
         public virtual float Cost { get; set; }
 
@@ -13,5 +14,7 @@ namespace SomeBasicEFApp.Web.Entities
         public virtual int Id { get; set; }
 
         public virtual int Version { get; set; }
+
+        public ProductId GetId() => new ProductId(Id);
     }
 }

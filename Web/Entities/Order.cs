@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using SomeBasicEFApp.Web.ValueTypes;
 
 namespace SomeBasicEFApp.Web.Entities
 {
-    public class Order : IIdentifiableByNumber
+    public class Order
     {
         public virtual Customer Customer { get; set; }
 
@@ -15,5 +16,6 @@ namespace SomeBasicEFApp.Web.Entities
 
 		public virtual IList<ProductOrder> ProductOrders { get; set; }
 
-	}
+        public OrderId GetId() => new OrderId(Id);
+    }
 }

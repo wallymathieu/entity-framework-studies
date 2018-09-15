@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using SomeBasicEFApp.Web.Commands;
 using SomeBasicEFApp.Web.Data;
 using SomeBasicEFApp.Web.Entities;
 
@@ -13,10 +14,12 @@ namespace SomeBasicEFApp.Web.Controllers
     public class ProductsController : Controller
     {
         private readonly CoreDbContext _context;
+        private CreateProductCommandHandler _handleCreateProductCommand;
 
         public ProductsController(CoreDbContext context)
         {
-            _context = context;    
+            _context = context;
+            _handleCreateProductCommand = new CreateProductCommandHandler(_context);
         }
 
         // GET: Products
@@ -33,8 +36,7 @@ namespace SomeBasicEFApp.Web.Controllers
                 return NotFound();
             }
 
-            var product = await _context.Products
-                .SingleOrDefaultAsync(m => m.Id == id);
+            var product = await _context.GetProductAsync(id.Value);
             if (product == null)
             {
                 return NotFound();
@@ -50,16 +52,13 @@ namespace SomeBasicEFApp.Web.Controllers
         }
 
         // POST: Products/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Cost,Name,Id,Version")] Product product)
+        public async Task<IActionResult> Create([Bind("Cost,Name")] Product product)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(product);
-                await _context.SaveChangesAsync();
+                await _handleCreateProductCommand.Handle(product);
                 return RedirectToAction("Index");
             }
             return View(product);
@@ -73,7 +72,7 @@ namespace SomeBasicEFApp.Web.Controllers
                 return NotFound();
             }
 
-            var product = await _context.Products.SingleOrDefaultAsync(m => m.Id == id);
+            var product = await _context.GetProductAsync(id.Value);
             if (product == null)
             {
                 return NotFound();
@@ -124,8 +123,7 @@ namespace SomeBasicEFApp.Web.Controllers
                 return NotFound();
             }
 
-            var product = await _context.Products
-                .SingleOrDefaultAsync(m => m.Id == id);
+            var product = await _context.GetProductAsync(id.Value);
             if (product == null)
             {
                 return NotFound();
@@ -139,7 +137,7 @@ namespace SomeBasicEFApp.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var product = await _context.Products.SingleOrDefaultAsync(m => m.Id == id);
+            var product = await _context.GetProductAsync(id);
             _context.Products.Remove(product);
             await _context.SaveChangesAsync();
             return RedirectToAction("Index");

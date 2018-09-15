@@ -1,6 +1,6 @@
 ﻿namespace SomeBasicEFApp.Web.Entities
 {
-    public class ProductOrder : IIdentifiableByNumber
+    public class ProductOrder
 	{
 		public virtual int Id { get; set; }
 

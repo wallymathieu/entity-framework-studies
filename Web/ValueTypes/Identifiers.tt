@@ -1,0 +1,59 @@
+<#@ template language="C#" #>
+<#@ assembly name="System.Core" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Text" #>
+<#@ import namespace="System.Collections.Generic" #>
+using System;
+using System.ComponentModel;
+using Saithe;
+
+namespace SomeBasicEFApp.Web.ValueTypes
+{
+
+<#
+var types = new []{
+    new {Name="CustomerId", Prefix="customer-"}, 
+    new {Name="OrderId", Prefix="order-"},
+    new {Name= "ProductId", Prefix="product-"}};
+foreach (var typeT in types){
+var type =typeT.Name;
+var prefix = typeT.Prefix;
+#>
+    [TypeConverter(typeof(ParseTypeConverter<<#= type #>>))]
+    public struct <#= type #> : IEquatable<<#= type #>>
+    {
+        public readonly int Value;
+
+        public <#= type #>(int value)
+        {
+            this.Value = value;
+        }
+
+        public readonly static <#= type #> Empty = new <#= type #>();
+
+        public bool Equals(<#= type #> other)
+        {
+            if (ReferenceEquals(null, other)) return false;
+            return Equals(Value, other.Value);
+        }
+        public override bool Equals(object obj)=>obj is <#= type #> v && Equals(v);
+        public override int GetHashCode()=>Value.GetHashCode();
+        public override string ToString()=>$"<#= prefix #>{Value}";
+        public static <#= type #> Parse(string value)
+        {
+            if (string.IsNullOrEmpty(value))
+                throw new ArgumentException("Missing value");
+            if (!value.StartsWith("<#= prefix #>", StringComparison.InvariantCultureIgnoreCase))
+                throw new ArgumentException($"Expected '{value}' to start with prefix '<#= prefix #>'");
+            return new <#= type #>(Int32.TryParse(value.Substring("<#= prefix #>".Length), out var val)
+                    ? val
+                    : throw new ArgumentException());
+        }
+        public static bool operator ==(<#= type #> a, <#= type #> b)=>a.Equals(b);
+        public static bool operator !=(<#= type #> a, <#= type #> b)=>!a.Equals(b);
+        public static implicit operator <#= type #>(int d) => new <#= type #>(d);
+    }
+<#
+}
+#>
+}

@@ -1,7 +1,7 @@
 language: csharp
 sudo: false
 dist: trusty
-dotnet: 2.0.0
+dotnet: 2.1.401
 mono:
   - latest
 os:
@@ -11,3 +11,7 @@ script:
   - dotnet build Web
   - dotnet build Tests
   - dotnet test Tests
+branches:
+  only:
+    - master
+    - dotnetcore
