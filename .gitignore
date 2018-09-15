@@ -278,3 +278,5 @@ __pycache__/
 
 .vscode
 
+appsettings.user.json
+
