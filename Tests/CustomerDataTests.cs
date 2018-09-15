@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Reflection;
+using SomeBasicEFApp.Web.Data;
 
 namespace SomeBasicEFApp.Tests
 {
@@ -53,6 +54,24 @@ namespace SomeBasicEFApp.Tests
             Assert.NotNull(o.ProductOrders);
             Assert.True(o.ProductOrders.Any(p => p.Product.Id == 1));
         }
+
+        [Fact]
+        public void ProductsWithOrders()
+        {
+            var products = _session.Products
+                                 .Include(p=>p.ProductOrders)
+                                 .ThenInclude(po => po.Order)
+                                 .WhereThereAreOrders(
+                                    from:new DateTime(2008, 5, 29), 
+                                    to:new DateTime(2008, 6, 2))
+                                 .ToArray()
+                                 ;
+            var orderIds = products
+                            .SelectMany(p => p.ProductOrders.Select(po => po.Order.Id))
+                            .Distinct();
+            Assert.Equal(4, Assert.Single(orderIds));
+        }
+
         [Fact]
         public void OrderHasACustomer()
         {

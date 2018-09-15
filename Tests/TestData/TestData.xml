@@ -67,6 +67,12 @@
     <Cost>1.25</Cost>
     <Version>1</Version>
   </Product>
+  <Product>
+    <Id>5</Id>
+    <Name>Tea</Name>
+    <Cost>1.00</Cost>
+    <Version>1</Version>
+  </Product>
   <Order>
     <Id>1</Id>
     <OrderDate>2008-05-05T00:00:00-04:00</OrderDate>
@@ -82,6 +88,12 @@
   <Order>
     <Id>3</Id>
     <OrderDate>2008-05-02T00:00:00-04:00</OrderDate>
+    <Customer>1</Customer>
+    <Version>1</Version>
+  </Order>
+  <Order>
+    <Id>4</Id>
+    <OrderDate>2008-06-01T00:00:00-04:00</OrderDate>
     <Customer>1</Customer>
     <Version>1</Version>
   </Order>
@@ -112,6 +124,10 @@
   <OrderProduct>
     <Product>4</Product>
     <Order>3</Order>
+  </OrderProduct>
+  <OrderProduct>
+    <Product>5</Product>
+    <Order>4</Order>
   </OrderProduct>
   <PreferredCustomer>
     <OrderDiscountRate>0.10</OrderDiscountRate>

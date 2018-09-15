@@ -14,7 +14,7 @@ namespace SomeBasicEFApp.Web.Commands
         {
             // additional logic around creating products can be added here
             var entity = new Product {Cost = product.Cost, Name = product.Name};
-            _context.Add(entity);
+            _context.Products.Add(entity);
             await _context.SaveChangesAsync();
             return entity;
         }
