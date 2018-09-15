@@ -3,7 +3,7 @@ using SomeBasicEFApp.Web.ValueTypes;
 
 namespace SomeBasicEFApp.Web.Entities
 {
-    public class Product : IIdentifiableByNumber
+    public class Product
     {
         public virtual float Cost { get; set; }
 

@@ -4,7 +4,7 @@ using SomeBasicEFApp.Web.ValueTypes;
 
 namespace SomeBasicEFApp.Web.Entities
 {
-    public class Order : IIdentifiableByNumber
+    public class Order
     {
         public virtual Customer Customer { get; set; }
 
