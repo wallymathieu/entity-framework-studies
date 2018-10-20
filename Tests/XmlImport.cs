@@ -34,7 +34,7 @@ namespace SomeBasicEFApp.Tests
                              && propertyInfo.PropertyType.Name.EndsWith("Id", StringComparison.Ordinal)
                             )
                     {
-                        var value = Activator.CreateInstance(propertyInfo.PropertyType, new[] { propElement.Value });
+                        var value = Activator.CreateInstance(propertyInfo.PropertyType, Convert.ToInt32(propElement.Value));
                         propertyInfo.SetValue(customerObj, value, null);
                     }else
                     {
