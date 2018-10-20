@@ -2,14 +2,14 @@ using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SomeBasicEFApp.Web.Data;
-using SomeBasicEFApp.Web.Entities;
 using SomeBasicEFApp.Web.Models;
 
 namespace SomeBasicEFApp.Web.Controllers.Api
 {
     [Route("/api/v1/orders")]
+    [ApiController]
     [ApiExplorerSettings(GroupName = "v1")]
-    public class OrdersController : Controller
+    public class OrdersController : ControllerBase
     {
         private readonly CoreDbContext _context;
 

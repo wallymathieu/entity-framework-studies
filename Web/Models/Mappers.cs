@@ -20,7 +20,9 @@ namespace SomeBasicEFApp.Web.Models
         };
         public static CustomerModel Map(Customer arg)=>new CustomerModel
         {
-            Id=arg.GetId().ToString()
+            Id=arg.GetId().ToString(),
+            Firstname=arg.Firstname,
+            Lastname=arg.Lastname
         };
     }
 }

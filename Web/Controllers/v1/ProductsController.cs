@@ -3,14 +3,14 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using SomeBasicEFApp.Web.Commands;
 using SomeBasicEFApp.Web.Data;
-using SomeBasicEFApp.Web.Entities;
 using SomeBasicEFApp.Web.Models;
 
-namespace SomeBasicEFApp.Web.Controllers.Api
+namespace SomeBasicEFApp.Web.Controllers.v1
 {
     [Route("/api/v1/products")]
+    [ApiController]
     [ApiExplorerSettings(GroupName = "v1")]
-    public class ProductsController : Controller
+    public class ProductsController : ControllerBase
     {
         private readonly CoreDbContext _context;
 
