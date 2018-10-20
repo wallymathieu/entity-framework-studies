@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
 using System.Linq;
+using System.Threading.Tasks;
 using JetBrains.Annotations;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
@@ -127,17 +128,22 @@ namespace SomeBasicEFApp.Web.Data
 
         public DbSet<ProductOrder> ProductOrders { get; set; }
 
-        public Customer GetCustomer(CustomerId v)
-        {
-            return Customers.SingleOrDefault(c => c.Id == v);
-        }
-        public Product GetProduct(ProductId v)
-        {
-            return Products.SingleOrDefault(p => p.Id == v);
-        }
-        public Order GetOrder(OrderId v)
-        {
-            return Orders.SingleOrDefault(o => o.Id == v);
-        }
+        public Customer GetCustomer(CustomerId v) => 
+            Customers.SingleOrDefault(c => c.Id == v);
+
+        public Product GetProduct(ProductId v) => 
+            Products.SingleOrDefault(p => p.Id == v);
+
+        public Order GetOrder(OrderId v) => 
+            Orders.SingleOrDefault(o => o.Id == v);
+        public Task<Customer> GetCustomerAsync(CustomerId v) => 
+            Customers.SingleOrDefaultAsync(c => c.Id == v);
+
+        public Task<Product> GetProductAsync(ProductId v) => 
+            Products.SingleOrDefaultAsync(p => p.Id == v);
+
+        public Task<Order> GetOrderAsync(OrderId v) => 
+            Orders.SingleOrDefaultAsync(o => o.Id == v);
+
     }
 }

@@ -193,13 +193,9 @@ namespace SomeBasicEFApp.Web.Migrations
 
                     b.Property<string>("Lastname");
 
-                    b.Property<string>("UserId");
-
                     b.Property<int>("Version");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("UserId");
 
                     b.ToTable("Customers");
                 });

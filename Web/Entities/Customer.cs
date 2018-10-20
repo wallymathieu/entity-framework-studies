@@ -17,7 +17,5 @@ namespace SomeBasicEFApp.Web.Entities
         public virtual IList<Order> Orders { get; set; }
 
         public virtual int Version { get; set; }
-        
-        public virtual IdentityUser User { get; set; }
     }
 }

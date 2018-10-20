@@ -34,8 +34,7 @@ namespace SomeBasicEFApp.Web.Controllers
                 return BadRequest();
             }
 
-            var order = await _context.Orders
-                .SingleOrDefaultAsync(m => m.Id == id);
+            var order = await _context.GetOrderAsync(id.Value);
             if (order == null)
             {
                 return NotFound();
@@ -73,8 +72,7 @@ namespace SomeBasicEFApp.Web.Controllers
             {
                 return BadRequest();
             }
-
-            var order = await _context.Orders.SingleOrDefaultAsync(m => m.Id == id);
+            var order = await _context.GetOrderAsync(id.Value);
             if (order == null)
             {
                 return NotFound();
@@ -124,9 +122,7 @@ namespace SomeBasicEFApp.Web.Controllers
             {
                 return BadRequest();
             }
-
-            var order = await _context.Orders
-                .SingleOrDefaultAsync(m => m.Id == id);
+            var order = await _context.GetOrderAsync(id.Value);
             if (order == null)
             {
                 return NotFound();
@@ -140,7 +136,7 @@ namespace SomeBasicEFApp.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(OrderId id)
         {
-            var order = await _context.Orders.SingleOrDefaultAsync(m => m.Id == id);
+            var order = await _context.GetOrderAsync(id);
             _context.Orders.Remove(order);
             await _context.SaveChangesAsync();
             return RedirectToAction("Index");

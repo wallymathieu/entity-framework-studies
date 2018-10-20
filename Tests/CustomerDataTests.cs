@@ -23,7 +23,7 @@ namespace SomeBasicEFApp.Tests
         [Fact]
         public void CanGetCustomerById()
         {
-            var customer = _session.GetCustomer(new CustomerId("1"));
+            var customer = _session.GetCustomer(new CustomerId(1));
 
             Assert.NotNull(customer);
         }
@@ -40,7 +40,7 @@ namespace SomeBasicEFApp.Tests
         [Fact]
         public void CanGetProductById()
         {
-            var product = _session.GetProduct(new ProductId("1"));
+            var product = _session.GetProduct(new ProductId(1));
 
             Assert.NotNull(product);
         }
@@ -50,16 +50,34 @@ namespace SomeBasicEFApp.Tests
             var o = _session.Orders
                     .Include(order => order.ProductOrders)
                         .ThenInclude(po => po.Product)
-                    .Single(order => order.Id == new OrderId("1"));
+                    .Single(order => order.Id == new OrderId(1));
             Assert.NotNull(o.ProductOrders);
-            Assert.True(o.ProductOrders.Any(p => p.Product.Id == new ProductId("1")));
+            Assert.True(o.ProductOrders.Any(p => p.Product.Id == new ProductId(1)));
         }
+
+        [Fact]
+        public void ProductsWithOrders()
+        {
+            var products = _session.Products
+                                 .Include(p=>p.ProductOrders)
+                                 .ThenInclude(po => po.Order)
+                                 .WhereThereAreOrders(
+                                    from:new DateTime(2008, 5, 29), 
+                                    to:new DateTime(2008, 6, 2))
+                                 .ToArray()
+                                 ;
+            var orderIds = products
+                            .SelectMany(p => p.ProductOrders.Select(po => po.Order.Id))
+                            .Distinct();
+            Assert.Equal(new OrderId(4), Assert.Single(orderIds));
+        }
+
         [Fact]
         public void OrderHasACustomer()
         {
             var o = _session.Orders
                     .Include(order => order.Customer)
-                    .Single(order => order.Id == new OrderId("1"));
+                    .Single(order => order.Id == new OrderId(1));
             Assert.NotNull(o.Customer);
             Assert.NotEmpty(o.Customer.Firstname);
         }
@@ -105,15 +123,15 @@ namespace SomeBasicEFApp.Tests
                 import.ParseConnections("OrderProduct", "Product", "Order", (productId, orderId) =>
                 {
                     session.ProductOrders.Add(new ProductOrder { 
-                        OrderId = new OrderId(orderId.ToString()), 
-                        ProductId = new ProductId(productId.ToString())
+                        OrderId = new OrderId(orderId), 
+                        ProductId = new ProductId(productId)
                     });
                 });
 
                 import.ParseIntProperty("Order", "Customer", (orderId, customerId) =>
                 {
-                    var order = session.GetOrder(new OrderId(orderId.ToString()));
-                    order.CustomerId = new CustomerId(customerId.ToString());
+                    var order = session.GetOrder(new OrderId(orderId));
+                    order.CustomerId = new CustomerId(customerId);
                 });
 
                 session.SaveChanges();
