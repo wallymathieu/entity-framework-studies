@@ -1,10 +1,12 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using SomeBasicEFApp.Web;
 
 namespace SomeBasicEFApp.Web.Entities
 {
     public class Customer
     {
+        [Key]
         public virtual CustomerId Id { get; set; }
 
         public virtual string Firstname { get; set; }

@@ -65,19 +65,18 @@ namespace SomeBasicEFApp.Tests
         }
 
         private static string rnd => Guid.NewGuid().ToString("N");
-        private static Lazy<DbContextOptions> options = new Lazy<DbContextOptions>(() =>
-              Setup(new DbContextOptionsBuilder()
-                  .UseInMemoryDatabase(databaseName: $"customer_data_tests_{rnd}")
-                  .Options));
+        private static Lazy<DbContextOptions<CoreDbContext>> options = new Lazy<DbContextOptions<CoreDbContext>>(() =>
+            Setup(new DbContextOptionsBuilder<CoreDbContext>()
+                                         .UseInMemoryDatabase(databaseName: $"customer_data_tests_{rnd}").Options));
 
-        private static DbContextOptions Setup(DbContextOptions options)
+        private static DbContextOptions<CoreDbContext> Setup(DbContextOptions<CoreDbContext> opts)
         {
             var doc = XDocument.Load(Path.Combine(
                 Path.GetDirectoryName(typeof(CustomerDataTests).GetTypeInfo().Assembly.Location),
                 "TestData", "TestData.xml"));
             var import = new XmlImport(doc, "http://tempuri.org/Database.xsd");
             var customer = new List<Customer>();
-            using (var session = new CoreDbContext(options))
+            using (var session = new CoreDbContext(opts))
             {
                 import.Parse(new[] { typeof(Customer), typeof(Order), typeof(Product) },
                                 (type, obj) =>
@@ -101,7 +100,7 @@ namespace SomeBasicEFApp.Tests
                 session.SaveChanges();
             }
 
-            using (var session = new CoreDbContext(options))
+            using (var session = new CoreDbContext(opts))
             {
                 import.ParseConnections("OrderProduct", "Product", "Order", (productId, orderId) =>
                 {
@@ -110,16 +109,16 @@ namespace SomeBasicEFApp.Tests
                         ProductId = new ProductId(productId.ToString())
                     });
                 });
-/*
+
                 import.ParseIntProperty("Order", "Customer", (orderId, customerId) =>
                 {
                     var order = session.GetOrder(new OrderId(orderId.ToString()));
                     order.CustomerId = new CustomerId(customerId.ToString());
                 });
-*/
+
                 session.SaveChanges();
             }
-            return options;
+            return opts;
         }
 
         public void Dispose()

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using SomeBasicEFApp.Web;
 
@@ -12,7 +13,7 @@ namespace SomeBasicEFApp.Web.Entities
         public virtual Customer Customer { get; set; }
 
         public virtual DateTime OrderDate { get; set; }
-
+        [Key]
         public virtual OrderId Id { get; set; }
 
         public virtual int Version { get; set; }
