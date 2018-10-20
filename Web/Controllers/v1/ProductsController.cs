@@ -9,8 +9,9 @@ using SomeBasicEFApp.Web.Models;
 namespace SomeBasicEFApp.Web.Controllers.Api
 {
     [Route("/api/v1/products")]
+    [ApiController]
     [ApiExplorerSettings(GroupName = "v1")]
-    public class ProductsController : Controller
+    public class ProductsController : ControllerBase
     {
         private readonly CoreDbContext _context;
 
@@ -31,7 +32,7 @@ namespace SomeBasicEFApp.Web.Controllers.Api
         [HttpPost("")]
         [Produces(typeof(ProductModel))]
         [ProducesResponseType(statusCode: 400, type: typeof(ErrorModel))]
-        public async Task<IActionResult> Post(ProductModel model)
+        public async Task<IActionResult> Post([FromBody]ProductModel model)
         {// here you normally want filtering based on query parameters (in order to get better perf)
             var handler = new CreateProductCommandHandler(_context);
             var product = await handler.Handle(new CreateProductCommand

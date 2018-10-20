@@ -4,6 +4,7 @@ using System.Reflection;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.Configuration;
@@ -83,9 +84,6 @@ namespace SomeBasicEFApp.Web
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"))
                     .ReplaceService<IRelationalTypeMappingSource, IdTypeRelationalTypeMappingSource>()
                     );
-            services.AddDefaultIdentity<IdentityUser>()
-                .AddEntityFrameworkStores<CoreDbContext>();
-
             _swagger.ConfigureServices(services);
             services.AddIdentity<ApplicationUser, IdentityRole>(options =>
                 {
@@ -98,14 +96,7 @@ namespace SomeBasicEFApp.Web
 #endif
                 }).AddEntityFrameworkStores<CoreDbContext>()
                 .AddDefaultTokenProviders();
-            services.AddMvc();
-
-            services.AddSwaggerGen((c) => {
-                c.SwaggerDoc("v1", new Info { 
-                    Version="v1",
-                    Title="Current"
-                });
-            });
+            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -119,24 +110,16 @@ namespace SomeBasicEFApp.Web
             }
             else
             {
+                app.UseHsts();
                 app.UseExceptionHandler("/Home/Error");
             }
 
             _swagger.Configure(app, env);
             app.UseStaticFiles();
-            app.UseSwagger();
-            app.UseSwaggerUI((c) => {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
-            });
 
             // Add external authentication middleware below. To configure them please see https://go.microsoft.com/fwlink/?LinkID=532715
 
-            app.UseMvc(routes =>
-            {
-                routes.MapRoute(
-                    name: "default",
-                    template: "{controller=Home}/{action=Index}/{id?}");
-            });
+            app.UseMvcWithDefaultRoute();
         }
     }
 }
