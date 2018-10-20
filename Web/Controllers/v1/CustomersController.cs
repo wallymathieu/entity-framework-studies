@@ -52,7 +52,7 @@ namespace Web.Controllers.Api
         public async Task<IActionResult> Create([FromBody]EditCustomer model)
         {
             var customer = new Customer {Firstname = model.Firstname, Lastname = model.Lastname};
-            _context.Add(customer);
+            await _context.Customers.AddAsync(customer);
             await _context.SaveChangesAsync();
             return Ok(customer);
         }

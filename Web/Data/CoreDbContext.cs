@@ -14,6 +14,7 @@ namespace SomeBasicEFApp.Web.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<ProductOrder>().HasKey(b => new { b.OrderId, b.ProductId });
+            modelBuilder.Entity<Customer>();
             base.OnModelCreating(modelBuilder);
         }
 

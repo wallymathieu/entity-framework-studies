@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using SomeBasicEFApp.Web;
 
 namespace SomeBasicEFApp.Web.Entities
@@ -11,7 +12,7 @@ namespace SomeBasicEFApp.Web.Entities
         public virtual string Name { get; set; }
 
         public virtual IList<ProductOrder> ProductOrders { get; set; }
-        [Key]
+        [Key,DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public virtual ProductId Id { get; set; }
 
         public virtual int Version { get; set; }

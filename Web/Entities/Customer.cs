@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.AspNetCore.Identity;
 using SomeBasicEFApp.Web;
 
@@ -7,7 +8,7 @@ namespace SomeBasicEFApp.Web.Entities
 {
     public class Customer
     {
-        [Key]
+        [Key,DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public virtual CustomerId Id { get; set; }
 
         public virtual string Firstname { get; set; }

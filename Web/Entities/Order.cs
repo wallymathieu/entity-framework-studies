@@ -12,7 +12,7 @@ namespace SomeBasicEFApp.Web.Entities
         public virtual Customer Customer { get; set; }
 
         public virtual DateTime OrderDate { get; set; }
-        [Key]
+        [Key,DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public virtual OrderId Id { get; set; }
 
         public virtual int Version { get; set; }
