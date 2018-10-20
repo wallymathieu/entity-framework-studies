@@ -17,7 +17,6 @@ namespace SomeBasicEFApp.Web.Controllers.Api
 
         [HttpGet("")]
         [Produces(typeof(OrderModel[]))]
-        [ProducesResponseType(statusCode: 400, type: typeof(ErrorModel))]
         public IActionResult Index()
         {// here you normally want filtering based on query parameters (in order to get better perf)
             return Ok(
