@@ -20,18 +20,16 @@ var type =typeT.Name;
 var prefix = typeT.Prefix;
 #>
     [TypeConverter(typeof(ParseTypeConverter<<#= type #>>))]
-    public struct <#= type #> : IEquatable<<#= type #>>
+    public struct <#= type #> : IEquatable<<#= type #>>, IId
     {
-        public readonly string Value;
+        public int Value { get; }
 
-        public <#= type #>(string value)=>Value = value;
-
-        public readonly static <#= type #> Empty = new <#= type #>();
+        public <#= type #>(int value)=>Value = value;
 
         public bool Equals(<#= type #> other) => Equals(Value, other.Value);
 
         public override bool Equals(object obj) => obj is <#= type #> id && Equals(id);
-        public override int GetHashCode() => Value?.GetHashCode() ?? 0;
+        public override int GetHashCode() => Value.GetHashCode();
         public override string ToString() => $"<#= prefix #>{Value}";
 
         public static <#= type #> Parse(string value)
@@ -40,7 +38,9 @@ var prefix = typeT.Prefix;
                 throw new ArgumentException("Missing value");
             if (!value.StartsWith("<#= prefix #>", StringComparison.InvariantCultureIgnoreCase))
                 throw new FormatException($"Expected '{value}' to start with prefix '<#= prefix #>'");
-            return new <#= type #>(value.Substring("<#= prefix #>".Length));
+            if (Int32.TryParse(value.Substring("<#= prefix #>".Length), out var result))
+                return new <#= type #>(result);
+            throw new FormatException($"Expected '{value}' to match '<#= prefix #>-\\d+'");
         }
         public static bool operator ==(<#= type #> a, <#= type #> b) => a.Equals(b);
         public static bool operator !=(<#= type #> a, <#= type #> b) => !a.Equals(b);

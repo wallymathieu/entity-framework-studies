@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Identity;
 using SomeBasicEFApp.Web;
 
 namespace SomeBasicEFApp.Web.Entities
@@ -16,6 +17,7 @@ namespace SomeBasicEFApp.Web.Entities
         public virtual IList<Order> Orders { get; set; }
 
         public virtual int Version { get; set; }
-
+        
+        public virtual IdentityUser User { get; set; }
     }
 }

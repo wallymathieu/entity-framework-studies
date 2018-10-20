@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -27,8 +29,13 @@ namespace SomeBasicEFApp.Web
         public void ConfigureServices(IServiceCollection services)
         {
             // Add framework services.
+            
             services.AddDbContext<CoreDbContext>(options =>
-                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"))
+                    .ReplaceService<IRelationalTypeMappingSource, IdTypeRelationalTypeMappingSource>()
+                    );
+            services.AddDefaultIdentity<IdentityUser>()
+                .AddEntityFrameworkStores<CoreDbContext>();
 
 
             services.AddMvc();
