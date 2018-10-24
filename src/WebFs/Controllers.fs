@@ -41,6 +41,7 @@ type CustomersController (context:CoreDbContext) =
          let customer = Customer()
          customer.Lastname <- value.Lastname
          customer.Firstname <- value.Firstname
+         let! _ = context.AddAsync customer
          let! _ = context.SaveChangesAsync()
          return this.Ok(Mapper.mapCustomer customer) :> AR
     }

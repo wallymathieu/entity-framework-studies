@@ -10,18 +10,22 @@ type ProductOrder()=
     member val ProductOrderId : int=0 with get, set
     member val Order : Order=null with get, set
     member val Product : Product=null with get, set
+    member val Version = 0 with get, set
 and [<AllowNullLiteral>] Order() =
     [<Column("Id")>][<Key>]
     member val OrderId : int=0 with get, set
     member val OrderDate =DateTime.MinValue with get, set
     member val Customer : Customer=null with get, set
     member val ProductOrders =List<ProductOrder>() with get, set
+    member val Version = 0 with get, set
+    
 and [<AllowNullLiteral>] Customer()=
     [<Column("Id")>][<Key>]
     member val CustomerId : int=0 with get, set
     member val Firstname ="" with get, set
     member val Lastname ="" with get, set
     member val Orders = List<Order>() with get, set
+    member val Version = 0 with get, set
 and [<AllowNullLiteral>] Product()=
     [<Column("Id")>][<Key>]
     member val ProductId : int=0 with get, set
@@ -29,6 +33,7 @@ and [<AllowNullLiteral>] Product()=
     [<Column("Name")>]
     member val ProductName = "" with get, set
     member val ProductOrders = List<ProductOrder>() with get, set
+    member val Version = 0 with get, set
 
 open Microsoft.EntityFrameworkCore
 open System.Linq

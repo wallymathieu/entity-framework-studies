@@ -1,9 +1,9 @@
 build_script:
   - dotnet restore
-  - dotnet build Web
-  - dotnet build Tests
+  - dotnet build src\Web
+  - dotnet build tests\Tests
 test_script:
-  - dotnet test Tests
+  - dotnet test tests\Tests
 branches:
   only:
     - master
