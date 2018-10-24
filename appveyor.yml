@@ -1,9 +1,9 @@
 build_script:
   - dotnet restore
-  - dotnet build src\Web
-  - dotnet build tests\Tests
+  - dotnet build entity-framework-studies.sln
 test_script:
   - dotnet test tests\Tests
+  - dotnet test tests\FsTests
 branches:
   only:
     - master

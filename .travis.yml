@@ -7,10 +7,10 @@ mono:
 os:
   - linux
 script: 
-  - dotnet restore
-  - dotnet build src/Web
-  - dotnet build tests/Tests
+  - dotnet restore entity-framework-studies.sln
+  - dotnet build entity-framework-studies.sln
   - dotnet test tests/Tests
+  - dotnet test tests/FsTests
 branches:
   only:
     - master

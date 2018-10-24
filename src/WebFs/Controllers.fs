@@ -76,7 +76,7 @@ type OrdersController (context:CoreDbContext) =
     [<HttpGet("")>]
     member this.Index() = task { // here you normally want filtering based on query parameters (in order to get better perf)
         let! orders=context.Orders
-                        .Include(fun o->o.Customer).Include(fun o->o.ProductOrders).Include("ProductOrders.Product")
+                        .Include(fun o->o.Customer).Include(fun o->o.Products).Include("Products.Product")
                         .Select(Mapper.mapOrder)
                         .ToListAsync();
         return this.Ok orders
