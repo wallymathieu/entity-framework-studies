@@ -73,10 +73,12 @@ type InMemoryCustomerDataTests()=
         options)
     default this.Options = fixtureOptions.Value
 
+open System
 open FsMigrations
+
 type SqlLiteCustomerDataTests()=
     inherit CustomerDataTests()
-    let fixtureOptions=lazy(
+    let createOptions ()= 
         if File.Exists "CoreFsTests.db" then
             File.Delete "CoreFsTests.db"
         let options= DbContextOptionsBuilder()
@@ -85,7 +87,8 @@ type SqlLiteCustomerDataTests()=
         let runner = MigrationRunner.create "Data Source=CoreFsTests.db" "SQLite"
         runner.MigrateUp()
         TestData.fillDb options
-        options)
+        options
+    let fixtureOptions=Lazy<_>(createOptions, Threading.LazyThreadSafetyMode.ExecutionAndPublication)
     default this.Options = fixtureOptions.Value
         
     //
