@@ -62,8 +62,7 @@ type CustomerDataTests()=
         let! order = this.Session.Orders.IncludeProducts().FirstAsync(fun o->o.OrderId=1)
         Assert.True(order.Products |> Seq.tryFind( fun p -> p.Product.ProductId = 1) |> Option.isSome) }
 
-type InMemoryCustomerDataTests()=
-    inherit CustomerDataTests()
+module InMemory=
     let fixtureOptions=lazy(
         let db = sprintf "customer_data_tests_%O" <| Guid.NewGuid()
         let options= DbContextOptionsBuilder()
@@ -71,16 +70,17 @@ type InMemoryCustomerDataTests()=
                             .Options
         TestData.fillDb options
         options)
-    default this.Options = fixtureOptions.Value
 
-open System
-open FsMigrations
-
-type SqlLiteCustomerDataTests()=
+type InMemoryCustomerDataTests()=
     inherit CustomerDataTests()
-    let createOptions ()= 
+    default this.Options = InMemory.fixtureOptions.Value
+
+module SqlLite=
+    open FsMigrations
+    let private createOptions ()=
         if File.Exists "CoreFsTests.db" then
             File.Delete "CoreFsTests.db"
+
         let options= DbContextOptionsBuilder()
                             .UseSqlite("Data Source=CoreFsTests.db")
                             .Options
@@ -88,7 +88,8 @@ type SqlLiteCustomerDataTests()=
         runner.MigrateUp()
         TestData.fillDb options
         options
-    let fixtureOptions=Lazy<_>(createOptions, Threading.LazyThreadSafetyMode.ExecutionAndPublication)
-    default this.Options = fixtureOptions.Value
-        
-    //
+    let fixtureOptions=lazy createOptions ()
+
+type SqlLiteCustomerDataTests()=
+    inherit CustomerDataTests()
+    default this.Options = SqlLite.fixtureOptions.Value
