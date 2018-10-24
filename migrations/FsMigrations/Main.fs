@@ -61,5 +61,8 @@ let main argv =
       runner.MigrateUp()
       0
     | _ ->
+(* NOTE: To create db, run
+CREATE DATABASE [ef-core-studies-fsharp]
+*)
       printHelp()
       1 // return an integer exit code
