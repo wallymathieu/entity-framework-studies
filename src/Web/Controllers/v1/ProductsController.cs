@@ -18,7 +18,6 @@ namespace SomeBasicEFApp.Web.Controllers.v1
 
         [HttpGet("")]
         [Produces(typeof(ProductModel[]))]
-        [ProducesResponseType(statusCode: 400, type: typeof(ErrorModel))]
         public IActionResult Index()
         {// here you normally want filtering based on query parameters (in order to get better perf)
             return Ok(
@@ -30,7 +29,6 @@ namespace SomeBasicEFApp.Web.Controllers.v1
 
         [HttpPost("")]
         [Produces(typeof(ProductModel))]
-        [ProducesResponseType(statusCode: 400, type: typeof(ErrorModel))]
         public async Task<IActionResult> Post(ProductModel model)
         {// here you normally want filtering based on query parameters (in order to get better perf)
             var handler = new CreateProductCommandHandler(_context);
