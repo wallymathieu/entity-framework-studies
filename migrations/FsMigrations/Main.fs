@@ -1,11 +1,7 @@
 module FsMigrations.Main
-
-
+open FsMigrations
 open System
-open FluentMigrator.Runner
-open FluentMigrator.Runner.Processors
-open Microsoft.Extensions.DependencyInjection
-open Microsoft.Extensions.Logging
+
 type CmdArgs = 
   { connection : string
     processor : string
@@ -39,23 +35,8 @@ let main argv =
               |> List.ofArray
               |> parseArgs defaultArgs
     
-            // Initialize the services
-    let serviceProvider = ServiceCollection()
-                            .AddLogging(fun lb -> lb.AddDebug().AddFluentMigratorConsole() |> ignore)
-                            .AddFluentMigratorCore()
-                            .ConfigureRunner(
-                                fun builder -> builder
-                                                .AddSQLite()
-                                                .AddSqlServer()
-                                                .WithGlobalConnectionString(args.connection)
-                                                .ScanIn(typeof<FsMigrations.Migrations.AddTables>.Assembly)
-                                                    .For.Migrations() |> ignore)
-                            .Configure<SelectingProcessorAccessorOptions>(
-                                fun opt -> opt.ProcessorId <- args.processor)
-                            .BuildServiceProvider()
-
     // Instantiate the runner
-    let runner = serviceProvider.GetRequiredService<IMigrationRunner>()
+    let runner = MigrationRunner.create args.connection args.processor
     match args.operation with
     | "migrate" -> 
       runner.MigrateUp()

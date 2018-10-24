@@ -18,6 +18,7 @@
     <ItemGroup>
         <Compile Include="Extensions.fs" />
         <Compile Include="Migrations.fs" />
+        <Compile Include="MigrationRunner.fs" />
         <Compile Include="Main.fs" />
     </ItemGroup>
 

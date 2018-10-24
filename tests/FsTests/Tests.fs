@@ -42,31 +42,50 @@ module TestData=
         for (order,product) in db.OrderProducts |> Array.map toOrderProduct do
             order.Products.Add ( ProductOrder (order, product) )
         session.SaveChanges() |> ignore
-
+[<AbstractClass>]
 type CustomerDataTests()=
-    let options=
-        lazy 
-            let db = sprintf "customer_data_tests_%O" <| Guid.NewGuid()
-            let ctxB= DbContextOptionsBuilder()
-                                .UseInMemoryDatabase(databaseName= db)
-                                .Options
-                
-            TestData.fillDb ctxB
-            ctxB
-    let session= lazy (new CoreDbContext ( options.Value ))
+    abstract member Options : DbContextOptions
+    member this.Session = new CoreDbContext (this.Options)
 
     [<Fact>]
     member this.CanGetCustomerById()=task{
-        let! c = session.Value.Customers.FindAsync 1
+        let! c = this.Session.Customers.FindAsync 1
         Assert.NotNull c }
 
     [<Fact>]
     member this.CanGetProductById()= task{
-        let! p = session.Value.Products.FindAsync 1
+        let! p = this.Session.Products.FindAsync 1
         Assert.NotNull p }
 
     [<Fact>]
     member this.OrderContainsProduct()=task{
-        let! order = session.Value.Orders.IncludeProducts().FirstAsync(fun o->o.OrderId=1)
+        let! order = this.Session.Orders.IncludeProducts().FirstAsync(fun o->o.OrderId=1)
         Assert.True(order.Products |> Seq.tryFind( fun p -> p.Product.ProductId = 1) |> Option.isSome) }
 
+type InMemoryCustomerDataTests()=
+    inherit CustomerDataTests()
+    let fixtureOptions=lazy(
+        let db = sprintf "customer_data_tests_%O" <| Guid.NewGuid()
+        let options= DbContextOptionsBuilder()
+                            .UseInMemoryDatabase(databaseName= db)
+                            .Options
+        TestData.fillDb options
+        options)
+    default this.Options = fixtureOptions.Value
+
+open FsMigrations
+type SqlLiteCustomerDataTests()=
+    inherit CustomerDataTests()
+    let fixtureOptions=lazy(
+        if File.Exists "CoreFsTests.db" then
+            File.Delete "CoreFsTests.db"
+        let options= DbContextOptionsBuilder()
+                            .UseSqlite("Data Source=CoreFsTests.db")
+                            .Options
+        let runner = MigrationRunner.create "Data Source=CoreFsTests.db" "SQLite"
+        runner.MigrateUp()
+        TestData.fillDb options
+        options)
+    default this.Options = fixtureOptions.Value
+        
+    //
