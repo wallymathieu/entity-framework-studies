@@ -8,13 +8,15 @@ open Microsoft.AspNetCore.Mvc
 open Microsoft.EntityFrameworkCore
 open FSharp.Control.Tasks.V2
 
+open CoreFs
+
 open WebFs.Domain
 open WebFs.Models
 type AR = IActionResult
 type HomeController () =
     inherit Controller()
-    [<HttpGet>]
-    member this.Get() = this.Redirect "/swagger"
+    [<HttpGet("")>]
+    member this.Index() = this.Redirect "/swagger"
 
 [<Route("/api/v1/customers")>]
 [<ApiController>]
@@ -23,7 +25,7 @@ type CustomersController (context:CoreDbContext) =
     inherit ControllerBase()
 
     [<HttpGet>]
-    member this.Get() = task{
+    member this.Get() = task{ // here you normally want filtering based on query parameters (in order to get better perf)
         let! result= context.Customers.Select(Mapper.mapCustomer).ToListAsync()
         return ActionResult<_>(result)
     }
@@ -76,11 +78,37 @@ type OrdersController (context:CoreDbContext) =
     [<HttpGet("")>]
     member this.Index() = task { // here you normally want filtering based on query parameters (in order to get better perf)
         let! orders=context.Orders
-                        .Include(fun o->o.Customer).Include(fun o->o.Products).Include("Products.Product")
-                        .Select(Mapper.mapOrder)
-                        .ToListAsync();
-        return this.Ok orders
+                        .Include(fun o->o.Customer)
+                        .IncludeProducts()
+                        .ToListAsync()
+                        
+
+        return this.Ok (orders |> Seq.map Mapper.mapOrder)
     }
+
+    [<HttpPost("")>]
+    member this.Post() = task {
+        let order = Order()
+        order.OrderDate <- DateTime.UtcNow
+        let! _ = context.AddAsync order
+        let! _ = context.SaveChangesAsync()
+        return this.Ok (Mapper.mapOrder order)
+    }
+
+    [<HttpPost("{id}/products")>]
+    member this.PostProduct(id:int, [<FromBody>] body:AddProductToOrderModel) = task {
+        let! order=context.Orders
+                        .Include(fun o->o.Customer)
+                        .IncludeProducts()
+                        .FirstOrDefaultAsync(fun o->o.OrderId=id)
+        let! product=context.Products.FindAsync body.ProductId
+        if (isNull order) then return this.NotFound() :> AR
+        else
+            order.Products.Add (ProductOrder (order, product))
+            let! _ = context.SaveChangesAsync()
+            return this.Ok (Mapper.mapOrder order) :> AR
+    }
+
 [<Route("/api/v1/products")>]
 [<ApiController>]
 [<ApiExplorerSettings(GroupName = "v1")>]
@@ -93,4 +121,21 @@ type ProductsController (context:CoreDbContext) =
                         .Select(Mapper.mapProduct)
                         .ToListAsync();
         return this.Ok products
+    }
+    [<HttpPost>]
+    member this.Post([<FromBody>] value:EditProduct) =task{
+         let product = Product()
+         product.ProductName <- value.Name
+         product.Cost <- value.Cost
+         let! _ = context.AddAsync product
+         let! _ = context.SaveChangesAsync()
+         return this.Ok(Mapper.mapProduct product) :> AR
+    }
+    [<HttpPut("{id}")>]
+    member this.Put(id:int,[<FromBody>] value:EditProduct) =task{
+         let! product = context.Products.FindAsync(id)
+         product.ProductName <- value.Name
+         product.Cost <- value.Cost
+         let! _ = context.SaveChangesAsync()
+         return this.Ok(Mapper.mapProduct product) :> AR
     }

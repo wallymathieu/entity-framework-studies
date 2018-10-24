@@ -3,7 +3,7 @@
     <TargetFramework>netcoreapp2.1</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Domain.fs" />
+    <Compile Include="DbContext.fs" />
     <Compile Include="Models.fs" />
     <Compile Include="Controllers.fs" />
     <Compile Include="Swagger.fs" />
@@ -17,5 +17,8 @@
     <PackageReference Include="TaskBuilder.fs">
       <Version>2.1.0</Version>
     </PackageReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\CoreFs\CoreFs.fsproj" />
   </ItemGroup>
 </Project>

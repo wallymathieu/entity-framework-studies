@@ -29,6 +29,6 @@ type SwaggerConfig()=
             contact.Name <- "Dev"
             contact.Email <- "developers@somecompany.com"
             contact.Url <- "https://somecompany.com"
-            info.Contact <- contact 
+            info.Contact <- contact
             options.SwaggerDoc("v1", info);
         ) |> ignore

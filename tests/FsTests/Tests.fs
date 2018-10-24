@@ -6,8 +6,10 @@ open FSharp.Data
 open Microsoft.EntityFrameworkCore
 open WebFs.Domain
 open System.IO
+open FSharp.Control.Tasks.V2
 
 module TestData=
+    open CoreFs
 
     type TestData = XmlProvider<"../Tests/TestData/TestData.xml", Global=false>
 
@@ -54,17 +56,17 @@ type CustomerDataTests()=
     let session= lazy (new CoreDbContext ( options.Value ))
 
     [<Fact>]
-    member this.CanGetCustomerById()=
-        Assert.NotNull(session.Value.Customers.Find(1))
+    member this.CanGetCustomerById()=task{
+        let! c = session.Value.Customers.FindAsync 1
+        Assert.NotNull c }
 
     [<Fact>]
-    member this.CanGetProductById()=
-        Assert.NotNull(session.Value.Products.Find(1))
+    member this.CanGetProductById()= task{
+        let! p = session.Value.Products.FindAsync 1
+        Assert.NotNull p }
 
     [<Fact>]
-    member this.OrderContainsProduct()=
-        let order = session.Value.Orders.Include(fun o->o.Products).Include("Products.Product") 
-                    |> Seq.find(fun o->o.OrderId=1)
-        Assert.True(order.Products |> Seq.tryFind( fun p -> p.Product.ProductId = 1) |> Option.isSome)
-
+    member this.OrderContainsProduct()=task{
+        let! order = session.Value.Orders.IncludeProducts().FirstAsync(fun o->o.OrderId=1)
+        Assert.True(order.Products |> Seq.tryFind( fun p -> p.Product.ProductId = 1) |> Option.isSome) }
 
