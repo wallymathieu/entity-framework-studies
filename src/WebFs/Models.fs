@@ -1,11 +1,11 @@
 module WebFs.Models
 type EditCustomer={Firstname:string; Lastname:string}
-type EditProduct={Name:string; Cost:single}
+type EditProduct={Name:string; Cost:float}
 type AddProductToOrderModel={ProductId:int}
 
 type CustomerModel={Id:string;Firstname:string; Lastname:string}
 and OrderModel={Id:string;Customer:CustomerModel;Products:ProductModel[]}
-and ProductModel={Id:string; Name:string; Cost:single}
+and ProductModel={Id:string; Name:string; Cost:float}
 
 open Domain
 module Mapper=

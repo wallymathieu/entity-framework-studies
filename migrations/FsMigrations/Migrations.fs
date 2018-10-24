@@ -26,5 +26,5 @@ type AddTables()=
         self.Create.Table("Products")
             .WithIdColumn()
             .WithVersionColumn()
-            .WithColumn("Cost").AsFloat()
+            .WithColumn("Cost").AsDouble()
             .WithColumn("Name").AsString() |> ignore
