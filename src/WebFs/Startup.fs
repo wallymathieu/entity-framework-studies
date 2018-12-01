@@ -26,9 +26,9 @@ type Startup private () =
         services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1) |> ignore
         services.AddDbContext<CoreDbContext>(fun options ->
                                                  options.UseSqlServer(this.Configuration.GetConnectionString("DefaultConnection")) |> ignore
-                                            ) |> ignore
-
-        swagger.ConfigureServices services
+                                            ) 
+                .AddScoped<ICoreDbContext,CoreDbContext>()
+                |> swagger.ConfigureServices
     // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
     member this.Configure(app: IApplicationBuilder, env: IHostingEnvironment) =
         if (env.IsDevelopment()) then
@@ -36,8 +36,8 @@ type Startup private () =
         else
             app.UseHsts() |> ignore
 
-        app.UseHttpsRedirection() |> ignore
-        app.UseMvc() |> ignore
-        swagger.Configure(app, env)
+        app.UseHttpsRedirection() 
+            .UseMvc() 
+            |> swagger.Configure
 
     member val Configuration : IConfiguration = null with get, set

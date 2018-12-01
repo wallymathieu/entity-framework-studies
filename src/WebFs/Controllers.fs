@@ -13,6 +13,7 @@ open CoreFs
 open WebFs.Domain
 open WebFs.Models
 type AR = IActionResult
+[<ApiExplorerSettings(GroupName = "none")>]
 type HomeController () =
     inherit Controller()
     [<HttpGet("")>]
@@ -21,7 +22,7 @@ type HomeController () =
 [<Route("/api/v1/customers")>]
 [<ApiController>]
 [<ApiExplorerSettings(GroupName = "v1")>]
-type CustomersController (context:CoreDbContext) =
+type CustomersController (context:ICoreDbContext) =
     inherit ControllerBase()
 
     [<HttpGet>]
@@ -44,7 +45,7 @@ type CustomersController (context:CoreDbContext) =
          customer.Lastname <- value.Lastname
          customer.Firstname <- value.Firstname
          let! _ = context.AddAsync customer
-         let! _ = context.SaveChangesAsync()
+         do! context.SaveChangesAsync()
          return this.Ok(Mapper.mapCustomer customer) :> AR
     }
 
@@ -55,7 +56,7 @@ type CustomersController (context:CoreDbContext) =
         else
             customer.Lastname <- value.Lastname
             customer.Firstname <- value.Firstname
-            let! _ = context.SaveChangesAsync()
+            do! context.SaveChangesAsync()
             return this.Ok(Mapper.mapCustomer customer) :> AR
     }
 
@@ -65,14 +66,14 @@ type CustomersController (context:CoreDbContext) =
         if isNull customer then return this.NotFound() :> AR
         else
             context.Customers.Remove customer |> ignore
-            let! _ = context.SaveChangesAsync()
+            do! context.SaveChangesAsync()
             return this.Ok(Mapper.mapCustomer customer) :> AR
     }
 
 [<Route("/api/v1/orders")>]
 [<ApiController>]
 [<ApiExplorerSettings(GroupName = "v1")>]
-type OrdersController (context:CoreDbContext) =
+type OrdersController (context:ICoreDbContext) =
     inherit ControllerBase()
 
     [<HttpGet("")>]
@@ -90,8 +91,8 @@ type OrdersController (context:CoreDbContext) =
     member this.Post() = task {
         let order = Order()
         order.OrderDate <- DateTime.UtcNow
-        let! _ = context.AddAsync order
-        let! _ = context.SaveChangesAsync()
+        do! context.AddAsync order
+        do! context.SaveChangesAsync()
         return this.Ok (Mapper.mapOrder order)
     }
 
@@ -105,14 +106,14 @@ type OrdersController (context:CoreDbContext) =
         if (isNull order) then return this.NotFound() :> AR
         else
             order.Products.Add (ProductOrder (order, product))
-            let! _ = context.SaveChangesAsync()
+            do! context.SaveChangesAsync()
             return this.Ok (Mapper.mapOrder order) :> AR
     }
 
 [<Route("/api/v1/products")>]
 [<ApiController>]
 [<ApiExplorerSettings(GroupName = "v1")>]
-type ProductsController (context:CoreDbContext) =
+type ProductsController (context:ICoreDbContext) =
     inherit ControllerBase()
 
     [<HttpGet("")>]
@@ -127,8 +128,8 @@ type ProductsController (context:CoreDbContext) =
          let product = Product()
          product.ProductName <- value.Name
          product.Cost <- value.Cost
-         let! _ = context.AddAsync product
-         let! _ = context.SaveChangesAsync()
+         do! context.AddAsync product
+         do! context.SaveChangesAsync()
          return this.Ok(Mapper.mapProduct product) :> AR
     }
     [<HttpPut("{id}")>]
@@ -136,6 +137,6 @@ type ProductsController (context:CoreDbContext) =
          let! product = context.Products.FindAsync(id)
          product.ProductName <- value.Name
          product.Cost <- value.Cost
-         let! _ = context.SaveChangesAsync()
+         do! context.SaveChangesAsync()
          return this.Ok(Mapper.mapProduct product) :> AR
     }
