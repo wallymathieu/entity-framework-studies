@@ -7,6 +7,16 @@ open CoreFs
 open Microsoft.EntityFrameworkCore
 open System.Linq
 open System.Runtime.CompilerServices
+open System.Threading.Tasks
+open FSharp.Control.Tasks.V2
+
+[<Interface>]
+type ICoreDbContext=
+    abstract member Customers: DbSet<Customer> with get
+    abstract member Orders: DbSet<Order> with get
+    abstract member Products: DbSet<Product> with get
+    abstract member SaveChangesAsync: unit->Task<unit>
+    abstract member AddAsync<'t> : 't -> Task<unit> 
 
 type CoreDbContext(options:DbContextOptions)=
     inherit DbContext(options)
@@ -37,6 +47,15 @@ type CoreDbContext(options:DbContextOptions)=
     member this.Customers with get()=this.customers and set v = this.customers<-v
     member this.Orders with get()=this.orders and set v = this.orders<-v
     member this.Products with get()=this.products and set v = this.products<-v
+
+    interface ICoreDbContext with 
+      member this.SaveChangesAsync() = task { let! _ = this.SaveChangesAsync()
+        return () }
+      member this.AddAsync(t) = task { let! _ = this.AddAsync t
+        return () }
+      member this.Customers = this.customers
+      member this.Orders = this.orders
+      member this.Products = this.products
 
 [<Extension>]
 type QueryableExtensions()=
