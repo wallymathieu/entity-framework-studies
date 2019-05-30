@@ -5,7 +5,7 @@ open FluentMigrator.Runner.Processors
 open Microsoft.Extensions.DependencyInjection
 open Microsoft.Extensions.Logging
 
-let create connection processor=
+let create (connection:String) (processor:String)=
     let serviceProvider = ServiceCollection()
                             .AddLogging(fun lb -> lb.AddDebug().AddFluentMigratorConsole() |> ignore)
                             .AddFluentMigratorCore()
@@ -17,8 +17,8 @@ let create connection processor=
                                                 .WithGlobalConnectionString(connection)
                                                 .ScanIn(typeof<FsMigrations.Migrations.AddTables>.Assembly)
                                                     .For.Migrations() |> ignore)
-                            .Configure<SelectingProcessorAccessorOptions>(
-                                fun opt -> opt.ProcessorId <- processor)
+                            .Configure(
+                                fun (opt:SelectingProcessorAccessorOptions) -> opt.ProcessorId <- processor)
                             .BuildServiceProvider()
 
     // Instantiate the runner
