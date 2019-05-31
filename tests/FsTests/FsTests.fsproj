@@ -2,6 +2,8 @@
 
     <PropertyGroup>
         <TargetFramework>netcoreapp2.1</TargetFramework>
+        <GenerateRuntimeConfigurationFiles>true</GenerateRuntimeConfigurationFiles>
+        <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
 
         <IsPackable>false</IsPackable>
     </PropertyGroup>
