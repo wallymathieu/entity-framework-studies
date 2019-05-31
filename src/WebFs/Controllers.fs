@@ -105,7 +105,7 @@ type OrdersController (context:ICoreDbContext) =
         let! product=context.Products.FindAsync body.ProductId
         if (isNull order) then return this.NotFound() :> AR
         else
-            order.Products.Add (ProductOrder (order, product))
+            order.Products.Add (ProductOrder (0, order, product))
             do! context.SaveChangesAsync()
             return this.Ok (Mapper.mapOrder order) :> AR
     }

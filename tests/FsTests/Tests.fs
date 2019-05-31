@@ -27,6 +27,8 @@ module TestData=
         let toOrderProduct(o : TestData.OrderProduct)=
             let order=session.Orders.Find(o.Order)
             let product=session.Products.Find(o.Product)
+            Assert.NotNull(order)
+            Assert.NotNull(product)
             (order,product)
 
         use f = File.Open("TestData/TestData.xml", FileMode.Open, FileAccess.Read, FileShare.Read)
@@ -39,9 +41,13 @@ module TestData=
             session.Add order |> ignore
         for product in db.Products |> Array.map toProduct do
             session.Add product |> ignore
-        for (order,product) in db.OrderProducts |> Array.map toOrderProduct do
-            order.Products.Add ( ProductOrder (order, product) )
         session.SaveChanges() |> ignore
+
+        use session = new CoreDbContext(options)
+        for (order,product) in db.OrderProducts |> Array.map toOrderProduct do
+            order.Products.Add ( ProductOrder (0, order, product) )
+        session.SaveChanges() |> ignore
+            
 [<AbstractClass>]
 type CustomerDataTests()=
     abstract member Options : DbContextOptions

@@ -4,8 +4,9 @@ open System
 open System.Collections.Generic
 
 [<AllowNullLiteral>]
-type ProductOrder(order,product)=
-    new()=ProductOrder(null, null)
+type ProductOrder(productOrderId, order,product)=
+    new()=ProductOrder(0, null, null)
+    member val ProductOrderId =productOrderId with get, set
     member val Order : Order=order with get, set
     member val Product : Product=product with get, set
 and [<AllowNullLiteral>] Order(id,orderDate,customer,version) =
