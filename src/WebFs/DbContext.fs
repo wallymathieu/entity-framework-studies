@@ -23,10 +23,6 @@ type CoreDbContext(options:DbContextOptions)=
     default this.OnModelCreating(modelBuilder:ModelBuilder)=
         modelBuilder.Entity<Order>()
                     .Property(fun o->o.OrderId).HasColumnName("Id") |> ignore
-        (*
-        modelBuilder.Entity<Order>()
-            .HasMany("Products").WithOne("Order").HasForeignKey("ProductId") |> ignore
-            *)
         modelBuilder.Entity<Customer>()
                     .Property(fun o->o.CustomerId).HasColumnName("Id") |> ignore
         modelBuilder.Entity<Product>()
@@ -35,10 +31,6 @@ type CoreDbContext(options:DbContextOptions)=
                     .Property(fun o->o.ProductName).HasColumnName("Name") |> ignore
         modelBuilder.Entity<Product>()
                     .Property(fun o->o.Cost) |> ignore
-        (*
-        modelBuilder.Entity<Product>()
-            .HasMany("Orders").WithOne("Product").HasForeignKey("OrderId") |> ignore
-        *)
         modelBuilder.Entity<ProductOrder>()
                     .ToTable("OrdersToProducts")
                     .HasKey([| "ProductId"; "OrderId" |]) |> ignore
@@ -46,12 +38,6 @@ type CoreDbContext(options:DbContextOptions)=
             |> ignore
         modelBuilder.Entity<ProductOrder>().HasAnnotation("Product", ForeignKeyAttribute("ProductId"))
             |> ignore
-                    (*
-        modelBuilder.Entity<ProductOrder>().HasAnnotation("Order", ForeignKeyAttribute("OrderId"))
-            .HasOne(fun o->o.Order).WithMany("Products").HasForeignKey("ProductId","OrderId") |> ignore
-        modelBuilder.Entity<ProductOrder>().HasAnnotation("Product", ForeignKeyAttribute("ProductId"))
-            .HasOne(fun o->o.Product).WithMany("Orders").HasForeignKey("ProductId","OrderId") |> ignore
-            *)
         base.OnModelCreating(modelBuilder)
 
     [<DefaultValue>]val mutable private customers: DbSet<Customer>
