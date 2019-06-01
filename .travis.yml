@@ -4,6 +4,7 @@ mono:
   - latest
 os:
   - linux
+dist: xenial
 script: 
   - dotnet restore entity-framework-studies.sln
   - dotnet build entity-framework-studies.sln
