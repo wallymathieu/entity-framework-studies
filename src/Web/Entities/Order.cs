@@ -6,15 +6,15 @@ namespace SomeBasicEFApp.Web.Entities
 {
     public class Order
     {
-        public virtual Customer Customer { get; set; }
+        public Customer Customer { get; set; }
 
-        public virtual DateTime OrderDate { get; set; }
+        public DateTime OrderDate { get; set; }
 
-        public virtual int Id { get; set; }
+        public int Id { get; set; }
 
-        public virtual int Version { get; set; }
+        public int Version { get; set; }
 
-		public virtual IList<ProductOrder> ProductOrders { get; set; }
+		public IList<ProductOrder> ProductOrders { get; set; }
 
         public OrderId GetId() => new OrderId(Id);
     }

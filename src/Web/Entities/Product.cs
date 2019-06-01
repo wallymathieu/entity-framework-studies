@@ -5,15 +5,15 @@ namespace SomeBasicEFApp.Web.Entities
 {
     public class Product
     {
-        public virtual float Cost { get; set; }
+        public float Cost { get; set; }
 
-        public virtual string Name { get; set; }
+        public string Name { get; set; }
 
-        public virtual IList<ProductOrder> ProductOrders { get; set; }
+        public IList<ProductOrder> ProductOrders { get; set; }
 
-        public virtual int Id { get; set; }
+        public int Id { get; set; }
 
-        public virtual int Version { get; set; }
+        public int Version { get; set; }
 
         public ProductId GetId() => new ProductId(Id);
     }
