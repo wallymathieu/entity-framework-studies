@@ -25,11 +25,6 @@ module TestData=
         let toProduct (o : TestData.Product)=
             Product(id=o.Id,version=o.Version,name=o.Name,cost=float o.Cost)
 
-        let toOrderProduct(o : TestData.OrderProduct)=
-            let order=session.Orders.IncludeProducts().Single(fun o1->o1.OrderId= o.Order)
-            let product=session.Products.Find(o.Product)
-            (order,product)
-
         use f = File.Open("TestData/TestData.xml", FileMode.Open, FileAccess.Read, FileShare.Read)
         let db = TestData.Load(f)
 
@@ -42,10 +37,13 @@ module TestData=
             session.Add product |> ignore
         session.SaveChanges() |> ignore
         use session = new CoreDbContext(options)
+        let toOrderProduct(o : TestData.OrderProduct)=
+            let order=session.Orders.IncludeProducts().Single(fun o1->o1.OrderId= o.Order)
+            let product=session.Products.Find(o.Product)
+            (order,product)
         for (order,product) in db.OrderProducts |> Array.map toOrderProduct do
             let orderProduct = ProductOrder (order, product)
             order.Products.Add orderProduct
-            
         session.SaveChanges() |> ignore
 [<AbstractClass>]
 type CustomerDataTests()=
@@ -62,11 +60,11 @@ type CustomerDataTests()=
         let! p = this.Session.Products.FindAsync 1
         Assert.NotNull p }
 
-    [<Fact(Skip="Some mapping troubles")>]
+    [<Fact>]
     member this.Order_contains_product()=task{
         let! order = this.Session.Orders.IncludeProducts().FirstAsync(fun o->o.OrderId=1)
         Assert.True(order.Products |> Seq.tryFind( fun p -> p.Product.ProductId = 1) |> Option.isSome) }
-
+        
 module InMemory=
     let fixtureOptions=lazy(
         let db = sprintf "customer_data_tests_%O" <| Guid.NewGuid()
