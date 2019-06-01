@@ -8,6 +8,7 @@
     <UserSecretsId>aspnet-ef-web-studies-0799fe3e-6eaf-4c5f-b40e-7c6bfd5dfa9a</UserSecretsId>
     <RootNamespace>SomeBasicEFApp.Web</RootNamespace>
     <AspNetCoreHostingModel>InProcess</AspNetCoreHostingModel>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>

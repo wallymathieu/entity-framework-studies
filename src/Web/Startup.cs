@@ -62,12 +62,8 @@ namespace SomeBasicEFApp.Web
                             {Name = "Dev", Email = "developers@somecompany.com", Url = "https://somecompany.com"}
                     });
 
-
-                    //Determine base path for the application.
-                    var basePath = env.WebRootPath;
-
                     //Set the comments path for the swagger json and ui.
-                    var xmlPath = Path.Combine(basePath, typeof(Startup).Assembly.GetName().Name + ".xml");
+                    var xmlPath = typeof(Startup).Assembly.Location.Replace(".dll",".xml").Replace(".exe", ".xml");
                     if (File.Exists(xmlPath))
                         options.IncludeXmlComments(xmlPath);
                 });
