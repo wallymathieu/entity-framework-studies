@@ -8,7 +8,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.PlatformAbstractions;
 using SomeBasicEFApp.Web.Data;
 using Swashbuckle.AspNetCore.Swagger;
 
@@ -17,9 +16,17 @@ namespace SomeBasicEFApp.Web
     public class Startup
     {
         private SwaggerConfig _swagger;
+        private IHostingEnvironment _env;
 
         class SwaggerConfig
         {
+            private IHostingEnvironment env;
+
+            public SwaggerConfig(IHostingEnvironment env)
+            {
+                this.env = env;
+            }
+
             ///
             public void Configure(IApplicationBuilder app, IHostingEnvironment env)
             {
@@ -55,22 +62,19 @@ namespace SomeBasicEFApp.Web
                             {Name = "Dev", Email = "developers@somecompany.com", Url = "https://somecompany.com"}
                     });
 
-
-                    //Determine base path for the application.
-                    var basePath = PlatformServices.Default.Application.ApplicationBasePath;
-
                     //Set the comments path for the swagger json and ui.
-                    var xmlPath = Path.Combine(basePath, typeof(Startup).Assembly.GetName().Name + ".xml");
+                    var xmlPath = typeof(Startup).Assembly.Location.Replace(".dll",".xml").Replace(".exe", ".xml");
                     if (File.Exists(xmlPath))
                         options.IncludeXmlComments(xmlPath);
                 });
             }
         }
 
-        public Startup(IConfiguration configuration)
+        public Startup(IConfiguration configuration, IHostingEnvironment env)
         {
             Configuration = configuration;
-            _swagger = new SwaggerConfig();
+            _env = env;
+            _swagger = new SwaggerConfig(env);
         }
 
         public IConfiguration Configuration { get; }
@@ -104,7 +108,6 @@ namespace SomeBasicEFApp.Web
             {
                 app.UseDeveloperExceptionPage();
                 app.UseDatabaseErrorPage();
-                app.UseBrowserLink();
             }
             else
             {

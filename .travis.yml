@@ -1,9 +1,10 @@
 language: csharp
-dotnet: 2.1.401
+dotnet: 2.2.100
 mono:
   - latest
 os:
   - linux
+dist: xenial
 script: 
   - dotnet restore entity-framework-studies.sln
   - dotnet build entity-framework-studies.sln

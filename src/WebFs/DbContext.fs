@@ -21,13 +21,6 @@ type ICoreDbContext=
 type CoreDbContext(options:DbContextOptions)=
     inherit DbContext(options)
     default this.OnModelCreating(modelBuilder:ModelBuilder)=
-        modelBuilder.Entity<ProductOrder>()
-                    .ToTable("OrdersToProducts")
-                    .HasKey([| "ProductId"; "OrderId" |]) |> ignore
-        modelBuilder.Entity<ProductOrder>()
-                    .HasAnnotation("Order", ForeignKeyAttribute("OrderId"))
-                    .HasAnnotation("Product", ForeignKeyAttribute("ProductId"))
-                    |> ignore
         modelBuilder.Entity<Order>()
                     .Property(fun o->o.OrderId).HasColumnName("Id") |> ignore
         modelBuilder.Entity<Customer>()
@@ -38,7 +31,13 @@ type CoreDbContext(options:DbContextOptions)=
                     .Property(fun o->o.ProductName).HasColumnName("Name") |> ignore
         modelBuilder.Entity<Product>()
                     .Property(fun o->o.Cost) |> ignore
-
+        modelBuilder.Entity<ProductOrder>()
+                    .ToTable("OrdersToProducts")
+                    .HasKey([| "ProductId"; "OrderId" |]) |> ignore
+        modelBuilder.Entity<ProductOrder>().HasAnnotation("Order", ForeignKeyAttribute("OrderId"))
+            |> ignore
+        modelBuilder.Entity<ProductOrder>().HasAnnotation("Product", ForeignKeyAttribute("ProductId"))
+            |> ignore
         base.OnModelCreating(modelBuilder)
 
     [<DefaultValue>]val mutable private customers: DbSet<Customer>
