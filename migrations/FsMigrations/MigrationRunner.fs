@@ -17,8 +17,8 @@ let create connection processor=
                                                 .WithGlobalConnectionString(connection)
                                                 .ScanIn(typeof<FsMigrations.Migrations.AddTables>.Assembly)
                                                     .For.Migrations() |> ignore)
-                            .Configure<SelectingProcessorAccessorOptions>(
-                                fun opt -> opt.ProcessorId <- processor)
+                            .Configure(
+                                fun (opt:SelectingProcessorAccessorOptions) -> opt.ProcessorId <- processor)
                             .BuildServiceProvider()
 
     // Instantiate the runner
