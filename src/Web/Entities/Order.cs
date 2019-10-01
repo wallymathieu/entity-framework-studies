@@ -10,12 +10,10 @@ namespace SomeBasicEFApp.Web.Entities
 
         public DateTime OrderDate { get; set; }
 
-        public int Id { get; set; }
+        public OrderId Id { get; set; }
 
         public int Version { get; set; }
 
-		public IList<ProductOrder> ProductOrders { get; set; }
-
-        public OrderId GetId() => new OrderId(Id);
+        public IList<ProductOrder> ProductOrders { get; set; }
     }
 }

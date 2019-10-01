@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using SomeBasicEFApp.Web.Commands;
 using SomeBasicEFApp.Web.Data;
 using SomeBasicEFApp.Web.Entities;
+using SomeBasicEFApp.Web.ValueTypes;
 
 namespace SomeBasicEFApp.Web.Controllers
 {
@@ -143,7 +144,7 @@ namespace SomeBasicEFApp.Web.Controllers
             return RedirectToAction("Index");
         }
 
-        private bool ProductExists(int id)
+        private bool ProductExists(ProductId id)
         {
             return _context.Products.Any(e => e.Id == id);
         }
