@@ -6,12 +6,12 @@ open System.Linq
 open System.Threading.Tasks
 open Microsoft.AspNetCore.Mvc
 open Microsoft.EntityFrameworkCore
-open FSharp.Control.Tasks.V2
-
+open FSharp.Control.Tasks.Builders
 open CoreFs
 
 open WebFs.Domain
 open WebFs.Models
+open FSharpPlus.Operators
 type AR = IActionResult
 [<ApiExplorerSettings(GroupName = "none")>]
 type HomeController () =
@@ -27,8 +27,8 @@ type CustomersController (context:ICoreDbContext) =
 
     [<HttpGet>]
     member this.Get() = task{ // here you normally want filtering based on query parameters (in order to get better perf)
-        let! result= context.Customers.Select(Mapper.mapCustomer).ToListAsync()
-        return ActionResult<_>(result)
+        let! result= context.Customers.ToListAsync()
+        return ActionResult<_>(map Mapper.mapCustomer result)
     }
 
     [<HttpGet("{id}")>]
@@ -41,9 +41,9 @@ type CustomersController (context:ICoreDbContext) =
 
     [<HttpPost>]
     member this.Post([<FromBody>] value:EditCustomer) =task{
-         let customer = Customer()
-         customer.Lastname <- value.Lastname
-         customer.Firstname <- value.Firstname
+         let customer = Customer(customerId= CustomerId 0,lastname =value.Lastname, firstname=value.Firstname, version=0)
+         //customer.Lastname <- value.Lastname
+         //customer.Firstname <- value.Firstname
          let! _ = context.AddAsync customer
          do! context.SaveChangesAsync()
          return this.Ok(Mapper.mapCustomer customer) :> AR
@@ -89,8 +89,7 @@ type OrdersController (context:ICoreDbContext) =
 
     [<HttpPost("")>]
     member this.Post() = task {
-        let order = Order()
-        order.OrderDate <- DateTime.UtcNow
+        let order = Order(orderId=OrderId 0, orderDate=DateTime.UtcNow, customer=null, version=0)
         do! context.AddAsync order
         do! context.SaveChangesAsync()
         return this.Ok (Mapper.mapOrder order)
@@ -98,10 +97,11 @@ type OrdersController (context:ICoreDbContext) =
 
     [<HttpPost("{id}/products")>]
     member this.PostProduct(id:int, [<FromBody>] body:AddProductToOrderModel) = task {
+        let id' = OrderId id
         let! order=context.Orders
                         .Include(fun o->o.Customer)
                         .IncludeProducts()
-                        .FirstOrDefaultAsync(fun o->o.OrderId=id)
+                        .FirstOrDefaultAsync(fun o->o.OrderId=id')
         let! product=context.Products.FindAsync body.ProductId
         if (isNull order) then return this.NotFound() :> AR
         else
@@ -118,16 +118,12 @@ type ProductsController (context:ICoreDbContext) =
 
     [<HttpGet("")>]
     member this.Index() = task{ // here you normally want filtering based on query parameters (in order to get better perf)
-        let! products=context.Products
-                        .Select(Mapper.mapProduct)
-                        .ToListAsync();
-        return this.Ok products
+        let! products=context.Products.ToListAsync()
+        return this.Ok (map Mapper.mapProduct products)
     }
     [<HttpPost>]
     member this.Post([<FromBody>] value:EditProduct) =task{
-         let product = Product()
-         product.ProductName <- value.Name
-         product.Cost <- value.Cost
+         let product = Product(productId=ProductId 0,productName=value.Name, cost=value.Cost, version=0)
          do! context.AddAsync product
          do! context.SaveChangesAsync()
          return this.Ok(Mapper.mapProduct product) :> AR

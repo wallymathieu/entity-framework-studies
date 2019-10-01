@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using SomeBasicEFApp.Web.Data;
 using SomeBasicEFApp.Web.Entities;
+using SomeBasicEFApp.Web.ValueTypes;
 
 namespace SomeBasicEFApp.Web.Controllers
 {
@@ -141,7 +142,7 @@ namespace SomeBasicEFApp.Web.Controllers
             return RedirectToAction("Index");
         }
 
-        private bool OrderExists(int id)
+        private bool OrderExists(OrderId id)
         {
             return _context.Orders.Any(e => e.Id == id);
         }

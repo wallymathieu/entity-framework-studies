@@ -8,7 +8,10 @@ open Microsoft.EntityFrameworkCore
 open System.Linq
 open System.Runtime.CompilerServices
 open System.Threading.Tasks
-open FSharp.Control.Tasks.V2
+open FSharp.Control.Tasks.Builders
+open Microsoft.EntityFrameworkCore.Storage.ValueConversion
+open Microsoft.FSharp.Linq.RuntimeHelpers
+open System.Linq.Expressions
 
 [<Interface>]
 type ICoreDbContext=
@@ -17,16 +20,28 @@ type ICoreDbContext=
     abstract member Products: DbSet<Product> with get
     abstract member SaveChangesAsync: unit->Task<unit>
     abstract member AddAsync<'t> : 't -> Task<unit> 
+type FSharpValueConverter()=
+    static member inline Create<'wrappertype,'simpletype>( ctor: ('simpletype->'wrappertype), unwrap: ('wrappertype->'simpletype) )=
+        let toExpression (``f# lambda`` : Quotations.Expr<'a>) =
+            ``f# lambda``
+            |> LeafExpressionConverter.QuotationToExpression 
+            |> unbox<Expression<'a>>
+        let from' = <@ Func<_, _>(ctor) @> |> toExpression
+        let to' = <@ Func<_, _>(unwrap) @> |> toExpression
+        ValueConverter<'wrappertype, 'simpletype>(convertFromProviderExpression= from', convertToProviderExpression= to')
 
 type CoreDbContext(options:DbContextOptions)=
     inherit DbContext(options)
     default this.OnModelCreating(modelBuilder:ModelBuilder)=
+        let orderIdConverter = FSharpValueConverter.Create(OrderId, OrderId.unwrap)
+        let productIdConverter = FSharpValueConverter.Create(ProductId, ProductId.unwrap)
+        let customerIdConverter = FSharpValueConverter.Create(CustomerId, CustomerId.unwrap)
         modelBuilder.Entity<Order>()
-                    .Property(fun o->o.OrderId).HasColumnName("Id") |> ignore
+                    .Property(fun o->o.OrderId).HasColumnName("Id").HasConversion(orderIdConverter) |> ignore
         modelBuilder.Entity<Customer>()
-                    .Property(fun o->o.CustomerId).HasColumnName("Id") |> ignore
+                    .Property(fun o->o.CustomerId).HasColumnName("Id").HasConversion(customerIdConverter) |> ignore
         modelBuilder.Entity<Product>()
-                    .Property(fun o->o.ProductId).HasColumnName("Id") |> ignore
+                    .Property(fun o->o.ProductId).HasColumnName("Id").HasConversion(productIdConverter) |> ignore
         modelBuilder.Entity<Product>()
                     .Property(fun o->o.ProductName).HasColumnName("Name") |> ignore
         modelBuilder.Entity<Product>()
@@ -34,10 +49,8 @@ type CoreDbContext(options:DbContextOptions)=
         modelBuilder.Entity<ProductOrder>()
                     .ToTable("OrdersToProducts")
                     .HasKey([| "ProductId"; "OrderId" |]) |> ignore
-        modelBuilder.Entity<ProductOrder>().HasAnnotation("Order", ForeignKeyAttribute("OrderId"))
-            |> ignore
-        modelBuilder.Entity<ProductOrder>().HasAnnotation("Product", ForeignKeyAttribute("ProductId"))
-            |> ignore
+        //modelBuilder.Entity<ProductOrder>().HasAnnotation("Order", ForeignKeyAttribute("OrderId")) |> ignore
+        //modelBuilder.Entity<ProductOrder>().HasAnnotation("Product", ForeignKeyAttribute("ProductId")) |> ignore
         base.OnModelCreating(modelBuilder)
 
     [<DefaultValue>]val mutable private customers: DbSet<Customer>

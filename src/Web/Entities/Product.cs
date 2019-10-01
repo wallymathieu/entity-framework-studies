@@ -11,10 +11,8 @@ namespace SomeBasicEFApp.Web.Entities
 
         public IList<ProductOrder> ProductOrders { get; set; }
 
-        public int Id { get; set; }
+        public ProductId Id { get; set; }
 
         public int Version { get; set; }
-
-        public ProductId GetId() => new ProductId(Id);
     }
 }

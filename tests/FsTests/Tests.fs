@@ -7,7 +7,8 @@ open Microsoft.EntityFrameworkCore
 open WebFs.Domain
 open System.IO
 open System.Linq
-open FSharp.Control.Tasks.V2
+open FSharp.Control.Tasks.Builders
+open CoreFs
 
 module TestData=
     open CoreFs
@@ -17,13 +18,13 @@ module TestData=
     let fillDb (options:DbContextOptions)=
         use session = new CoreDbContext(options)
         let toCustomer (o : TestData.Customer) =
-            Customer(id=o.Id,version=o.Version,firstname=o.Firstname,lastname=o.Lastname)
+            Customer(customerId=CustomerId o.Id,version=o.Version,firstname=o.Firstname,lastname=o.Lastname)
 
         let toOrder (o : TestData.Order)=
-            Order(id=o.Id,version=o.Version,customer=session.Customers.Find(o.Customer),orderDate=o.OrderDate.DateTime)
+            Order(orderId=OrderId o.Id,version=o.Version,customer=session.Customers.Find(CustomerId o.Customer),orderDate=o.OrderDate.DateTime)
 
         let toProduct (o : TestData.Product)=
-            Product(id=o.Id,version=o.Version,name=o.Name,cost=float o.Cost)
+            Product(productId=ProductId o.Id,version=o.Version,productName=o.Name,cost=float o.Cost)
 
         use f = File.Open("TestData/TestData.xml", FileMode.Open, FileAccess.Read, FileShare.Read)
         let db = TestData.Load(f)
@@ -38,8 +39,9 @@ module TestData=
         session.SaveChanges() |> ignore
         use session = new CoreDbContext(options)
         let toOrderProduct(o : TestData.OrderProduct)=
-            let order=session.Orders.IncludeProducts().Single(fun o1->o1.OrderId= o.Order)
-            let product=session.Products.Find(o.Product)
+            let orderId =OrderId o.Order
+            let order=session.Orders.IncludeProducts().Single(fun o1->o1.OrderId= orderId)
+            let product=session.Products.Find(ProductId o.Product)
             (order,product)
         for (order,product) in db.OrderProducts |> Array.map toOrderProduct do
             let orderProduct = ProductOrder (order, product)
@@ -52,32 +54,36 @@ type CustomerDataTests()=
 
     [<Fact>]
     member this.Can_get_customer_by_id()=task{
-        let! c = this.Session.Customers.FindAsync 1
+        let! c = this.Session.Customers.FindAsync (CustomerId 1)
         Assert.NotNull c }
 
     [<Fact>]
     member this.Can_get_product_by_id()= task{
-        let! p = this.Session.Products.FindAsync 1
+        let! p = this.Session.Products.FindAsync (ProductId 1)
         Assert.NotNull p }
 
     [<Fact>]
     member this.Order_contains_product()=task{
-        let! order = this.Session.Orders.IncludeProducts().FirstAsync(fun o->o.OrderId=1)
-        Assert.True(order.Products |> Seq.tryFind( fun p -> p.Product.ProductId = 1) |> Option.isSome) }
+        let orderId= OrderId 1
+        let productId= ProductId 1
+        let! order = this.Session.Orders.IncludeProducts().FirstAsync(fun o->o.OrderId=orderId)
+        Assert.True(order.Products |> Seq.tryFind( fun p -> p.Product.ProductId = productId) |> Option.isSome) }
         
 module InMemory=
     let fixtureOptions=lazy(
         let db = sprintf "customer_data_tests_%O" <| Guid.NewGuid()
         let options= DbContextOptionsBuilder()
                             .UseInMemoryDatabase(databaseName= db)
+                            .EnableSensitiveDataLogging()
+                            .EnableDetailedErrors()
                             .Options
         TestData.fillDb options
         options)
 
+(* Somehow this doesn't work with typed ids
 type InMemoryCustomerDataTests()=
     inherit CustomerDataTests()
-    default this.Options = InMemory.fixtureOptions.Value
-
+    default this.Options = InMemory.fixtureOptions.Value *)
 module SqlLite=
     open FsMigrations
     let private createOptions ()=

@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Globalization;
+using System.Linq;
 using System.Reflection;
 using System.Xml.Linq;
+using SomeBasicEFApp.Web.ValueTypes;
 
 namespace SomeBasicEFApp.Tests
 {
@@ -15,8 +18,18 @@ namespace SomeBasicEFApp.Tests
             _ns = ns;
             this.xDocument = xDocument;
         }
+        /// <summary>pick out constructor with single parateter and construct instance:</summary>
+        private static (ConstructorInfo, Type) GetConstructorAndParameterType(Type t)
+        {
+            var ctor = t.GetConstructors().Single(c => c.GetParameters().Length == 1);
+            return (ctor, ctor.GetParameters()[0].ParameterType);
+        }
         private object Parse(XElement target, Type type, Action<Type, PropertyInfo> onIgnore)
         {
+            static bool InValueTypesNamespace(Type propertyType) =>
+                propertyType.Namespace == typeof(CustomerId).Namespace;
+            static bool IsValueTypeOrString(Type propertyType) =>
+                propertyType.GetTypeInfo().IsValueType || propertyType == typeof(string);
             var props = type.GetProperties();
             var customerObj = Activator.CreateInstance(type);
             foreach (var propertyInfo in props)
@@ -24,9 +37,16 @@ namespace SomeBasicEFApp.Tests
                 XElement propElement = target.Element(_ns + propertyInfo.Name);
                 if (null != propElement)
                 {
-                    if (!(propertyInfo.PropertyType.GetTypeInfo().IsValueType || propertyInfo.PropertyType == typeof(string)))
+                    if (!IsValueTypeOrString(propertyInfo.PropertyType))
                     {
-                        if (onIgnore != null) onIgnore(type, propertyInfo);
+                        onIgnore?.Invoke(type, propertyInfo);
+                    }
+                    else if (InValueTypesNamespace(propertyInfo.PropertyType))
+                    {
+                        var (ctor, parameterType)= GetConstructorAndParameterType(propertyInfo.PropertyType);
+                        var value = ctor.Invoke(new[]{Convert.ChangeType(propElement.Value,
+                                    parameterType, CultureInfo.InvariantCulture.NumberFormat)});
+                        propertyInfo.SetValue(customerObj, value, null);
                     }
                     else
                     {
@@ -38,10 +58,10 @@ namespace SomeBasicEFApp.Tests
             return customerObj;
         }
 
-        public IEnumerable<Tuple<Type, Object>> Parse(IEnumerable<Type> types, Action<Type, Object> onParsedEntity = null, Action<Type, PropertyInfo> onIgnore = null)
+        public IEnumerable<Tuple<Type, object>> Parse(IEnumerable<Type> types, Action<Type, object> onParsedEntity = null, Action<Type, PropertyInfo> onIgnore = null)
         {
             var db = xDocument.Root;
-            var list = new List<Tuple<Type, Object>>();
+            var list = new List<Tuple<Type, object>>();
 
             foreach (var type in types)
             {
@@ -50,7 +70,7 @@ namespace SomeBasicEFApp.Tests
                 foreach (var element in elements)
                 {
                     var obj = Parse(element, type, onIgnore);
-                    if (null != onParsedEntity) onParsedEntity(type, obj);
+                    onParsedEntity?.Invoke(type, obj);
                     list.Add(Tuple.Create(type, obj));
                 }
             }
@@ -68,7 +88,7 @@ namespace SomeBasicEFApp.Tests
                 XElement s = element.Element(ns + second);
                 var firstValue = int.Parse(f.Value);
                 var secondValue = int.Parse(s.Value);
-                if (null != onParsedEntity) onParsedEntity(firstValue, secondValue);
+                onParsedEntity?.Invoke(firstValue, secondValue);
                 list.Add(Tuple.Create(firstValue, secondValue));
             }
             return list;
@@ -87,7 +107,7 @@ namespace SomeBasicEFApp.Tests
                 XElement s = element.Element(ns + elementName);
                 var id = int.Parse(f.Value);
                 var other = int.Parse(s.Value);
-                if (null != onParsedEntity) onParsedEntity(id, other);
+                onParsedEntity?.Invoke(id, other);
                 list.Add(Tuple.Create(id, other));
             }
             return list;

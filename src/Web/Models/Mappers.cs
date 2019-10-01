@@ -9,18 +9,18 @@ namespace SomeBasicEFApp.Web.Models
         {
             Cost = arg.Cost,
             Name = arg.Name,
-            Id =arg.GetId().ToString()
+            Id =arg.Id.ToString()
         };
 
         public static OrderModel Map(Order arg) => new OrderModel
         {
-            Id = arg.GetId().ToString(),
+            Id = arg.Id.ToString(),
             Products = arg.ProductOrders?.Select(po => Map(po.Product)).ToArray(),
             Customer = arg.Customer!=null? Map(arg.Customer):null
         };
         public static CustomerModel Map(Customer arg)=>new CustomerModel
         {
-            Id=arg.GetId().ToString(),
+            Id=arg.Id.ToString(),
             Firstname=arg.Firstname,
             Lastname=arg.Lastname
         };
