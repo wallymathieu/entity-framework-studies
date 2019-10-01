@@ -22,8 +22,12 @@ type ICoreDbContext=
     abstract member AddAsync<'t> : 't -> Task<unit> 
 type FSharpValueConverter()=
     static member inline Create<'wrappertype,'simpletype>( ctor: ('simpletype->'wrappertype), unwrap: ('wrappertype->'simpletype) )=
-        let from' = <@ Func<_, _>(ctor) @> |> LeafExpressionConverter.QuotationToExpression |> unbox<Expression<Func<_, _>>>
-        let to' = <@ Func<_, _>(unwrap) @> |> LeafExpressionConverter.QuotationToExpression |> unbox<Expression<Func<_, _>>>
+        let toExpression (``f# lambda`` : Quotations.Expr<'a>) =
+            ``f# lambda``
+            |> LeafExpressionConverter.QuotationToExpression 
+            |> unbox<Expression<'a>>
+        let from' = <@ Func<_, _>(ctor) @> |> toExpression
+        let to' = <@ Func<_, _>(unwrap) @> |> toExpression
         ValueConverter<'wrappertype, 'simpletype>(convertFromProviderExpression= from', convertToProviderExpression= to')
 
 type CoreDbContext(options:DbContextOptions)=

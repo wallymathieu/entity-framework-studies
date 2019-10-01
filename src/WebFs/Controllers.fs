@@ -41,9 +41,9 @@ type CustomersController (context:ICoreDbContext) =
 
     [<HttpPost>]
     member this.Post([<FromBody>] value:EditCustomer) =task{
-         let customer = Customer()
-         customer.Lastname <- value.Lastname
-         customer.Firstname <- value.Firstname
+         let customer = Customer(customerId= CustomerId 0,lastname =value.Lastname, firstname=value.Firstname, version=0)
+         //customer.Lastname <- value.Lastname
+         //customer.Firstname <- value.Firstname
          let! _ = context.AddAsync customer
          do! context.SaveChangesAsync()
          return this.Ok(Mapper.mapCustomer customer) :> AR
@@ -89,8 +89,7 @@ type OrdersController (context:ICoreDbContext) =
 
     [<HttpPost("")>]
     member this.Post() = task {
-        let order = Order()
-        order.OrderDate <- DateTime.UtcNow
+        let order = Order(orderId=OrderId 0, orderDate=DateTime.UtcNow, customer=null, version=0)
         do! context.AddAsync order
         do! context.SaveChangesAsync()
         return this.Ok (Mapper.mapOrder order)
@@ -124,9 +123,7 @@ type ProductsController (context:ICoreDbContext) =
     }
     [<HttpPost>]
     member this.Post([<FromBody>] value:EditProduct) =task{
-         let product = Product()
-         product.ProductName <- value.Name
-         product.Cost <- value.Cost
+         let product = Product(productId=ProductId 0,productName=value.Name, cost=value.Cost, version=0)
          do! context.AddAsync product
          do! context.SaveChangesAsync()
          return this.Ok(Mapper.mapProduct product) :> AR

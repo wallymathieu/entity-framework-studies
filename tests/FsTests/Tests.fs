@@ -18,13 +18,13 @@ module TestData=
     let fillDb (options:DbContextOptions)=
         use session = new CoreDbContext(options)
         let toCustomer (o : TestData.Customer) =
-            Customer(id=CustomerId o.Id,version=o.Version,firstname=o.Firstname,lastname=o.Lastname)
+            Customer(customerId=CustomerId o.Id,version=o.Version,firstname=o.Firstname,lastname=o.Lastname)
 
         let toOrder (o : TestData.Order)=
-            Order(id=OrderId o.Id,version=o.Version,customer=session.Customers.Find(CustomerId o.Customer),orderDate=o.OrderDate.DateTime)
+            Order(orderId=OrderId o.Id,version=o.Version,customer=session.Customers.Find(CustomerId o.Customer),orderDate=o.OrderDate.DateTime)
 
         let toProduct (o : TestData.Product)=
-            Product(id=ProductId o.Id,version=o.Version,name=o.Name,cost=float o.Cost)
+            Product(productId=ProductId o.Id,version=o.Version,productName=o.Name,cost=float o.Cost)
 
         use f = File.Open("TestData/TestData.xml", FileMode.Open, FileAccess.Read, FileShare.Read)
         let db = TestData.Load(f)
@@ -78,9 +78,10 @@ module InMemory=
         TestData.fillDb options
         options)
 
+(* value converter does not work with inmemory db (yet)
 type InMemoryCustomerDataTests()=
     inherit CustomerDataTests()
-    default this.Options = InMemory.fixtureOptions.Value
+    default this.Options = InMemory.fixtureOptions.Value *)
 
 module SqlLite=
     open FsMigrations
