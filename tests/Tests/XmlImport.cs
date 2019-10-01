@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Globalization;
+using System.Linq;
 using System.Reflection;
 using System.Xml.Linq;
 
@@ -26,7 +28,15 @@ namespace SomeBasicEFApp.Tests
                 {
                     if (!(propertyInfo.PropertyType.GetTypeInfo().IsValueType || propertyInfo.PropertyType == typeof(string)))
                     {
-                        if (onIgnore != null) onIgnore(type, propertyInfo);
+                        onIgnore?.Invoke(type, propertyInfo);
+                    }
+                    else if (propertyInfo.PropertyType.Namespace == "SomeBasicEFApp.Web.ValueTypes")
+                    {
+                        var ctor = propertyInfo.PropertyType.GetConstructors().Single(c=>c.GetParameters().Length==1);
+                        var value = ctor.Invoke(new[]{
+                                Convert.ChangeType(propElement.Value,
+                                    ctor.GetParameters()[0].ParameterType, CultureInfo.InvariantCulture.NumberFormat)});
+                        propertyInfo.SetValue(customerObj, value, null);
                     }
                     else
                     {
