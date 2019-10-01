@@ -8,22 +8,22 @@ using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Reflection;
-using SomeBasicEFApp.Web.Data;
 
 namespace SomeBasicEFApp.Tests
 {
-    public class CustomerDataTests:IDisposable
+    public abstract class CustomerDataTests:IDisposable
     {
-        private CoreDbContext _session;
+        private CoreDbContext Session;
         public CustomerDataTests()
         {
-            _session = new CoreDbContext(options.Value);
+            Session = new CoreDbContext(Options);
         }
+        public abstract DbContextOptions Options { get; }
 
         [Fact]
         public void CanGetCustomerById()
         {
-            var customer = _session.GetCustomer(1);
+            var customer = Session.GetCustomer(1);
 
             Assert.NotNull(customer);
         }
@@ -31,7 +31,7 @@ namespace SomeBasicEFApp.Tests
         [Fact]
         public void CanGetCustomerByFirstname()
         {
-            var customers = _session.Customers
+            var customers = Session.Customers
                 .Where(c => c.Firstname == "Steve")
                 .ToList();
             Assert.Equal(3, customers.Count);
@@ -40,14 +40,14 @@ namespace SomeBasicEFApp.Tests
         [Fact]
         public void CanGetProductById()
         {
-            var product = _session.GetProduct(1);
+            var product = Session.GetProduct(1);
 
             Assert.NotNull(product);
         }
         [Fact]
         public void OrderContainsProduct()
         {
-            var o = _session.Orders
+            var o = Session.Orders
                     .Include(order=>order.ProductOrders)
                         .ThenInclude(po=>po.Product)
                     .Single(order=>order.Id==1);
@@ -58,7 +58,7 @@ namespace SomeBasicEFApp.Tests
         [Fact]
         public void ProductsWithOrders()
         {
-            var products = _session.Products
+            var products = Session.Products
                                  .Include(p=>p.ProductOrders)
                                  .ThenInclude(po => po.Order)
                                  .WhereThereAreOrders(
@@ -75,20 +75,16 @@ namespace SomeBasicEFApp.Tests
         [Fact]
         public void OrderHasACustomer()
         {
-            var o = _session.Orders
+            var o = Session.Orders
                     .Include(order=>order.Customer)
                     .Single(order=>order.Id==1);
             Assert.NotNull(o.Customer);
             Assert.NotEmpty(o.Customer.Firstname);
         }
 
-        private static string rnd=> Guid.NewGuid().ToString("N");
-        private static Lazy<DbContextOptions> options=new Lazy<DbContextOptions>(()=>
-            Setup(new DbContextOptionsBuilder()
-                .UseInMemoryDatabase(databaseName: $"customer_data_tests_{rnd}")
-                .Options));
+        
 
-        private static DbContextOptions Setup(DbContextOptions options)
+        public static DbContextOptions Setup(DbContextOptions options)
         {
             var doc = XDocument.Load(Path.Combine(
                 Path.GetDirectoryName(typeof(CustomerDataTests).GetTypeInfo().Assembly.Location),
@@ -140,7 +136,7 @@ namespace SomeBasicEFApp.Tests
 
         public void Dispose()
         {
-            ((IDisposable)_session).Dispose();
+            ((IDisposable)Session).Dispose();
         }
     }
 }
