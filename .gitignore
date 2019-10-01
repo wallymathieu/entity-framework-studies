@@ -280,3 +280,4 @@ __pycache__/
 
 appsettings.user.json
 
+.ionide/
