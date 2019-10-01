@@ -7,7 +7,7 @@ open Microsoft.EntityFrameworkCore
 open WebFs.Domain
 open System.IO
 open System.Linq
-open FSharp.Control.Tasks.V2
+open FSharp.Control.Tasks.Builders
 
 module TestData=
     open CoreFs
@@ -38,7 +38,8 @@ module TestData=
         session.SaveChanges() |> ignore
         use session = new CoreDbContext(options)
         let toOrderProduct(o : TestData.OrderProduct)=
-            let order=session.Orders.IncludeProducts().Single(fun o1->o1.OrderId= o.Order)
+            let orderId = o.Order
+            let order=session.Orders.IncludeProducts().Single(fun o1->o1.OrderId= orderId)
             let product=session.Products.Find(o.Product)
             (order,product)
         for (order,product) in db.OrderProducts |> Array.map toOrderProduct do

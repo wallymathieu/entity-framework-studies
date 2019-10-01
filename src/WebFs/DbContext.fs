@@ -8,7 +8,7 @@ open Microsoft.EntityFrameworkCore
 open System.Linq
 open System.Runtime.CompilerServices
 open System.Threading.Tasks
-open FSharp.Control.Tasks.V2
+open FSharp.Control.Tasks.Builders
 
 [<Interface>]
 type ICoreDbContext=

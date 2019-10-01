@@ -6,12 +6,12 @@ open System.Linq
 open System.Threading.Tasks
 open Microsoft.AspNetCore.Mvc
 open Microsoft.EntityFrameworkCore
-open FSharp.Control.Tasks.V2
-
+open FSharp.Control.Tasks.Builders
 open CoreFs
 
 open WebFs.Domain
 open WebFs.Models
+open FSharpPlus.Operators
 type AR = IActionResult
 [<ApiExplorerSettings(GroupName = "none")>]
 type HomeController () =
@@ -27,8 +27,8 @@ type CustomersController (context:ICoreDbContext) =
 
     [<HttpGet>]
     member this.Get() = task{ // here you normally want filtering based on query parameters (in order to get better perf)
-        let! result= context.Customers.Select(Mapper.mapCustomer).ToListAsync()
-        return ActionResult<_>(result)
+        let! result= context.Customers.ToListAsync()
+        return ActionResult<_>(map Mapper.mapCustomer result)
     }
 
     [<HttpGet("{id}")>]
@@ -118,10 +118,8 @@ type ProductsController (context:ICoreDbContext) =
 
     [<HttpGet("")>]
     member this.Index() = task{ // here you normally want filtering based on query parameters (in order to get better perf)
-        let! products=context.Products
-                        .Select(Mapper.mapProduct)
-                        .ToListAsync();
-        return this.Ok products
+        let! products=context.Products.ToListAsync()
+        return this.Ok (map Mapper.mapProduct products)
     }
     [<HttpPost>]
     member this.Post([<FromBody>] value:EditProduct) =task{
