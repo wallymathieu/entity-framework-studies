@@ -6,12 +6,9 @@ open System.Collections.Generic
 type OrderId = OrderId of int
 type ProductId = ProductId of int
 type CustomerId = CustomerId of int
-module OrderId =
-    let unwrap (OrderId id)=id
-module ProductId =
-    let unwrap (ProductId id)=id
-module CustomerId =
-    let unwrap (CustomerId id)=id
+module OrderId =begin let unwrap (OrderId id)=id end
+module ProductId =begin let unwrap (ProductId id)=id end
+module CustomerId =begin let unwrap (CustomerId id)=id end
 
 [<AllowNullLiteral>]
 type ProductOrder(order,product)=

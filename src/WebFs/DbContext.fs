@@ -20,21 +20,18 @@ type ICoreDbContext=
     abstract member Products: DbSet<Product> with get
     abstract member SaveChangesAsync: unit->Task<unit>
     abstract member AddAsync<'t> : 't -> Task<unit> 
+type FSharpValueConverter()=
+    static member inline Create<'wrappertype,'simpletype>( ctor: ('simpletype->'wrappertype), unwrap: ('wrappertype->'simpletype) )=
+        let from' = <@ Func<_, _>(ctor) @> |> LeafExpressionConverter.QuotationToExpression |> unbox<Expression<Func<_, _>>>
+        let to' = <@ Func<_, _>(unwrap) @> |> LeafExpressionConverter.QuotationToExpression |> unbox<Expression<Func<_, _>>>
+        ValueConverter<'wrappertype, 'simpletype>(convertFromProviderExpression= from', convertToProviderExpression= to')
+
 type CoreDbContext(options:DbContextOptions)=
     inherit DbContext(options)
-    let orderIdConverter = 
-        let from' = <@ Func<_, _>(OrderId) @> |> LeafExpressionConverter.QuotationToExpression |> unbox<Expression<Func<_, _>>>
-        let to' = <@ Func<_, _>(OrderId.unwrap) @> |> LeafExpressionConverter.QuotationToExpression |> unbox<Expression<Func<_, _>>>
-        ValueConverter<OrderId, int>(convertFromProviderExpression= from', convertToProviderExpression= to')
-    let productIdConverter = 
-        let from' = <@ Func<_, _>(ProductId) @> |> LeafExpressionConverter.QuotationToExpression |> unbox<Expression<Func<_, _>>>
-        let to' = <@ Func<_, _>(ProductId.unwrap) @> |> LeafExpressionConverter.QuotationToExpression |> unbox<Expression<Func<_, _>>>
-        ValueConverter<ProductId, int>(convertFromProviderExpression= from', convertToProviderExpression= to')
-    let customerIdConverter = 
-        let from' = <@ Func<_, _>(CustomerId) @> |> LeafExpressionConverter.QuotationToExpression |> unbox<Expression<Func<_, _>>>
-        let to' = <@ Func<_, _>(CustomerId.unwrap) @> |> LeafExpressionConverter.QuotationToExpression |> unbox<Expression<Func<_, _>>>
-        ValueConverter<CustomerId, int>(convertFromProviderExpression= from', convertToProviderExpression= to')
     default this.OnModelCreating(modelBuilder:ModelBuilder)=
+        let orderIdConverter = FSharpValueConverter.Create(OrderId, OrderId.unwrap)
+        let productIdConverter = FSharpValueConverter.Create(ProductId, ProductId.unwrap)
+        let customerIdConverter = FSharpValueConverter.Create(CustomerId, CustomerId.unwrap)
         modelBuilder.Entity<Order>()
                     .Property(fun o->o.OrderId).HasColumnName("Id").HasConversion(orderIdConverter) |> ignore
         modelBuilder.Entity<Customer>()
