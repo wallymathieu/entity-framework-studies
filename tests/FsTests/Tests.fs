@@ -75,15 +75,15 @@ module InMemory=
         let options= DbContextOptionsBuilder()
                             .UseInMemoryDatabase(databaseName= db)
                             .EnableSensitiveDataLogging()
+                            .EnableDetailedErrors()
                             .Options
         TestData.fillDb options
         options)
 
-(* value converter does not work with inmemory db (yet)
+(* Somehow this doesn't work with typed ids
 type InMemoryCustomerDataTests()=
     inherit CustomerDataTests()
     default this.Options = InMemory.fixtureOptions.Value *)
-
 module SqlLite=
     open FsMigrations
     let private createOptions ()=

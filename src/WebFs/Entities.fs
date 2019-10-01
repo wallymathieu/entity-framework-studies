@@ -17,9 +17,9 @@ module CustomerId =begin let unwrap (CustomerId id)=id end
 type ProductOrder(order:Order,product:Product)=
     new()=ProductOrder(null, null)
     member val Order : Order=order with get, set
-    member val OrderId = if isNull order then OrderId 0 else order.OrderId with get, set
+    //member val OrderId = if isNull order then OrderId 0 else order.OrderId with get, set
     member val Product : Product=product with get, set
-    member val ProductId = if isNull product then ProductId 0 else product.ProductId with get, set
+    //member val ProductId = if isNull product then ProductId 0 else product.ProductId with get, set
 and [<AllowNullLiteral>] Order(orderId:OrderId,orderDate:DateTime,customer:Customer,version:int) =
     new()=Order(OrderId 0,DateTime.MinValue,null,0)
     member val OrderId =orderId with get, set

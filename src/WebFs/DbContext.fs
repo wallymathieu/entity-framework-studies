@@ -49,10 +49,8 @@ type CoreDbContext(options:DbContextOptions)=
         modelBuilder.Entity<ProductOrder>()
                     .ToTable("OrdersToProducts")
                     .HasKey([| "ProductId"; "OrderId" |]) |> ignore
-        modelBuilder.Entity<ProductOrder>().HasAnnotation("Order", ForeignKeyAttribute("OrderId"))
-            |> ignore
-        modelBuilder.Entity<ProductOrder>().HasAnnotation("Product", ForeignKeyAttribute("ProductId"))
-            |> ignore
+        //modelBuilder.Entity<ProductOrder>().HasAnnotation("Order", ForeignKeyAttribute("OrderId")) |> ignore
+        //modelBuilder.Entity<ProductOrder>().HasAnnotation("Product", ForeignKeyAttribute("ProductId")) |> ignore
         base.OnModelCreating(modelBuilder)
 
     [<DefaultValue>]val mutable private customers: DbSet<Customer>
