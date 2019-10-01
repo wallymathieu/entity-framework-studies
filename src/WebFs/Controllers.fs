@@ -98,10 +98,11 @@ type OrdersController (context:ICoreDbContext) =
 
     [<HttpPost("{id}/products")>]
     member this.PostProduct(id:int, [<FromBody>] body:AddProductToOrderModel) = task {
+        let id' = OrderId id
         let! order=context.Orders
                         .Include(fun o->o.Customer)
                         .IncludeProducts()
-                        .FirstOrDefaultAsync(fun o->o.OrderId=id)
+                        .FirstOrDefaultAsync(fun o->o.OrderId=id')
         let! product=context.Products.FindAsync body.ProductId
         if (isNull order) then return this.NotFound() :> AR
         else

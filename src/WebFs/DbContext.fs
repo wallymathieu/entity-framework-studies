@@ -9,6 +9,9 @@ open System.Linq
 open System.Runtime.CompilerServices
 open System.Threading.Tasks
 open FSharp.Control.Tasks.Builders
+open Microsoft.EntityFrameworkCore.Storage.ValueConversion
+open Microsoft.FSharp.Linq.RuntimeHelpers
+open System.Linq.Expressions
 
 [<Interface>]
 type ICoreDbContext=
@@ -17,16 +20,27 @@ type ICoreDbContext=
     abstract member Products: DbSet<Product> with get
     abstract member SaveChangesAsync: unit->Task<unit>
     abstract member AddAsync<'t> : 't -> Task<unit> 
-
 type CoreDbContext(options:DbContextOptions)=
     inherit DbContext(options)
+    let orderIdConverter = 
+        let from' = <@ Func<_, _>(OrderId) @> |> LeafExpressionConverter.QuotationToExpression |> unbox<Expression<Func<_, _>>>
+        let to' = <@ Func<_, _>(OrderId.unwrap) @> |> LeafExpressionConverter.QuotationToExpression |> unbox<Expression<Func<_, _>>>
+        ValueConverter<OrderId, int>(convertFromProviderExpression= from', convertToProviderExpression= to')
+    let productIdConverter = 
+        let from' = <@ Func<_, _>(ProductId) @> |> LeafExpressionConverter.QuotationToExpression |> unbox<Expression<Func<_, _>>>
+        let to' = <@ Func<_, _>(ProductId.unwrap) @> |> LeafExpressionConverter.QuotationToExpression |> unbox<Expression<Func<_, _>>>
+        ValueConverter<ProductId, int>(convertFromProviderExpression= from', convertToProviderExpression= to')
+    let customerIdConverter = 
+        let from' = <@ Func<_, _>(CustomerId) @> |> LeafExpressionConverter.QuotationToExpression |> unbox<Expression<Func<_, _>>>
+        let to' = <@ Func<_, _>(CustomerId.unwrap) @> |> LeafExpressionConverter.QuotationToExpression |> unbox<Expression<Func<_, _>>>
+        ValueConverter<CustomerId, int>(convertFromProviderExpression= from', convertToProviderExpression= to')
     default this.OnModelCreating(modelBuilder:ModelBuilder)=
         modelBuilder.Entity<Order>()
-                    .Property(fun o->o.OrderId).HasColumnName("Id") |> ignore
+                    .Property(fun o->o.OrderId).HasColumnName("Id").HasConversion(orderIdConverter) |> ignore
         modelBuilder.Entity<Customer>()
-                    .Property(fun o->o.CustomerId).HasColumnName("Id") |> ignore
+                    .Property(fun o->o.CustomerId).HasColumnName("Id").HasConversion(customerIdConverter) |> ignore
         modelBuilder.Entity<Product>()
-                    .Property(fun o->o.ProductId).HasColumnName("Id") |> ignore
+                    .Property(fun o->o.ProductId).HasColumnName("Id").HasConversion(productIdConverter) |> ignore
         modelBuilder.Entity<Product>()
                     .Property(fun o->o.ProductName).HasColumnName("Name") |> ignore
         modelBuilder.Entity<Product>()
