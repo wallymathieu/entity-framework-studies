@@ -2,15 +2,27 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SomeBasicEFApp.Web.Entities;
 using SomeBasicEFApp.Web.ValueTypes;
 
 namespace SomeBasicEFApp.Web.Data
 {
-    public partial class CoreDbContext : IdentityDbContext<ApplicationUser>
+    public class CoreDbContext : IdentityDbContext<ApplicationUser>
     {
         public CoreDbContext(DbContextOptions options) : base(options)
         {
+        }
+
+        protected override void OnModelCreating(ModelBuilder builder)
+        {
+            builder.Entity<Product>()
+                .Property(o => o.Id).HasConversion(new ValueConverter<ProductId, int>(v => v.Value, v => new ProductId(v)));
+            builder.Entity<Customer>()
+                .Property(o => o.Id).HasConversion(new ValueConverter<CustomerId, int>(v => v.Value, v => new CustomerId(v)));
+            builder.Entity<Order>()
+                .Property(o => o.Id).HasConversion(new ValueConverter<OrderId, int>(v => v.Value, v => new OrderId(v)));
+            base.OnModelCreating(builder);
         }
 
         public DbSet<Customer> Customers { get; set; }
@@ -20,21 +32,21 @@ namespace SomeBasicEFApp.Web.Data
         public DbSet<ProductOrder> ProductOrders { get; set; }
 
         public Customer GetCustomer(CustomerId v) => 
-            Customers.SingleOrDefault(c => c.Id == v.Value);
+            Customers.SingleOrDefault(c => c.Id == v);
 
         public Product GetProduct(ProductId v) => 
-            Products.SingleOrDefault(p => p.Id == v.Value);
+            Products.SingleOrDefault(p => p.Id == v);
 
         public Order GetOrder(OrderId v) => 
-            Orders.SingleOrDefault(o => o.Id == v.Value);
+            Orders.SingleOrDefault(o => o.Id == v);
         public Task<Customer> GetCustomerAsync(CustomerId v) => 
-            Customers.SingleOrDefaultAsync(c => c.Id == v.Value);
+            Customers.SingleOrDefaultAsync(c => c.Id == v);
 
         public Task<Product> GetProductAsync(ProductId v) => 
-            Products.SingleOrDefaultAsync(p => p.Id == v.Value);
+            Products.SingleOrDefaultAsync(p => p.Id == v);
 
         public Task<Order> GetOrderAsync(OrderId v) => 
-            Orders.SingleOrDefaultAsync(o => o.Id == v.Value);
+            Orders.SingleOrDefaultAsync(o => o.Id == v);
 
     }
 }

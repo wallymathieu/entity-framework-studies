@@ -74,6 +74,7 @@ module InMemory=
         let db = sprintf "customer_data_tests_%O" <| Guid.NewGuid()
         let options= DbContextOptionsBuilder()
                             .UseInMemoryDatabase(databaseName= db)
+                            .EnableSensitiveDataLogging()
                             .Options
         TestData.fillDb options
         options)

@@ -4,8 +4,11 @@ open System
 open System.Collections.Generic
 
 type OrderId = OrderId of int
+with override this.ToString()= match this with OrderId id->id.ToString()
 type ProductId = ProductId of int
+with override this.ToString()= match this with ProductId id->id.ToString()
 type CustomerId = CustomerId of int
+with override this.ToString()= match this with CustomerId id->id.ToString()
 module OrderId =begin let unwrap (OrderId id)=id end
 module ProductId =begin let unwrap (ProductId id)=id end
 module CustomerId =begin let unwrap (CustomerId id)=id end

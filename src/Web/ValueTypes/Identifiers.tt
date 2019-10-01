@@ -20,7 +20,7 @@ var type =typeT.Name;
 var prefix = typeT.Prefix;
 #>
     [TypeConverter(typeof(ParseTypeConverter<<#= type #>>))]
-    public struct <#= type #> : IEquatable<<#= type #>>
+    public struct <#= type #> : IEquatable<<#= type #>>, IComparable<<#= type #>>
     {
         public readonly int Value;
 
@@ -52,6 +52,7 @@ var prefix = typeT.Prefix;
         public static bool operator ==(<#= type #> a, <#= type #> b)=>a.Equals(b);
         public static bool operator !=(<#= type #> a, <#= type #> b)=>!a.Equals(b);
         public static implicit operator <#= type #>(int d) => new <#= type #>(d);
+        public int CompareTo(<#= type #> other) => this.Value.CompareTo(other.Value);
     }
 <#
 }
