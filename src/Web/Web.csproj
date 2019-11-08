@@ -29,6 +29,7 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="3.0.0" />
     <PackageReference Include="Saithe" Version="2.1.1" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="4.0.1" />
+    <PackageReference Include="FSharpPlus.CSharp" Version="0.0.1-alpha-2" />
   </ItemGroup>
 
   <ItemGroup>

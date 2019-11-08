@@ -6,7 +6,8 @@ using SomeBasicEFApp.Web.Data;
 using SomeBasicEFApp.Web.Entities;
 using SomeBasicEFApp.Web.Models;
 using SomeBasicEFApp.Web.ValueTypes;
-
+using Microsoft.AspNetCore.Http;
+using FSharpPlusCSharp;
 namespace SomeBasicEFApp.Web.Controllers.v1
 {
     [Route("/api/v1/customers")]
@@ -32,6 +33,10 @@ namespace SomeBasicEFApp.Web.Controllers.v1
         // GET: Customers/Details/5
         [HttpGet("{id}")]
         [Produces(typeof(CustomerModel))]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesDefaultResponseType]
         public async Task<IActionResult> Details(CustomerId? id)
         {
             if (id == null)
@@ -39,8 +44,7 @@ namespace SomeBasicEFApp.Web.Controllers.v1
                 return BadRequest();
             }
 
-            var customer = await _context.Customers
-                .SingleOrDefaultAsync(m => m.Id == id);
+            var customer = await _context.GetCustomerAsync(id.Value);
             if (customer == null)
             {
                 return NotFound();
@@ -61,14 +65,18 @@ namespace SomeBasicEFApp.Web.Controllers.v1
 
         [HttpPut("{id}")]
         [Produces(typeof(CustomerModel))]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesDefaultResponseType]
         public async Task<IActionResult> Edit(CustomerId id, [FromBody] EditCustomer model)
         {
-            var customer = await _context.GetCustomerAsync(id);
-            if (customer == null) return NotFound();
-            customer.Firstname = model.Firstname;
-            customer.Lastname = model.Lastname;
-            await _context.SaveChangesAsync();
-            return Ok(Mappers.Map(customer));
+            var maybeCustomer = await _context.GetCustomerAsync(id);
+            return await maybeCustomer.Match<Customer,Task<IActionResult>>(async customer=> {
+                customer.Firstname = model.Firstname;
+                customer.Lastname = model.Lastname;
+                await _context.SaveChangesAsync();
+                return Ok(Mappers.Map(customer));
+            }, async () => await Task.FromResult(NotFound()));
         }
 
 

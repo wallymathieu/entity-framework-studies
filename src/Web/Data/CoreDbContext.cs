@@ -5,6 +5,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SomeBasicEFApp.Web.Entities;
 using SomeBasicEFApp.Web.ValueTypes;
+using FSharpPlusCSharp;
+using Microsoft.FSharp.Core;
 
 namespace SomeBasicEFApp.Web.Data
 {
@@ -31,22 +33,22 @@ namespace SomeBasicEFApp.Web.Data
 
         public DbSet<ProductOrder> ProductOrders { get; set; }
 
-        public Customer GetCustomer(CustomerId v) => 
-            Customers.SingleOrDefault(c => c.Id == v);
+        public FSharpOption<Customer> GetCustomer(CustomerId v) => 
+            Customers.SingleOrDefault(c => c.Id == v).ToOption();
 
-        public Product GetProduct(ProductId v) => 
-            Products.SingleOrDefault(p => p.Id == v);
+        public FSharpOption<Product> GetProduct(ProductId v) => 
+            Products.SingleOrDefault(p => p.Id == v).ToOption();
 
-        public Order GetOrder(OrderId v) => 
-            Orders.SingleOrDefault(o => o.Id == v);
-        public Task<Customer> GetCustomerAsync(CustomerId v) => 
-            Customers.SingleOrDefaultAsync(c => c.Id == v);
+        public FSharpOption<Order> GetOrder(OrderId v) => 
+            Orders.SingleOrDefault(o => o.Id == v).ToOption();
+        public async Task<FSharpOption<Customer>> GetCustomerAsync(CustomerId v) => 
+            (await Customers.SingleOrDefaultAsync(c => c.Id == v)).ToOption();
 
-        public Task<Product> GetProductAsync(ProductId v) => 
-            Products.SingleOrDefaultAsync(p => p.Id == v);
+        public async Task<FSharpOption<Product>> GetProductAsync(ProductId v) => 
+            (await Products.SingleOrDefaultAsync(p => p.Id == v)).ToOption();
 
-        public Task<Order> GetOrderAsync(OrderId v) => 
-            Orders.SingleOrDefaultAsync(o => o.Id == v);
+        public async Task<FSharpOption<Order>> GetOrderAsync(OrderId v) => 
+            (await Orders.SingleOrDefaultAsync(o => o.Id == v)).ToOption();
 
     }
 }
