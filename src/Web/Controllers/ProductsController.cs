@@ -72,13 +72,7 @@ namespace SomeBasicEFApp.Web.Controllers
             {
                 return NotFound();
             }
-
-            var product = await _context.GetProductAsync(id.Value);
-            if (product == null)
-            {
-                return NotFound();
-            }
-            return View(product);
+            return this.NotFoundWhenMissing(await _context.GetProductAsync(id.Value), product => View(product));
         }
 
         // POST: Products/Edit/5
@@ -123,14 +117,7 @@ namespace SomeBasicEFApp.Web.Controllers
             {
                 return NotFound();
             }
-
-            var product = await _context.GetProductAsync(id.Value);
-            if (product == null)
-            {
-                return NotFound();
-            }
-
-            return View(product);
+            return this.NotFoundWhenMissing(await _context.GetProductAsync(id.Value), product => View(product));
         }
 
         // POST: Products/Delete/5
@@ -138,15 +125,13 @@ namespace SomeBasicEFApp.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var product = await _context.GetProductAsync(id);
-            _context.Products.Remove(product);
-            await _context.SaveChangesAsync();
-            return RedirectToAction("Index");
+            return await this.NotFoundWhenMissingAsync(await _context.GetProductAsync(id), async product => {
+                _context.Products.Remove(product);
+                await _context.SaveChangesAsync();
+                return RedirectToAction("Index");
+            });
         }
 
-        private bool ProductExists(ProductId id)
-        {
-            return _context.Products.Any(e => e.Id == id);
-        }
+        private bool ProductExists(ProductId id) => _context.Products.Any(e => e.Id == id);
     }
 }

@@ -1,9 +1,6 @@
-using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using SomeBasicEFApp.Web.Data;
 using SomeBasicEFApp.Web.Entities;
@@ -17,7 +14,7 @@ namespace SomeBasicEFApp.Web.Controllers
 
         public OrdersController(CoreDbContext context)
         {
-            _context = context;    
+            _context = context;
         }
 
         // GET: Orders
@@ -34,13 +31,7 @@ namespace SomeBasicEFApp.Web.Controllers
                 return NotFound();
             }
 
-            var order = await _context.GetOrderAsync(id.Value);
-            if (order == null)
-            {
-                return NotFound();
-            }
-
-            return View(order);
+            return this.NotFoundWhenMissing(await _context.GetOrderAsync(id.Value), order => View(order));
         }
 
         // GET: Orders/Create
@@ -72,12 +63,7 @@ namespace SomeBasicEFApp.Web.Controllers
             {
                 return NotFound();
             }
-            var order = await _context.GetOrderAsync(id.Value);
-            if (order == null)
-            {
-                return NotFound();
-            }
-            return View(order);
+            return this.NotFoundWhenMissing(await _context.GetOrderAsync(id.Value), order => View(order));
         }
 
         // POST: Orders/Edit/5
@@ -122,29 +108,20 @@ namespace SomeBasicEFApp.Web.Controllers
             {
                 return NotFound();
             }
-            var order = await _context.GetOrderAsync(id.Value);
-            if (order == null)
-            {
-                return NotFound();
-            }
-
-            return View(order);
+            return this.NotFoundWhenMissing(await _context.GetOrderAsync(id.Value), order => View(order));
         }
 
         // POST: Orders/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        public async Task<IActionResult> DeleteConfirmed(int id) =>
+            await this.NotFoundWhenMissingAsync(await _context.GetOrderAsync(id), async order =>
         {
-            var order = await _context.GetOrderAsync(id);
             _context.Orders.Remove(order);
             await _context.SaveChangesAsync();
             return RedirectToAction("Index");
-        }
+        });
 
-        private bool OrderExists(OrderId id)
-        {
-            return _context.Orders.Any(e => e.Id == id);
-        }
+        private bool OrderExists(OrderId id) => _context.Orders.Any(e => e.Id == id);
     }
 }

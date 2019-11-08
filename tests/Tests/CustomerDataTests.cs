@@ -8,7 +8,7 @@ using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Reflection;
-
+using FSharpPlusCSharp;
 namespace SomeBasicEFApp.Tests
 {
     public abstract class CustomerDataTests:IDisposable
@@ -43,6 +43,7 @@ namespace SomeBasicEFApp.Tests
             var product = Session.GetProduct(1);
 
             Assert.NotNull(product);
+            Assert.True(product.HasValue());
         }
         [Fact]
         public void OrderContainsProduct()
@@ -52,7 +53,7 @@ namespace SomeBasicEFApp.Tests
                         .ThenInclude(po=>po.Product)
                     .Single(order=>order.Id==1);
             Assert.NotNull(o.ProductOrders);
-            Assert.True(o.ProductOrders.Any(p => p.Product.Id == 1));
+            Assert.Contains(o.ProductOrders, p => p.Product.Id == 1);
         }
 
         [Fact]
@@ -64,8 +65,7 @@ namespace SomeBasicEFApp.Tests
                                  .WhereThereAreOrders(
                                     from:new DateTime(2008, 5, 29), 
                                     to:new DateTime(2008, 6, 2))
-                                 .ToArray()
-                                 ;
+                                 .ToArray();
             var orderIds = products
                             .SelectMany(p => p.ProductOrders.Select(po => po.Order.Id))
                             .Distinct();
@@ -118,15 +118,34 @@ namespace SomeBasicEFApp.Tests
             {
                 import.ParseConnections("OrderProduct", "Product", "Order", (productId, orderId) =>
                 {
-                    var product = session.GetProduct(productId);
-                    var order = session.GetOrder(orderId);
-                    session.ProductOrders.Add(new ProductOrder { Order = order, Product = product });
+                    var maybeOrderAndProduct = 
+                            from product in session.GetProduct(productId)
+                            from order in session.GetOrder(orderId)
+                            select (order, product );
+                    maybeOrderAndProduct.Match(v =>
+                    {
+                        var (order, product) = v;
+                        session.ProductOrders.Add(new ProductOrder { Order = order, Product = product });
+                    }, () =>
+                    {
+                        throw new Exception("Could not find order and product");
+                    });
                 });
 
                 import.ParseIntProperty("Order", "Customer", (orderId, customerId) =>
                 {
-                    var order = session.GetOrder(orderId);
-                    order.Customer = session.GetCustomer(customerId);
+                    var maybeOrderAndCustomer =
+                            from order in session.GetOrder(orderId)
+                            from customer in session.GetCustomer(customerId)
+                            select (order, customer);
+                    maybeOrderAndCustomer.Match(v =>
+                    {
+                        var (order, customer) = v;
+                        order.Customer = customer;
+                    }, () =>
+                    {
+                        throw new Exception("Could not find order and customer");
+                    });
                 });
 
                 session.SaveChanges();

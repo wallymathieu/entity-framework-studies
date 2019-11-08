@@ -33,14 +33,7 @@ namespace SomeBasicEFApp.Web.Controllers
             {
                 return NotFound();
             }
-
-            var customer = await _context.GetCustomerAsync(id.Value);
-            if (customer == null)
-            {
-                return NotFound();
-            }
-
-            return View(customer);
+            return this.NotFoundWhenMissing(await _context.GetCustomerAsync(id.Value), customer => View(customer));
         }
 
         // GET: Customers/Create
@@ -72,13 +65,7 @@ namespace SomeBasicEFApp.Web.Controllers
             {
                 return NotFound();
             }
-
-            var customer = await _context.GetCustomerAsync(id.Value);
-            if (customer == null)
-            {
-                return NotFound();
-            }
-            return View(customer);
+            return this.NotFoundWhenMissing(await _context.GetCustomerAsync(id.Value), customer => View(customer));
         }
 
         // POST: Customers/Edit/5
@@ -123,30 +110,19 @@ namespace SomeBasicEFApp.Web.Controllers
             {
                 return NotFound();
             }
-
-            var customer = await _context.GetCustomerAsync(id.Value);
-            if (customer == null)
-            {
-                return NotFound();
-            }
-
-            return View(customer);
+            return this.NotFoundWhenMissing(await _context.GetCustomerAsync(id.Value), customer => View(customer));
         }
 
         // POST: Customers/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        public async Task<IActionResult> DeleteConfirmed(int id) => await this.NotFoundWhenMissingAsync(await _context.GetCustomerAsync(id), async customer =>
         {
-            var customer = await _context.GetCustomerAsync(id);
             _context.Customers.Remove(customer);
             await _context.SaveChangesAsync();
             return RedirectToAction("Index");
-        }
+        });
 
-        private bool CustomerExists(CustomerId id)
-        {
-            return _context.Customers.Any(e => e.Id == id);
-        }
+        private bool CustomerExists(CustomerId id) => _context.Customers.Any(e => e.Id == id);
     }
 }
