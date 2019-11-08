@@ -25,10 +25,8 @@ namespace SomeBasicEFApp.Web.Controllers.v1
         // GET: Customers
         [HttpGet]
         [Produces(typeof(CustomerModel[]))]
-        public async Task<IActionResult> Index()
-        {
-            return Ok(await _context.Customers.Select(c=>Mappers.Map(c)).ToListAsync());
-        }
+        public async Task<IActionResult> Index() =>
+            Ok(await _context.Customers.Select(c => Mappers.Map(c)).ToListAsync());
 
         // GET: Customers/Details/5
         [HttpGet("{id}")]
@@ -37,27 +35,16 @@ namespace SomeBasicEFApp.Web.Controllers.v1
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesDefaultResponseType]
-        public async Task<IActionResult> Details(CustomerId? id)
-        {
-            if (id == null)
-            {
-                return BadRequest();
-            }
-
-            var customer = await _context.GetCustomerAsync(id.Value);
-            if (customer == null)
-            {
-                return NotFound();
-            }
-
-            return Ok(Mappers.Map(customer));
-        }
+        public async Task<IActionResult> Details(CustomerId? id) => 
+            await this.BadRequestWhenMissingAsync(id.ToOption(), async customerId =>
+                        this.NotFoundWhenMissing(await _context.GetCustomerAsync(customerId),
+                                                  customer => Ok(Mappers.Map(customer))));
 
         [HttpPost("")]
         [Produces(typeof(CustomerModel))]
         public async Task<IActionResult> Create([FromBody] EditCustomer model)
         {
-            var customer = new Customer {Firstname = model.Firstname, Lastname = model.Lastname};
+            var customer = new Customer { Firstname = model.Firstname, Lastname = model.Lastname };
             await _context.Customers.AddAsync(customer);
             await _context.SaveChangesAsync();
             return Ok(Mappers.Map(customer));
@@ -68,16 +55,15 @@ namespace SomeBasicEFApp.Web.Controllers.v1
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesDefaultResponseType]
-        public async Task<IActionResult> Edit(CustomerId id, [FromBody] EditCustomer model)
-        {
-            var maybeCustomer = await _context.GetCustomerAsync(id);
-            return await maybeCustomer.Match<Customer,Task<IActionResult>>(async customer=> {
-                customer.Firstname = model.Firstname;
-                customer.Lastname = model.Lastname;
-                await _context.SaveChangesAsync();
-                return Ok(Mappers.Map(customer));
-            }, async () => await Task.FromResult(NotFound()));
-        }
+        public async Task<IActionResult> Edit(CustomerId id, [FromBody] EditCustomer model) =>
+            await this.NotFoundWhenMissingAsync(await _context.GetCustomerAsync(id),
+                async customer =>
+                {
+                    customer.Firstname = model.Firstname;
+                    customer.Lastname = model.Lastname;
+                    await _context.SaveChangesAsync();
+                    return Ok(Mappers.Map(customer));
+                });
 
 
         // POST: Customers/Delete/5
