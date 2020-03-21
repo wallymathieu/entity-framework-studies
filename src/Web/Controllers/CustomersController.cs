@@ -144,7 +144,7 @@ namespace SomeBasicEFApp.Web.Controllers
             return RedirectToAction("Index");
         }
 
-        private bool CustomerExists(int id)
+        private bool CustomerExists(CustomerId id)
         {
             return _context.Customers.Any(e => e.Id == id);
         }

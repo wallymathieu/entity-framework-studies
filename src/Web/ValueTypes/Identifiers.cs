@@ -6,7 +6,7 @@ namespace SomeBasicEFApp.Web.ValueTypes
 {
 
     [TypeConverter(typeof(ParseTypeConverter<CustomerId>))]
-    public struct CustomerId : IEquatable<CustomerId>
+    public struct CustomerId : IEquatable<CustomerId>, IComparable<CustomerId>
     {
         public readonly int Value;
 
@@ -38,9 +38,10 @@ namespace SomeBasicEFApp.Web.ValueTypes
         public static bool operator ==(CustomerId a, CustomerId b)=>a.Equals(b);
         public static bool operator !=(CustomerId a, CustomerId b)=>!a.Equals(b);
         public static implicit operator CustomerId(int d) => new CustomerId(d);
+        public int CompareTo(CustomerId other) => this.Value.CompareTo(other.Value);
     }
     [TypeConverter(typeof(ParseTypeConverter<OrderId>))]
-    public struct OrderId : IEquatable<OrderId>
+    public struct OrderId : IEquatable<OrderId>, IComparable<OrderId>
     {
         public readonly int Value;
 
@@ -72,9 +73,10 @@ namespace SomeBasicEFApp.Web.ValueTypes
         public static bool operator ==(OrderId a, OrderId b)=>a.Equals(b);
         public static bool operator !=(OrderId a, OrderId b)=>!a.Equals(b);
         public static implicit operator OrderId(int d) => new OrderId(d);
+        public int CompareTo(OrderId other) => this.Value.CompareTo(other.Value);
     }
     [TypeConverter(typeof(ParseTypeConverter<ProductId>))]
-    public struct ProductId : IEquatable<ProductId>
+    public struct ProductId : IEquatable<ProductId>, IComparable<ProductId>
     {
         public readonly int Value;
 
@@ -106,5 +108,6 @@ namespace SomeBasicEFApp.Web.ValueTypes
         public static bool operator ==(ProductId a, ProductId b)=>a.Equals(b);
         public static bool operator !=(ProductId a, ProductId b)=>!a.Equals(b);
         public static implicit operator ProductId(int d) => new ProductId(d);
+        public int CompareTo(ProductId other) => this.Value.CompareTo(other.Value);
     }
 }

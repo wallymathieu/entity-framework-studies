@@ -5,7 +5,7 @@ namespace SomeBasicEFApp.Web.Entities
 {
     public class Customer
     {
-        public int Id { get; set; }
+        public CustomerId Id { get; set; }
 
         public string Firstname { get; set; }
 
@@ -13,7 +13,6 @@ namespace SomeBasicEFApp.Web.Entities
 
         public IList<Order> Orders { get; set; }
 
-        public virtual int Version { get; set; }
-        public CustomerId GetId() => new CustomerId(Id);
+        public int Version { get; set; }
     }
 }
