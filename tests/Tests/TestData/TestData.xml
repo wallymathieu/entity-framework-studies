@@ -48,7 +48,6 @@
     <Name>Yo-yo</Name>
     <Cost>3.50</Cost>
     <Version>1</Version>
-    <Type>Toy</Type>
   </Product>
   <Product>
     <Id>2</Id>

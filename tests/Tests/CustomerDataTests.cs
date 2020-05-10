@@ -42,14 +42,17 @@ namespace SomeBasicEFApp.Tests
         public void CanGetProductById()
         {
             var product = Session.GetProduct(1);
-            Assert.Equal(new ProductType("Toy"), product.Type);
-
             Assert.NotNull(product);
-            product.Type=new ProductType("Other");
-            Session.SaveChanges();
-            Assert.Equal(new ProductType("Other"), Session.GetProduct(1).Type);
         }
-        
+        [Fact]
+        public void ProductType()
+        {
+            var product = Session.GetProduct(1);
+            Assert.Equal(new ProductType(null), product.Type);
+
+            var product2 = Session.GetProduct(2);
+            Assert.Equal(new ProductType("Candy"), product2.Type);
+        }
         [Fact]
         public void OrderContainsProduct()
         {
@@ -87,8 +90,6 @@ namespace SomeBasicEFApp.Tests
             Assert.NotNull(o.Customer);
             Assert.NotEmpty(o.Customer.Firstname);
         }
-
-        
 
         public static DbContextOptions Setup(DbContextOptions options)
         {
