@@ -37,11 +37,17 @@ type CoreDbContext(options:DbContextOptions)=
         let productIdConverter = FSharpValueConverter.Create(ProductId, ProductId.unwrap)
         let customerIdConverter = FSharpValueConverter.Create(CustomerId, CustomerId.unwrap)
         modelBuilder.Entity<Order>()
-                    .Property(fun o->o.OrderId).HasColumnName("Id").HasConversion(orderIdConverter) |> ignore
+                    .Property(fun o->o.OrderId).HasColumnName("Id")
+                    .HasConversion(orderIdConverter)
+                    .UsePropertyAccessMode(PropertyAccessMode.PreferProperty) |> ignore
         modelBuilder.Entity<Customer>()
-                    .Property(fun o->o.CustomerId).HasColumnName("Id").HasConversion(customerIdConverter) |> ignore
+                    .Property(fun o->o.CustomerId).HasColumnName("Id")
+                    .HasConversion(customerIdConverter)
+                    .UsePropertyAccessMode(PropertyAccessMode.PreferProperty) |> ignore
         modelBuilder.Entity<Product>()
-                    .Property(fun o->o.ProductId).HasColumnName("Id").HasConversion(productIdConverter) |> ignore
+                    .Property(fun o->o.ProductId).HasColumnName("Id")
+                    .HasConversion(productIdConverter)
+                    .UsePropertyAccessMode(PropertyAccessMode.PreferProperty) |> ignore
         modelBuilder.Entity<Product>()
                     .Property(fun o->o.ProductName).HasColumnName("Name") |> ignore
         modelBuilder.Entity<Product>()
