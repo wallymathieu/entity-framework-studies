@@ -15,6 +15,6 @@ namespace SomeBasicEFApp.Web.Entities
 
         public int Version { get; set; }
         
-        public ProductType Type { get; set; }        
+        public ProductType Type { get; set; } = new ProductType(null);
     }
 }
