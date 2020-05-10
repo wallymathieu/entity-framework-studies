@@ -2,7 +2,7 @@ using System;
 
 namespace SomeBasicEFApp.Web.ValueTypes
 {
-    public class ProductType:IEquatable<ProductType>
+    public class ProductType:IEquatable<ProductType>,IValueType
     {
         public string Type { get; }
 
@@ -33,5 +33,9 @@ namespace SomeBasicEFApp.Web.ValueTypes
         public static bool operator ==(ProductType a, ProductType b) => a.Equals(b);
 
         public static bool operator !=(ProductType a, ProductType b) => !(a == b);
+    }
+
+    public interface IValueType
+    {
     }
 }

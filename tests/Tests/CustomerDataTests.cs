@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Reflection;
+using SomeBasicEFApp.Web.ValueTypes;
 
 namespace SomeBasicEFApp.Tests
 {
@@ -41,9 +42,14 @@ namespace SomeBasicEFApp.Tests
         public void CanGetProductById()
         {
             var product = Session.GetProduct(1);
+            Assert.Equal(new ProductType("Toy"), product.Type);
 
             Assert.NotNull(product);
+            product.Type=new ProductType("Other");
+            Session.SaveChanges();
+            Assert.Equal(new ProductType("Other"), Session.GetProduct(1).Type);
         }
+        
         [Fact]
         public void OrderContainsProduct()
         {

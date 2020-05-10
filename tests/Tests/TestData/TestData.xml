@@ -48,30 +48,35 @@
     <Name>Yo-yo</Name>
     <Cost>3.50</Cost>
     <Version>1</Version>
+    <Type>Toy</Type>
   </Product>
   <Product>
     <Id>2</Id>
     <Name>Gumballs</Name>
     <Cost>0.25</Cost>
     <Version>1</Version>
+    <Type>Candy</Type>
   </Product>
   <Product>
     <Id>3</Id>
     <Name>Soda</Name>
     <Cost>1.50</Cost>
     <Version>1</Version>
+    <Type>Beverage</Type>
   </Product>
   <Product>
     <Id>4</Id>
     <Name>Coffee</Name>
     <Cost>1.25</Cost>
     <Version>1</Version>
+    <Type>Beverage</Type>
   </Product>
   <Product>
     <Id>5</Id>
     <Name>Tea</Name>
     <Cost>1.00</Cost>
     <Version>1</Version>
+    <Type>Beverage</Type>
   </Product>
   <Order>
     <Id>1</Id>
