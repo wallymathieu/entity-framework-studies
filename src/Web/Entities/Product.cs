@@ -14,5 +14,7 @@ namespace SomeBasicEFApp.Web.Entities
         public ProductId Id { get; set; }
 
         public int Version { get; set; }
+        
+        public ProductType Type { get; internal set; }        
     }
 }
