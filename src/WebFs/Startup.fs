@@ -23,7 +23,8 @@ type Startup private () =
     // This method gets called by the runtime. Use this method to add services to the container.
     member this.ConfigureServices(services: IServiceCollection) =
         // Add framework services.
-        services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1) |> ignore
+        services.AddControllersWithViews() |> ignore
+
         services.AddDbContext<CoreDbContext>(fun options ->
                                                  options.UseSqlServer(this.Configuration.GetConnectionString("DefaultConnection")) |> ignore
                                             ) 
@@ -36,8 +37,13 @@ type Startup private () =
         else
             app.UseHsts() |> ignore
 
-        app.UseHttpsRedirection() 
-            .UseMvc() 
+        app.UseHttpsRedirection()
+            .UseRouting()
+            .UseEndpoints(fun endpoints ->
+                endpoints.MapControllerRoute(
+                    name= "default",
+                    pattern= "{controller=Home}/{action=Index}/{id?}") |> ignore
+            )
             |> swagger.Configure
 
     member val Configuration : IConfiguration = null with get, set

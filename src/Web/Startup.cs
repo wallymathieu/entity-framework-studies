@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using Microsoft.AspNetCore.Builder;
@@ -9,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.OpenApi.Models;
 using SomeBasicEFApp.Web.Data;
 using Swashbuckle.AspNetCore.Swagger;
 
@@ -53,14 +55,13 @@ namespace SomeBasicEFApp.Web
                         (webAssembly.GetCustomAttributes(typeof(AssemblyInformationalVersionAttribute))
                             as AssemblyInformationalVersionAttribute[])?.First()?.InformationalVersion;
 
-                    options.SwaggerDoc("v1", new Info
+                    options.SwaggerDoc("v1", new OpenApiInfo
                     {
                         Version = informationalVersion ?? "dev",
                         Title = "API",
                         Description = "Some API",
-                        TermsOfService = "See license agreement",
-                        Contact = new Contact
-                            {Name = "Dev", Email = "developers@somecompany.com", Url = "https://somecompany.com"}
+                        Contact = new OpenApiContact
+                            {Name = "Dev", Email = "developers@somecompany.com", Url = new Uri("https://somecompany.com")}
                     });
 
                     //Set the comments path for the swagger json and ui.
@@ -99,7 +100,7 @@ namespace SomeBasicEFApp.Web
 #endif
                 }).AddEntityFrameworkStores<CoreDbContext>()
                 .AddDefaultTokenProviders();
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            services.AddControllersWithViews();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -119,9 +120,16 @@ namespace SomeBasicEFApp.Web
             _swagger.Configure(app, env);
             app.UseStaticFiles();
 
-            // Add external authentication middleware below. To configure them please see https://go.microsoft.com/fwlink/?LinkID=532715
+            app.UseRouting();
 
-            app.UseMvcWithDefaultRoute();
+            //app.UseAuthorization();
+
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapControllerRoute(
+                    name: "default",
+                    pattern: "{controller=Home}/{action=Index}/{id?}");
+            });
         }
     }
 }

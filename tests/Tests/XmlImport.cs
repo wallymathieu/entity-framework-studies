@@ -29,7 +29,8 @@ namespace SomeBasicEFApp.Tests
             static bool InValueTypesNamespace(Type propertyType) =>
                 propertyType.Namespace == typeof(CustomerId).Namespace;
             static bool IsValueTypeOrString(Type propertyType) =>
-                propertyType.GetTypeInfo().IsValueType || propertyType == typeof(string);
+                propertyType.GetTypeInfo().IsValueType || propertyType == typeof(string) 
+                                                       || typeof(IValueType).GetTypeInfo().IsAssignableFrom(propertyType);
             var props = type.GetProperties();
             var customerObj = Activator.CreateInstance(type);
             foreach (var propertyInfo in props)

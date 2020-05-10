@@ -16,12 +16,26 @@ namespace SomeBasicEFApp.Web.Data
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
-            builder.Entity<Product>()
-                .Property(o => o.Id).HasConversion(new ValueConverter<ProductId, int>(v => v.Value, v => new ProductId(v)));
-            builder.Entity<Customer>()
-                .Property(o => o.Id).HasConversion(new ValueConverter<CustomerId, int>(v => v.Value, v => new CustomerId(v)));
-            builder.Entity<Order>()
-                .Property(o => o.Id).HasConversion(new ValueConverter<OrderId, int>(v => v.Value, v => new OrderId(v)));
+            builder.Entity<Product>(entity =>
+            {
+                entity.Property(o => o.Id)
+                    .HasConversion(new ValueConverter<ProductId, int>(v => v.Value, v => new ProductId(v)));
+                entity
+                    .OwnsOne(o => o.Type,
+                        t=>t.Property(pt=>pt.Type).HasColumnName("ProductType"))
+                    .UsePropertyAccessMode(PropertyAccessMode.Field);
+                
+            });
+            builder.Entity<Customer>(entity =>
+            {
+                entity.Property(o => o.Id)
+                    .HasConversion(new ValueConverter<CustomerId, int>(v => v.Value, v => new CustomerId(v)));
+            });
+            builder.Entity<Order>(entity =>
+            {
+                entity.Property(o => o.Id)
+                    .HasConversion(new ValueConverter<OrderId, int>(v => v.Value, v => new OrderId(v)));
+            });
             base.OnModelCreating(builder);
         }
 
