@@ -1,4 +1,6 @@
 module WebFs.Swagger
+open System
+open Microsoft.OpenApi.Models
 open Swashbuckle.AspNetCore.Swagger
 open Microsoft.AspNetCore.Builder
 open Microsoft.AspNetCore.Hosting
@@ -20,15 +22,14 @@ type SwaggerConfig()=
         services.AddSwaggerGen(fun options -> ()) |> ignore
 
         services.ConfigureSwaggerGen(fun options ->
-            let info = Info()
+            let info = OpenApiInfo()
             info.Version <- "dev"
             info.Title <- "API"
             info.Description <- "Some API"
-            info.TermsOfService <- "See license agreement"
-            let contact=Contact()
+            let contact=OpenApiContact()
             contact.Name <- "Dev"
             contact.Email <- "developers@somecompany.com"
-            contact.Url <- "https://somecompany.com"
+            contact.Url <- Uri("https://somecompany.com")
             info.Contact <- contact
             options.SwaggerDoc("v1", info);
         ) |> ignore
