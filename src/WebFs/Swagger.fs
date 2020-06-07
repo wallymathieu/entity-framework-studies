@@ -22,14 +22,14 @@ type SwaggerConfig()=
         services.AddSwaggerGen(fun options -> ()) |> ignore
 
         services.ConfigureSwaggerGen(fun options ->
-            let info = OpenApiInfo()
-            info.Version <- "dev"
-            info.Title <- "API"
-            info.Description <- "Some API"
-            let contact=OpenApiContact()
-            contact.Name <- "Dev"
-            contact.Email <- "developers@somecompany.com"
-            contact.Url <- Uri("https://somecompany.com")
-            info.Contact <- contact
+            let info = OpenApiInfo(
+                        Version = "dev",
+                        Title = "API",
+                        Description = "Some API",
+                        Contact=OpenApiContact(
+                                    Name = "Dev",
+                                    Email = "developers@somecompany.com",
+                                    Url = Uri("https://somecompany.com")))
+
             options.SwaggerDoc("v1", info);
         ) |> ignore
