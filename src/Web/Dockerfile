@@ -1,6 +1,6 @@
 FROM mcr.microsoft.com/dotnet/core/sdk:3.1
 ENV PATH $PATH:/root/.dotnet/tools
-RUN dotnet tool install -g dotnet-ef --version 3.1.1
+RUN dotnet tool install -g dotnet-ef --version 3.1.3
 COPY . /app
 WORKDIR /app
 RUN ["dotnet", "restore"]
