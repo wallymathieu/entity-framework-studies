@@ -1,0 +1,49 @@
+
+version: "3.4"
+services:
+  webc:
+    build:
+      context: src/Web
+      dockerfile: Dockerfile
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_URLS: http://0.0.0.0:80
+      ConnectionStrings__DefaultConnection: "Server=db-c;Database=master;MultipleActiveResultSets=true;User Id=sa;Password=EF_TEST_PASSWORD"
+    ports:
+      - "8000:80"
+    depends_on:
+      - db-c
+  webf:
+    build:
+      context: src/WebFs
+      dockerfile: Dockerfile   
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_URLS: http://0.0.0.0:80
+      ConnectionStrings__DefaultConnection: "Server=db-f;Database=master;MultipleActiveResultSets=true;User Id=sa;Password=EF_TEST_PASSWORD"
+    ports:
+      - "8001:80"
+    depends_on:
+      - db-f
+      - webf-migrations
+  webf-migrations:
+    build:
+      context: migrations/FsMigrations
+      dockerfile: Dockerfile   
+    environment:
+      PASSWORD: "EF_TEST_PASSWORD"
+      SERVER: "db-f"
+      DATABASE: "master"
+    depends_on:
+      - db-f
+
+  db-c:
+    image: "mcr.microsoft.com/mssql/server"
+    environment:
+      SA_PASSWORD: "EF_TEST_PASSWORD"
+      ACCEPT_EULA: "Y"
+  db-f:
+    image: "mcr.microsoft.com/mssql/server"
+    environment:
+      SA_PASSWORD: "EF_TEST_PASSWORD"
+      ACCEPT_EULA: "Y"
