@@ -8,11 +8,11 @@ services:
     environment:
       ASPNETCORE_ENVIRONMENT: Development
       ASPNETCORE_URLS: http://0.0.0.0:80
-      ConnectionStrings__DefaultConnection: "Server=db-c;Database=master;MultipleActiveResultSets=true;User Id=sa;Password=EF_TEST_PASSWORD"
+      ConnectionStrings__DefaultConnection: "Server=db;Database=ef_core_studies;MultipleActiveResultSets=true;User Id=sa;Password=EF_test_PASSWORD123"
     ports:
       - "8000:80"
     depends_on:
-      - db-c
+      - db
   webf:
     build:
       context: src/WebFs
@@ -20,30 +20,29 @@ services:
     environment:
       ASPNETCORE_ENVIRONMENT: Development
       ASPNETCORE_URLS: http://0.0.0.0:80
-      ConnectionStrings__DefaultConnection: "Server=db-f;Database=master;MultipleActiveResultSets=true;User Id=sa;Password=EF_TEST_PASSWORD"
+      ConnectionStrings__DefaultConnection: "Server=db;Database=ef_core_studies_fsharp;MultipleActiveResultSets=true;User Id=sa;Password=EF_test_PASSWORD123"
     ports:
       - "8001:80"
     depends_on:
-      - db-f
+      - db
       - webf-migrations
   webf-migrations:
     build:
       context: migrations/FsMigrations
       dockerfile: Dockerfile   
     environment:
-      PASSWORD: "EF_TEST_PASSWORD"
-      SERVER: "db-f"
-      DATABASE: "master"
+      PASSWORD: "EF_test_PASSWORD123"
+      SERVER: "db"
+      DATABASE: "ef_core_studies_fsharp"
     depends_on:
-      - db-f
+      - db
 
-  db-c:
-    image: "mcr.microsoft.com/mssql/server"
+  db:
+    build:
+      context: ./db/
+      dockerfile: Dockerfile
+    ports:
+      - "1433:1433"
     environment:
-      SA_PASSWORD: "EF_TEST_PASSWORD"
-      ACCEPT_EULA: "Y"
-  db-f:
-    image: "mcr.microsoft.com/mssql/server"
-    environment:
-      SA_PASSWORD: "EF_TEST_PASSWORD"
+      SA_PASSWORD: "EF_test_PASSWORD123"
       ACCEPT_EULA: "Y"
