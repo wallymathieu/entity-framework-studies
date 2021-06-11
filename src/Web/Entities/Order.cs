@@ -8,7 +8,7 @@ namespace SomeBasicEFApp.Web.Entities
     public class Order
     {
         ///
-        public Customer Customer { get; set; }
+        public Customer? Customer { get; set; }
         ///
         public DateTime OrderDate { get; set; }
         ///
