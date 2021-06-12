@@ -5,17 +5,16 @@ using System.Reflection;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using SomeBasicEFApp.Web.Data;
-using Swashbuckle.AspNetCore.Swagger;
 
 namespace SomeBasicEFApp.Web
 {
+    ///
     public class Startup
     {
         private SwaggerConfig _swagger;
@@ -71,16 +70,16 @@ namespace SomeBasicEFApp.Web
                 });
             }
         }
-
+        ///
         public Startup(IConfiguration configuration, IWebHostEnvironment env)
         {
             Configuration = configuration;
             _env = env;
             _swagger = new SwaggerConfig(env);
         }
-
+        ///
         public IConfiguration Configuration { get; }
-
+        ///
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
@@ -102,7 +101,7 @@ namespace SomeBasicEFApp.Web
                 .AddDefaultTokenProviders();
             services.AddControllersWithViews();
         }
-
+        ///
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {

@@ -45,22 +45,22 @@ namespace SomeBasicEFApp.Web.Data
 
         public DbSet<ProductOrder> ProductOrders { get; set; }
 
-        public Customer GetCustomer(CustomerId v) => 
+        public Customer? GetCustomer(CustomerId v) => 
             Customers.SingleOrDefault(c => c.Id == v);
 
-        public Product GetProduct(ProductId v) => 
+        public Product? GetProduct(ProductId v) => 
             Products.SingleOrDefault(p => p.Id == v);
 
-        public Order GetOrder(OrderId v) => 
+        public Order? GetOrder(OrderId v) => 
             Orders.SingleOrDefault(o => o.Id == v);
-        public Task<Customer> GetCustomerAsync(CustomerId v) => 
-            Customers.SingleOrDefaultAsync(c => c.Id == v);
+        public async Task<Customer?> GetCustomerAsync(CustomerId v) => 
+            await Customers.SingleOrDefaultAsync(c => c.Id == v);
 
-        public Task<Product> GetProductAsync(ProductId v) => 
-            Products.SingleOrDefaultAsync(p => p.Id == v);
+        public async Task<Product?> GetProductAsync(ProductId v) => 
+            await Products.SingleOrDefaultAsync(p => p.Id == v);
 
-        public Task<Order> GetOrderAsync(OrderId v) => 
-            Orders.SingleOrDefaultAsync(o => o.Id == v);
+        public async Task<Order?> GetOrderAsync(OrderId v) => 
+            await Orders.SingleOrDefaultAsync(o => o.Id == v);
 
     }
 }
