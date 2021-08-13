@@ -11,10 +11,12 @@ namespace SomeBasicEFApp.Tests
 {
     public class XmlImport
     {
-        XNamespace _ns;
-        XDocument xDocument;
+        readonly XNamespace _ns;
+        readonly XDocument xDocument;
         public XmlImport(XDocument xDocument, XNamespace ns)
         {
+            if (ns is null) throw new NullReferenceException(nameof(ns));
+            if (xDocument is null) throw new NullReferenceException(nameof(xDocument));
             _ns = ns;
             this.xDocument = xDocument;
         }
@@ -24,12 +26,13 @@ namespace SomeBasicEFApp.Tests
             var ctor = t.GetConstructors().Single(c => c.GetParameters().Length == 1);
             return (ctor, ctor.GetParameters()[0].ParameterType);
         }
-        private object Parse(XElement target, Type type, Action<Type, PropertyInfo> onIgnore)
+        private object Parse(XElement target, Type type, Action<Type, PropertyInfo>? onIgnore)
         {
             static bool InValueTypesNamespace(Type propertyType) =>
                 propertyType.Namespace == typeof(CustomerId).Namespace;
+
             static bool IsValueTypeOrString(Type propertyType) =>
-                propertyType.GetTypeInfo().IsValueType || propertyType == typeof(string) 
+                propertyType.GetTypeInfo().IsValueType || propertyType == typeof(string)
                                                        || typeof(IValueType).GetTypeInfo().IsAssignableFrom(propertyType);
             var props = type.GetProperties();
             var customerObj = Activator.CreateInstance(type);
@@ -44,7 +47,7 @@ namespace SomeBasicEFApp.Tests
                     }
                     else if (InValueTypesNamespace(propertyInfo.PropertyType))
                     {
-                        var (ctor, parameterType)= GetConstructorAndParameterType(propertyInfo.PropertyType);
+                        var (ctor, parameterType) = GetConstructorAndParameterType(propertyInfo.PropertyType);
                         var value = ctor.Invoke(new[]{Convert.ChangeType(propElement.Value,
                                     parameterType, CultureInfo.InvariantCulture.NumberFormat)});
                         propertyInfo.SetValue(customerObj, value, null);
@@ -59,7 +62,7 @@ namespace SomeBasicEFApp.Tests
             return customerObj;
         }
 
-        public IEnumerable<Tuple<Type, object>> Parse(IEnumerable<Type> types, Action<Type, object> onParsedEntity = null, Action<Type, PropertyInfo> onIgnore = null)
+        public IEnumerable<Tuple<Type, object>> Parse(IEnumerable<Type> types, Action<Type, object>? onParsedEntity = null, Action<Type, PropertyInfo>? onIgnore = null)
         {
             var db = xDocument.Root;
             var list = new List<Tuple<Type, object>>();
@@ -77,7 +80,7 @@ namespace SomeBasicEFApp.Tests
             }
             return list;
         }
-        public IEnumerable<Tuple<int, int>> ParseConnections(string name, string first, string second, Action<int, int> onParsedEntity = null)
+        public IEnumerable<Tuple<int, int>> ParseConnections(string name, string first, string second, Action<int, int>? onParsedEntity = null)
         {
             var ns = _ns;
             var db = xDocument.Root;
@@ -95,7 +98,7 @@ namespace SomeBasicEFApp.Tests
             return list;
         }
 
-        public IEnumerable<Tuple<int, int>> ParseIntProperty(string name, string elementName, Action<int, int> onParsedEntity = null)
+        public IEnumerable<Tuple<int, int>> ParseIntProperty(string name, string elementName, Action<int, int>? onParsedEntity = null)
         {
             var ns = _ns;
             var db = xDocument.Root;

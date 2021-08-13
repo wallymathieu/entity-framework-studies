@@ -28,7 +28,7 @@ namespace SomeBasicEFApp.Web.Migrations
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(2000)");
 
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(256)")
@@ -56,10 +56,10 @@ namespace SomeBasicEFApp.Web.Migrations
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<string>("ClaimType")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(2000)");
 
                     b.Property<string>("ClaimValue")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(2000)");
 
                     b.Property<string>("RoleId")
                         .IsRequired()
@@ -80,10 +80,10 @@ namespace SomeBasicEFApp.Web.Migrations
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<string>("ClaimType")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(2000)");
 
                     b.Property<string>("ClaimValue")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(2000)");
 
                     b.Property<string>("UserId")
                         .IsRequired()
@@ -105,7 +105,7 @@ namespace SomeBasicEFApp.Web.Migrations
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("ProviderDisplayName")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(2000)");
 
                     b.Property<string>("UserId")
                         .IsRequired()
@@ -145,7 +145,7 @@ namespace SomeBasicEFApp.Web.Migrations
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Value")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(2000)");
 
                     b.HasKey("UserId", "LoginProvider", "Name");
 
@@ -162,7 +162,7 @@ namespace SomeBasicEFApp.Web.Migrations
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(2000)");
 
                     b.Property<int?>("CustomerId")
                         .HasColumnType("int");
@@ -189,16 +189,16 @@ namespace SomeBasicEFApp.Web.Migrations
                         .HasMaxLength(256);
 
                     b.Property<string>("PasswordHash")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(2000)");
 
                     b.Property<string>("PhoneNumber")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(2000)");
 
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("bit");
 
                     b.Property<string>("SecurityStamp")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(2000)");
 
                     b.Property<bool>("TwoFactorEnabled")
                         .HasColumnType("bit");
@@ -228,10 +228,10 @@ namespace SomeBasicEFApp.Web.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Firstname")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(2000)");
 
                     b.Property<string>("Lastname")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(2000)");
 
                     b.Property<int>("Version")
                         .HasColumnType("int");
@@ -271,7 +271,7 @@ namespace SomeBasicEFApp.Web.Migrations
                         .HasColumnType("real");
 
                     b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(2000)");
 
                     b.Property<int>("Version")
                         .HasColumnType("int");
@@ -377,7 +377,7 @@ namespace SomeBasicEFApp.Web.Migrations
 
                             b1.Property<string>("Type")
                                 .HasColumnName("ProductType")
-                                .HasColumnType("nvarchar(max)");
+                                .HasColumnType("nvarchar(2000)");
 
                             b1.HasKey("ProductId");
 
