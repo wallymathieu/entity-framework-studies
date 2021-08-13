@@ -33,7 +33,7 @@ namespace SomeBasicEFApp.Tests
 
             static bool IsValueTypeOrString(Type propertyType) =>
                 propertyType.GetTypeInfo().IsValueType || propertyType == typeof(string)
-                                                       || (propertyType.Namespace?.EndsWith("ValueTypes") ?? false);
+                                                       || typeof(IValueType).GetTypeInfo().IsAssignableFrom(propertyType);
             var props = type.GetProperties();
             var customerObj = Activator.CreateInstance(type);
             foreach (var propertyInfo in props)

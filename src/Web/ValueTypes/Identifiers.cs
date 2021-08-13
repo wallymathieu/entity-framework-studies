@@ -6,7 +6,7 @@ namespace SomeBasicEFApp.Web.ValueTypes
 {
 
     [TypeConverter(typeof(ParseTypeConverter<CustomerId>))]
-    public record CustomerId (int Value)
+    public record CustomerId (int Value) : IValueType
     {
         public override string ToString()=>$"customer-{Value}";
         public static CustomerId Parse(string value)
@@ -22,7 +22,7 @@ namespace SomeBasicEFApp.Web.ValueTypes
         public static implicit operator CustomerId(int d) => new CustomerId(d);
     }
     [TypeConverter(typeof(ParseTypeConverter<OrderId>))]
-    public record OrderId (int Value)
+    public record OrderId (int Value) : IValueType
     {
         public override string ToString()=>$"order-{Value}";
         public static OrderId Parse(string value)
@@ -38,7 +38,7 @@ namespace SomeBasicEFApp.Web.ValueTypes
         public static implicit operator OrderId(int d) => new OrderId(d);
     }
     [TypeConverter(typeof(ParseTypeConverter<ProductId>))]
-    public record ProductId (int Value)
+    public record ProductId (int Value) : IValueType
     {
         public override string ToString()=>$"product-{Value}";
         public static ProductId Parse(string value)

@@ -20,7 +20,7 @@ var type =typeT.Name;
 var prefix = typeT.Prefix;
 #>
     [TypeConverter(typeof(ParseTypeConverter<<#= type #>>))]
-    public record <#= type #> (int Value)
+    public record <#= type #> (int Value) : IValueType
     {
         public override string ToString()=>$"<#= prefix #>{Value}";
         public static <#= type #> Parse(string value)
