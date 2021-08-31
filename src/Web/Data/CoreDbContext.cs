@@ -45,22 +45,22 @@ namespace SomeBasicEFApp.Web.Data
 
         public DbSet<ProductOrder> ProductOrders { get; set; }
 
-        public Customer? GetCustomer(CustomerId v) => 
-            Customers.SingleOrDefault(c => c.Id == v);
+        public Customer? GetCustomer(CustomerId customerId) => 
+            Customers.SingleOrDefault(customer => customer.Id == customerId);
 
-        public Product? GetProduct(ProductId v) => 
-            Products.SingleOrDefault(p => p.Id == v);
+        public Product? GetProduct(ProductId productId) => 
+            Products.SingleOrDefault(product => product.Id == productId);
 
-        public Order? GetOrder(OrderId v) => 
-            Orders.SingleOrDefault(o => o.Id == v);
-        public async Task<Customer?> GetCustomerAsync(CustomerId v) => 
-            await Customers.SingleOrDefaultAsync(c => c.Id == v);
+        public Order? GetOrder(OrderId orderId) => 
+            Orders.SingleOrDefault(order => order.Id == orderId);
+        public async Task<Customer?> GetCustomerAsync(CustomerId customerId) => 
+            await Customers.SingleOrDefaultAsync(customer => customer.Id == customerId);
 
-        public async Task<Product?> GetProductAsync(ProductId v) => 
-            await Products.SingleOrDefaultAsync(p => p.Id == v);
+        public async Task<Product?> GetProductAsync(ProductId productId) => 
+            await Products.SingleOrDefaultAsync(product => product.Id == productId);
 
-        public async Task<Order?> GetOrderAsync(OrderId v) => 
-            await Orders.SingleOrDefaultAsync(o => o.Id == v);
+        public async Task<Order?> GetOrderAsync(OrderId orderId) => 
+            await Orders.SingleOrDefaultAsync(order => order.Id == orderId);
 
     }
 }

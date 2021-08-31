@@ -12,19 +12,19 @@ using SomeBasicEFApp.Web.ValueTypes;
 
 namespace SomeBasicEFApp.Tests
 {
-    public abstract class CustomerDataTests:IDisposable
+    public abstract class CustomerDataTests : IDisposable
     {
-        private CoreDbContext Session;
+        private CoreDbContext DbContext;
         public CustomerDataTests()
         {
-            Session = new CoreDbContext(Options);
+            DbContext = new CoreDbContext(Options);
         }
         public abstract DbContextOptions Options { get; }
 
         [Fact]
         public void CanGetCustomerById()
         {
-            var customer = Session.GetCustomer(1);
+            var customer = DbContext.GetCustomer(1);
 
             Assert.NotNull(customer);
         }
@@ -32,7 +32,7 @@ namespace SomeBasicEFApp.Tests
         [Fact]
         public void CanGetCustomerByFirstname()
         {
-            var customers = Session.Customers
+            var customers = DbContext.Customers
                 .Where(c => c.Firstname == "Steve")
                 .ToList();
             Assert.Equal(3, customers.Count);
@@ -41,25 +41,31 @@ namespace SomeBasicEFApp.Tests
         [Fact]
         public void CanGetProductById()
         {
-            var product = Session.GetProduct(1);
+            var product = DbContext.GetProduct(1);
             Assert.NotNull(product);
         }
         [Fact]
         public void ProductType()
         {
-            var product = Session.GetProduct(1);
+            var product = DbContext.GetProduct(1);
             Assert.Equal(new ProductType(null), product.Type);
 
-            var product2 = Session.GetProduct(2);
+            var product2 = DbContext.GetProduct(2);
             Assert.Equal(new ProductType("Candy"), product2.Type);
+        }
+        [Fact]
+        public void CanFindProductById()
+        {
+            var product = DbContext.Find<Product>(new ProductId(1));
+            Assert.NotNull(product);
         }
         [Fact]
         public void OrderContainsProduct()
         {
-            var o = Session.Orders
-                    .Include(order=>order.ProductOrders)
-                        .ThenInclude(po=>po.Product)
-                    .Single(order=>order.Id==1);
+            var o = DbContext.Orders
+                    .Include(order => order.ProductOrders)
+                        .ThenInclude(po => po.Product)
+                    .Single(order => order.Id == 1);
             Assert.NotNull(o.ProductOrders);
             Assert.True(o.ProductOrders.Any(p => p.Product.Id == 1));
         }
@@ -67,12 +73,12 @@ namespace SomeBasicEFApp.Tests
         [Fact]
         public void ProductsWithOrders()
         {
-            var products = Session.Products
-                                 .Include(p=>p.ProductOrders)
+            var products = DbContext.Products
+                                 .Include(p => p.ProductOrders)
                                  .ThenInclude(po => po.Order)
                                  .WhereThereAreOrders(
-                                    from:new DateTime(2008, 5, 29), 
-                                    to:new DateTime(2008, 6, 2))
+                                    from: new DateTime(2008, 5, 29),
+                                    to: new DateTime(2008, 6, 2))
                                  .ToArray()
                                  ;
             var orderIds = products
@@ -84,9 +90,9 @@ namespace SomeBasicEFApp.Tests
         [Fact]
         public void OrderHasACustomer()
         {
-            var o = Session.Orders
-                    .Include(order=>order.Customer)
-                    .Single(order=>order.Id==1);
+            var o = DbContext.Orders
+                    .Include(order => order.Customer)
+                    .Single(order => order.Id == 1);
             Assert.NotNull(o.Customer);
             Assert.NotEmpty(o.Customer.Firstname);
         }
@@ -143,7 +149,7 @@ namespace SomeBasicEFApp.Tests
 
         public void Dispose()
         {
-            ((IDisposable)Session).Dispose();
+            ((IDisposable)DbContext).Dispose();
         }
     }
 }
