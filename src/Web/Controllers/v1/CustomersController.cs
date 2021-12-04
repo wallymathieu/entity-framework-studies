@@ -78,6 +78,7 @@ namespace SomeBasicEFApp.Web.Controllers.v1
         public async Task<IActionResult> DeleteConfirmed(CustomerId id)
         {
             var customer = await _context.Customers.SingleOrDefaultAsync(m => m.Id == id);
+            if (customer is null) return NotFound();
             _context.Customers.Remove(customer);
             await _context.SaveChangesAsync();
             return Ok();
