@@ -1,14 +1,10 @@
 ﻿module WebFs.Domain
 open System
-open System.Collections.Generic
-open System.ComponentModel.DataAnnotations
-open System.ComponentModel.DataAnnotations.Schema
 open CoreFs
 open Microsoft.EntityFrameworkCore
 open System.Linq
 open System.Runtime.CompilerServices
 open System.Threading.Tasks
-open FSharp.Control.Tasks.Builders
 open Microsoft.EntityFrameworkCore.Storage.ValueConversion
 open Microsoft.FSharp.Linq.RuntimeHelpers
 open System.Linq.Expressions

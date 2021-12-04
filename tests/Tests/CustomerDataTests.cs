@@ -120,8 +120,6 @@ namespace SomeBasicEFApp.Tests
                                         case nameof(Product):
                                             session.Products.Add((Product)obj);
                                             break;
-                                        default:
-                                            break;
                                     }
 
                                 });

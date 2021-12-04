@@ -38,7 +38,7 @@ namespace SomeBasicEFApp.Tests
             var customerObj = Activator.CreateInstance(type);
             foreach (var propertyInfo in props)
             {
-                XElement propElement = target.Element(_ns + propertyInfo.Name);
+                XElement? propElement = target.Element(_ns + propertyInfo.Name);
                 if (null != propElement)
                 {
                     if (!IsValueTypeOrString(propertyInfo.PropertyType))
@@ -59,7 +59,7 @@ namespace SomeBasicEFApp.Tests
                     }
                 }
             }
-            return customerObj;
+            return customerObj!;
         }
 
         public IEnumerable<Tuple<Type, object>> Parse(IEnumerable<Type> types, Action<Type, object>? onParsedEntity = null, Action<Type, PropertyInfo>? onIgnore = null)

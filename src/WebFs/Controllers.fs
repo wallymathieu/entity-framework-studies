@@ -1,12 +1,8 @@
 ﻿namespace WebFs.Controllers
 
 open System
-open System.Collections.Generic
-open System.Linq
-open System.Threading.Tasks
 open Microsoft.AspNetCore.Mvc
 open Microsoft.EntityFrameworkCore
-open FSharp.Control.Tasks.Builders
 open CoreFs
 
 open WebFs.Domain

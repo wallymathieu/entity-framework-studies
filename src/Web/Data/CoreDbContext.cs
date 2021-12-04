@@ -40,7 +40,7 @@ namespace SomeBasicEFApp.Web.Data
         }
 
         public DbSet<Customer> Customers { get; init; }
-        public DbSet<Order> Orders { get; init; }
+        public DbSet<Order> Orders { get; init;  }
         public DbSet<Product> Products { get; init; }
 
         public DbSet<ProductOrder> ProductOrders { get; init; }

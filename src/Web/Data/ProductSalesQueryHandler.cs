@@ -12,7 +12,8 @@ namespace SomeBasicEFApp.Web.Data
         public static IQueryable<Product> WhereThereAreOrders(
             this IQueryable<Product> self, DateTime @to, DateTime @from) =>
                 self.Where(p => p.ProductOrders.Any(po =>
-                                                     @from <= po.Order.OrderDate
+                                                     po.Order!=null 
+                                                     && @from <= po.Order.OrderDate
                                                      && po.Order.OrderDate <= @to));
     }
 }

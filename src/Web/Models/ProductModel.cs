@@ -1,9 +1,4 @@
 namespace SomeBasicEFApp.Web.Models
 {
-    public class ProductModel
-    {
-        public string Id { get; init; }
-        public string Name { get; init; }
-        public float Cost { get; init; }
-    }
+    public record ProductModel(string Id, string? Name, float Cost);
 }

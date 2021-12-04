@@ -1,5 +1,3 @@
-using System;
-
 namespace SomeBasicEFApp.Web.ValueTypes
 {
     /// <summary>
@@ -8,6 +6,6 @@ namespace SomeBasicEFApp.Web.ValueTypes
     public record ProductType(string? Type): IValueType
     {
         /// <inheritdoc/>
-        public override string ToString() => Type;
+        public override string? ToString() => Type;
     }
 }

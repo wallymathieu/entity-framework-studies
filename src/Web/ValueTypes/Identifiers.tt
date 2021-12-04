@@ -19,10 +19,13 @@ foreach (var typeT in types){
 var type =typeT.Name;
 var prefix = typeT.Prefix;
 #>
+    ///
     [TypeConverter(typeof(ParseTypeConverter<<#= type #>>))]
     public record struct <#= type #> (int Value) : IValueType
     {
+        ///
         public override string ToString()=>$"<#= prefix #>{Value}";
+        ///
         public static <#= type #> Parse(string value)
         {
             if (string.IsNullOrEmpty(value))
@@ -33,6 +36,7 @@ var prefix = typeT.Prefix;
                     ? val
                     : throw new ArgumentException());
         }
+        ///
         public static implicit operator <#= type #>(int d) => new <#= type #>(d);
     }
 <#
