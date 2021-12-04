@@ -3,7 +3,7 @@
     <TargetFramework>net6</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Update="FSharp.Core" Version="5.0.1" />
+    <PackageReference Update="FSharp.Core" Version="6.0.1" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Entities.fs" />
@@ -13,15 +13,15 @@
     <Compile Include="Swagger.fs" />
     <Compile Include="Startup.fs" />
     <Compile Include="Program.fs" />
-    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.1.4" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="5.0.7" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="5.0.7">
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.3" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="6.0.0">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="5.0.7" />
-    <PackageReference Include="FluentMigrator" Version="3.2.15" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="6.0.0" />
+    <PackageReference Include="FluentMigrator" Version="3.3.1" />
     <PackageReference Include="Ply" Version="0.3.1" />
-    <PackageReference Include="FSharpPlus" Version="1.1.7" />
+    <PackageReference Include="FSharpPlus" Version="1.2.2" />
   </ItemGroup>
 </Project>
