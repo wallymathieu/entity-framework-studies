@@ -8,6 +8,6 @@ namespace SomeBasicEFApp.Web.Data
         /// <summary>
         /// If not null, then what customer entity this user is bound to
         /// </summary>
-        public Customer Customer { get; init; }
+        public Customer? Customer { get; init; }
     }
 }
