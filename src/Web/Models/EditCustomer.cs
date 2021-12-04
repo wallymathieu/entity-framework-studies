@@ -2,7 +2,7 @@ namespace SomeBasicEFApp.Web.Models
 {
     public class EditCustomer
     {
-        public string Firstname { get; set; }
-        public string Lastname { get; set; }
+        public string Firstname { get; init; }
+        public string Lastname { get; init; }
     }
 }
