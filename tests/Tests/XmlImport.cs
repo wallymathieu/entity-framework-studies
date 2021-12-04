@@ -12,13 +12,11 @@ namespace SomeBasicEFApp.Tests
     public class XmlImport
     {
         readonly XNamespace _ns;
-        readonly XDocument xDocument;
+        readonly XDocument _xDocument;
         public XmlImport(XDocument xDocument, XNamespace ns)
         {
-            if (ns is null) throw new NullReferenceException(nameof(ns));
-            if (xDocument is null) throw new NullReferenceException(nameof(xDocument));
-            _ns = ns;
-            this.xDocument = xDocument;
+            _ns = ns ?? throw new NullReferenceException(nameof(ns));
+            _xDocument = xDocument ?? throw new NullReferenceException(nameof(xDocument));
         }
         /// <summary>pick out constructor with single parateter and construct instance:</summary>
         private static (ConstructorInfo, Type) GetConstructorAndParameterType(Type t)
@@ -62,10 +60,10 @@ namespace SomeBasicEFApp.Tests
             return customerObj!;
         }
 
-        public IEnumerable<Tuple<Type, object>> Parse(IEnumerable<Type> types, Action<Type, object>? onParsedEntity = null, Action<Type, PropertyInfo>? onIgnore = null)
+        public void Parse(IEnumerable<Type> types, Action<Type, object>? onParsedEntity = null,
+            Action<Type, PropertyInfo>? onIgnore = null)
         {
-            var db = xDocument.Root;
-            var list = new List<Tuple<Type, object>>();
+            var db = _xDocument.Root;
 
             foreach (var type in types)
             {
@@ -75,17 +73,14 @@ namespace SomeBasicEFApp.Tests
                 {
                     var obj = Parse(element, type, onIgnore);
                     onParsedEntity?.Invoke(type, obj);
-                    list.Add(Tuple.Create(type, obj));
                 }
             }
-            return list;
         }
-        public IEnumerable<Tuple<int, int>> ParseConnections(string name, string first, string second, Action<int, int>? onParsedEntity = null)
+        public void ParseConnections(string name, string first, string second, Action<int, int>? onParsedEntity = null)
         {
             var ns = _ns;
-            var db = xDocument.Root;
+            var db = _xDocument.Root;
             var elements = db.Elements(ns + name);
-            var list = new List<Tuple<int, int>>();
             foreach (var element in elements)
             {
                 XElement f = element.Element(ns + first);
@@ -93,17 +88,14 @@ namespace SomeBasicEFApp.Tests
                 var firstValue = int.Parse(f.Value);
                 var secondValue = int.Parse(s.Value);
                 onParsedEntity?.Invoke(firstValue, secondValue);
-                list.Add(Tuple.Create(firstValue, secondValue));
             }
-            return list;
         }
 
-        public IEnumerable<Tuple<int, int>> ParseIntProperty(string name, string elementName, Action<int, int>? onParsedEntity = null)
+        public void ParseIntProperty(string name, string elementName, Action<int, int>? onParsedEntity = null)
         {
             var ns = _ns;
-            var db = xDocument.Root;
+            var db = _xDocument.Root;
             var elements = db.Elements(ns + name);
-            var list = new List<Tuple<int, int>>();
 
             foreach (var element in elements)
             {
@@ -112,9 +104,7 @@ namespace SomeBasicEFApp.Tests
                 var id = int.Parse(f.Value);
                 var other = int.Parse(s.Value);
                 onParsedEntity?.Invoke(id, other);
-                list.Add(Tuple.Create(id, other));
             }
-            return list;
         }
     }
 }

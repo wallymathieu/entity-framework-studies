@@ -32,11 +32,10 @@ namespace SomeBasicEFApp.Web.Controllers.v1
         public async Task<IActionResult> Post(ProductModel model)
         {// here you normally want filtering based on query parameters (in order to get better perf)
             var handler = new CreateProductCommandHandler(_context);
-            var product = await handler.Handle(new CreateProductCommand
-            {
-                Name = model.Name,
-                Cost = model.Cost
-            });
+            var product = await handler.Handle(new CreateProductCommand(
+                Name: model.Name,
+                Cost: model.Cost
+            ));
             return Ok(product);
         }
         
