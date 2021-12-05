@@ -9,8 +9,10 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Models;
 using SomeBasicEFApp.Web.Data;
+using SomeBasicEFApp.Web.ValueTypes;
 
 namespace SomeBasicEFApp.Web
 {
@@ -67,6 +69,14 @@ namespace SomeBasicEFApp.Web
                     var xmlPath = typeof(Startup).Assembly.Location.Replace(".dll",".xml").Replace(".exe", ".xml");
                     if (File.Exists(xmlPath))
                         options.IncludeXmlComments(xmlPath);
+                    var types = new[] {typeof(CustomerId), typeof(OrderId), typeof(ProductId)};
+                    foreach (var type in types)
+                    {
+                        options.MapType(type,() => new OpenApiSchema { 
+                            Type = "string", 
+                            Example = new OpenApiString(Activator.CreateInstance(type, 1).ToString() )});
+                    }
+
                 });
             }
         }
