@@ -1,6 +1,9 @@
 module WebFs.Models
+[<CLIMutable>]
 type EditCustomer={Firstname:string; Lastname:string}
+[<CLIMutable>]
 type EditProduct={Name:string; Cost:float}
+[<CLIMutable>]
 type AddProductToOrderModel={ProductId:int}
 
 type CustomerModel={Id:string;Firstname:string; Lastname:string}
