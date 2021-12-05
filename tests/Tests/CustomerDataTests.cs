@@ -15,10 +15,7 @@ namespace SomeBasicEFApp.Tests
     public abstract class CustomerDataTests : IDisposable
     {
         private CoreDbContext DbContext;
-        public CustomerDataTests()
-        {
-            DbContext = new CoreDbContext(Options);
-        }
+        public CustomerDataTests() => DbContext = new CoreDbContext(Options);
         public abstract DbContextOptions Options { get; }
 
         [Fact]
@@ -67,7 +64,7 @@ namespace SomeBasicEFApp.Tests
                         .ThenInclude(po => po.Product)
                     .Single(order => order.Id == 1);
             Assert.NotNull(o.ProductOrders);
-            Assert.True(o.ProductOrders.Any(p => p.Product.Id == 1));
+            Assert.Contains(o.ProductOrders, p => p.Product?.Id == 1);
         }
 
         [Fact]
@@ -82,7 +79,7 @@ namespace SomeBasicEFApp.Tests
                                  .ToArray()
                                  ;
             var orderIds = products
-                            .SelectMany(p => p.ProductOrders.Select(po => po.Order.Id))
+                            .SelectMany(p => p.ProductOrders.Select(po => po.Order?.Id))
                             .Distinct();
             Assert.Equal(4, Assert.Single(orderIds));
         }

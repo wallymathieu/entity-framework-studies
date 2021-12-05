@@ -66,7 +66,7 @@ type CustomerDataTests()=
         let orderId= OrderId 1
         let productId= ProductId 1
         let! order = this.Session.Orders.IncludeProducts().FirstAsync(fun o->o.OrderId=orderId)
-        Assert.True(order.Products |> Seq.tryFind( fun p -> p.Product.ProductId = productId) |> Option.isSome) }
+        Assert.Contains(order.Products, fun p -> p.Product.ProductId = productId) }
         
 module InMemory=
     let fixtureOptions=lazy(
