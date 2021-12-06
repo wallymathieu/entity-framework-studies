@@ -25,8 +25,8 @@ namespace SomeBasicEFApp.Tests
         public ApiFixture() => _testServer = Create();
         public void Dispose() 
         {
-             _testServer.Dispose();
-            if (File.Exists(db)) File.Delete(db);
+            _testServer.Dispose();
+            if (File.Exists(db)) try{ File.Delete(db); }catch{ }
         }
         public TestServer Server=>_testServer;
 
@@ -38,7 +38,7 @@ namespace SomeBasicEFApp.Tests
             }
             protected override void ConfigureDbContext(DbContextOptionsBuilder options)
             {
-                if (File.Exists(db)) File.Delete(db);
+                if (File.Exists(db)) try{ File.Delete(db); }catch{ }
                 options.UseSqlite("Data Source=" + db);
             }
             protected override void OnConfigured(IApplicationBuilder app, IWebHostEnvironment env)
