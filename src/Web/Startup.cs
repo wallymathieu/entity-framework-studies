@@ -95,7 +95,7 @@ namespace SomeBasicEFApp.Web
         {
             // Add framework services.
             services.AddDbContext<CoreDbContext>(options =>
-                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+                ConfigureDbContext(options));
 
             _swagger.ConfigureServices(services);
             services.AddIdentity<ApplicationUser, IdentityRole>(options =>
@@ -109,8 +109,14 @@ namespace SomeBasicEFApp.Web
 #endif
                 }).AddEntityFrameworkStores<CoreDbContext>()
                 .AddDefaultTokenProviders();
-            services.AddControllersWithViews();
+            services.AddControllersWithViews().AddApplicationPart(typeof(Startup).Assembly);
         }
+
+        protected virtual void ConfigureDbContext(DbContextOptionsBuilder options)
+        {
+            options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"));
+        }
+
         ///
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -139,6 +145,11 @@ namespace SomeBasicEFApp.Web
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
             });
+            OnConfigured(app, env);
+        }
+
+        protected virtual void OnConfigured(IApplicationBuilder app, IWebHostEnvironment env)
+        {
         }
     }
 }
