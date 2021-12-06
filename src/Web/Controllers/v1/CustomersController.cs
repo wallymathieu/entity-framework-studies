@@ -32,11 +32,10 @@ namespace SomeBasicEFApp.Web.Controllers.v1
 
         // GET: Customers/Details/5
         [HttpGet("{id}")]
-        [Produces(typeof(CustomerModel))]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesDefaultResponseType]
+        [ProducesResponseType(typeof(CustomerModel),StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(void),StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(void),StatusCodes.Status404NotFound)]
+        [ProducesDefaultResponseType()]
         public async Task<IActionResult> Details(CustomerId? id)
         {
             if (id == null)
@@ -66,8 +65,8 @@ namespace SomeBasicEFApp.Web.Controllers.v1
 
         [HttpPut("{id}")]
         [Produces(typeof(CustomerModel))]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(CustomerModel),StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(void),StatusCodes.Status404NotFound)]
         [ProducesDefaultResponseType]
         public async Task<IActionResult> Edit(CustomerId id, [FromBody] EditCustomer model)
         {
@@ -83,8 +82,8 @@ namespace SomeBasicEFApp.Web.Controllers.v1
         // POST: Customers/Delete/5
         [HttpDelete("{id}")]
         [Produces(typeof(void))]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(void),StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(void),StatusCodes.Status404NotFound)]
         [ProducesDefaultResponseType]
         public async Task<IActionResult> DeleteConfirmed(CustomerId id)
         {
