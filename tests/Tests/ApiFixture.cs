@@ -13,7 +13,7 @@ namespace SomeBasicEFApp.Tests
 {
     public class ApiFixture:IDisposable
     {
-        public static TestServer Create() 
+        static TestServer Create()
         {
             return new TestServer(new WebHostBuilder()
                     .UseKestrel()

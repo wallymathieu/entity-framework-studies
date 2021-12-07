@@ -8,6 +8,7 @@
     <IsPackable>false</IsPackable>
     <GenerateRuntimeConfigurationFiles>true</GenerateRuntimeConfigurationFiles>
     <Nullable>enable</Nullable>
+    <RootNamespace>SomeBasicEFApp.Tests</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>

@@ -18,6 +18,8 @@ namespace SomeBasicEFApp.Tests
         public CustomerDataTests() => DbContext = new CoreDbContext(Options);
         public abstract DbContextOptions Options { get; }
 
+        ProductId yoyoId = 1;
+        ProductId gumballsId = 2;
         [Fact]
         public void CanGetCustomerById()
         {
@@ -38,33 +40,32 @@ namespace SomeBasicEFApp.Tests
         [Fact]
         public void CanGetProductById()
         {
-            var product = DbContext.GetProduct(1);
+            var product = DbContext.GetProduct(yoyoId);
             Assert.NotNull(product);
         }
         [Fact]
         public void ProductType()
         {
-            var product = DbContext.GetProduct(1);
-            Assert.Equal(new ProductType(null), product.Type);
+            Assert.Equal(new ProductType(null), DbContext.GetProduct(yoyoId)?.Type);
 
-            var product2 = DbContext.GetProduct(2);
-            Assert.Equal(new ProductType("Candy"), product2.Type);
+            Assert.Equal(new ProductType("Candy"), DbContext.GetProduct(gumballsId)?.Type);
         }
         [Fact]
         public void CanFindProductById()
         {
-            var product = DbContext.Find<Product>(new ProductId(1));
+            var product = DbContext.Find<Product>(yoyoId);
             Assert.NotNull(product);
         }
         [Fact]
         public void OrderContainsProduct()
         {
+            OrderId orderId = 1;
             var o = DbContext.Orders
                     .Include(order => order.ProductOrders)
                         .ThenInclude(po => po.Product)
-                    .Single(order => order.Id == 1);
+                    .Single(order => order.Id == orderId);
             Assert.NotNull(o.ProductOrders);
-            Assert.Contains(o.ProductOrders, p => p.Product?.Id == 1);
+            Assert.Contains(o.ProductOrders, p => p.Product?.Id == yoyoId);
         }
 
         [Fact]
@@ -87,9 +88,10 @@ namespace SomeBasicEFApp.Tests
         [Fact]
         public void OrderHasACustomer()
         {
+            OrderId orderId = 1;
             var o = DbContext.Orders
                     .Include(order => order.Customer)
-                    .Single(order => order.Id == 1);
+                    .Single(order => order.Id == orderId);
             Assert.NotNull(o.Customer);
             Assert.NotEmpty(o.Customer.Firstname);
         }
@@ -142,9 +144,6 @@ namespace SomeBasicEFApp.Tests
             return options;
         }
 
-        public void Dispose()
-        {
-            ((IDisposable)DbContext).Dispose();
-        }
+        public void Dispose() => DbContext.Dispose();
     }
 }
