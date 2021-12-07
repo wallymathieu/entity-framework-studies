@@ -60,7 +60,7 @@ namespace SomeBasicEFApp.Tests
             return customerObj!;
         }
 
-        public void Parse(IEnumerable<Type> types, Action<Type, object>? onParsedEntity = null,
+        public void Parse(IEnumerable<Type> types, Action<object>? onParsedEntity = null,
             Action<Type, PropertyInfo>? onIgnore = null)
         {
             var db = _xDocument.Root;
@@ -72,7 +72,7 @@ namespace SomeBasicEFApp.Tests
                 foreach (var element in elements)
                 {
                     var obj = Parse(element, type, onIgnore);
-                    onParsedEntity?.Invoke(type, obj);
+                    onParsedEntity?.Invoke(obj);
                 }
             }
         }

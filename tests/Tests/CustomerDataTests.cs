@@ -106,21 +106,20 @@ namespace SomeBasicEFApp.Tests
             using (var session = new CoreDbContext(options))
             {
                 import.Parse(new[] { typeof(Customer), typeof(Order), typeof(Product) },
-                                (type, obj) =>
+                                (obj) =>
                                 {
-                                    switch (type.Name)
+                                    switch (obj)
                                     {
-                                        case nameof(Customer):
-                                            session.Customers.Add((Customer)obj);
+                                        case Customer c:
+                                            session.Customers.Add(c);
                                             break;
-                                        case nameof(Order):
-                                            session.Orders.Add((Order)obj);
+                                        case Order o:
+                                            session.Orders.Add(o);
                                             break;
-                                        case nameof(Product):
-                                            session.Products.Add((Product)obj);
+                                        case Product p:
+                                            session.Products.Add(p);
                                             break;
                                     }
-
                                 });
                 session.SaveChanges();
             }
