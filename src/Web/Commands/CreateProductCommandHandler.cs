@@ -23,9 +23,9 @@ namespace SomeBasicEFApp.Web.Commands
         /// Used to be compatible with previous controller logic
         /// </summary>
         public Task<Product> Handle(Product product) => Handle(new CreateProductCommand
-        {
-            Name = product.Name,
-            Cost = product.Cost
-        });
+        (
+            Name: product.Name,
+            Cost: product.Cost
+        ));
     }
 }

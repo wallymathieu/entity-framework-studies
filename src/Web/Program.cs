@@ -25,10 +25,7 @@ namespace SomeBasicEFApp.Web
                     conf.AddJsonFile("appsettings.json", reloadOnChange: true, optional: true)
                         .AddJsonFile("appsettings.user.json", reloadOnChange: true, optional: true)
                         .AddEnvironmentVariables();
-                    if (args != null)
-                    {
-                        conf.AddCommandLine(args);
-                    }
+                    conf.AddCommandLine(args);
                 })
                 .ConfigureLogging((hostingContext, logging) => { logging.AddConsole().AddDebug(); })
                 .UseDefaultServiceProvider((context, options) =>

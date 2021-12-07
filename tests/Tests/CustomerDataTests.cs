@@ -15,12 +15,11 @@ namespace SomeBasicEFApp.Tests
     public abstract class CustomerDataTests : IDisposable
     {
         private CoreDbContext DbContext;
-        public CustomerDataTests()
-        {
-            DbContext = new CoreDbContext(Options);
-        }
+        public CustomerDataTests() => DbContext = new CoreDbContext(Options);
         public abstract DbContextOptions Options { get; }
 
+        ProductId yoyoId = 1;
+        ProductId gumballsId = 2;
         [Fact]
         public void CanGetCustomerById()
         {
@@ -41,33 +40,32 @@ namespace SomeBasicEFApp.Tests
         [Fact]
         public void CanGetProductById()
         {
-            var product = DbContext.GetProduct(1);
+            var product = DbContext.GetProduct(yoyoId);
             Assert.NotNull(product);
         }
         [Fact]
         public void ProductType()
         {
-            var product = DbContext.GetProduct(1);
-            Assert.Equal(new ProductType(null), product.Type);
+            Assert.Equal(new ProductType(null), DbContext.GetProduct(yoyoId)?.Type);
 
-            var product2 = DbContext.GetProduct(2);
-            Assert.Equal(new ProductType("Candy"), product2.Type);
+            Assert.Equal(new ProductType("Candy"), DbContext.GetProduct(gumballsId)?.Type);
         }
         [Fact]
         public void CanFindProductById()
         {
-            var product = DbContext.Find<Product>(new ProductId(1));
+            var product = DbContext.Find<Product>(yoyoId);
             Assert.NotNull(product);
         }
         [Fact]
         public void OrderContainsProduct()
         {
+            OrderId orderId = 1;
             var o = DbContext.Orders
                     .Include(order => order.ProductOrders)
                         .ThenInclude(po => po.Product)
-                    .Single(order => order.Id == 1);
+                    .Single(order => order.Id == orderId);
             Assert.NotNull(o.ProductOrders);
-            Assert.True(o.ProductOrders.Any(p => p.Product.Id == 1));
+            Assert.Contains(o.ProductOrders, p => p.Product?.Id == yoyoId);
         }
 
         [Fact]
@@ -82,7 +80,7 @@ namespace SomeBasicEFApp.Tests
                                  .ToArray()
                                  ;
             var orderIds = products
-                            .SelectMany(p => p.ProductOrders.Select(po => po.Order.Id))
+                            .SelectMany(p => p.ProductOrders.Select(po => po.Order?.Id))
                             .Distinct();
             Assert.Equal(4, Assert.Single(orderIds));
         }
@@ -90,9 +88,10 @@ namespace SomeBasicEFApp.Tests
         [Fact]
         public void OrderHasACustomer()
         {
+            OrderId orderId = 1;
             var o = DbContext.Orders
                     .Include(order => order.Customer)
-                    .Single(order => order.Id == 1);
+                    .Single(order => order.Id == orderId);
             Assert.NotNull(o.Customer);
             Assert.NotEmpty(o.Customer.Firstname);
         }
@@ -107,23 +106,20 @@ namespace SomeBasicEFApp.Tests
             using (var session = new CoreDbContext(options))
             {
                 import.Parse(new[] { typeof(Customer), typeof(Order), typeof(Product) },
-                                (type, obj) =>
+                                (obj) =>
                                 {
-                                    switch (type.Name)
+                                    switch (obj)
                                     {
-                                        case nameof(Customer):
-                                            session.Customers.Add((Customer)obj);
+                                        case Customer c:
+                                            session.Customers.Add(c);
                                             break;
-                                        case nameof(Order):
-                                            session.Orders.Add((Order)obj);
+                                        case Order o:
+                                            session.Orders.Add(o);
                                             break;
-                                        case nameof(Product):
-                                            session.Products.Add((Product)obj);
-                                            break;
-                                        default:
+                                        case Product p:
+                                            session.Products.Add(p);
                                             break;
                                     }
-
                                 });
                 session.SaveChanges();
             }
@@ -147,9 +143,6 @@ namespace SomeBasicEFApp.Tests
             return options;
         }
 
-        public void Dispose()
-        {
-            ((IDisposable)DbContext).Dispose();
-        }
+        public void Dispose() => DbContext.Dispose();
     }
 }

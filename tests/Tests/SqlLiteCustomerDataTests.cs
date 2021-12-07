@@ -7,7 +7,7 @@ namespace SomeBasicEFApp.Tests
 {
     public class SqlLiteCustomerDataTests : CustomerDataTests
     {
-        private static Lazy<DbContextOptions> options = new Lazy<DbContextOptions>(() =>
+        private static Lazy<DbContextOptions> options = new(() =>
         {
             if (File.Exists("CoreTests.db")) File.Delete("CoreTests.db");
             var opts = new DbContextOptionsBuilder()

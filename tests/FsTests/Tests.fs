@@ -7,7 +7,6 @@ open Microsoft.EntityFrameworkCore
 open WebFs.Domain
 open System.IO
 open System.Linq
-open FSharp.Control.Tasks.Builders
 open CoreFs
 
 module TestData=
@@ -47,6 +46,7 @@ module TestData=
             let orderProduct = ProductOrder (order, product)
             order.Products.Add orderProduct
         session.SaveChanges() |> ignore
+let yoyoId= ProductId 1
 [<AbstractClass>]
 type CustomerDataTests()=
     abstract member Options : DbContextOptions
@@ -59,15 +59,14 @@ type CustomerDataTests()=
 
     [<Fact>]
     member this.Can_get_product_by_id()= task{
-        let! p = this.Session.Products.FindAsync (ProductId 1)
+        let! p = this.Session.Products.FindAsync yoyoId
         Assert.NotNull p }
 
     [<Fact>]
     member this.Order_contains_product()=task{
         let orderId= OrderId 1
-        let productId= ProductId 1
         let! order = this.Session.Orders.IncludeProducts().FirstAsync(fun o->o.OrderId=orderId)
-        Assert.True(order.Products |> Seq.tryFind( fun p -> p.Product.ProductId = productId) |> Option.isSome) }
+        Assert.Contains(order.Products, fun p -> p.Product.ProductId = yoyoId) }
         
 module InMemory=
     let fixtureOptions=lazy(

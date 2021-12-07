@@ -9,8 +9,10 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Models;
 using SomeBasicEFApp.Web.Data;
+using SomeBasicEFApp.Web.ValueTypes;
 
 namespace SomeBasicEFApp.Web
 {
@@ -67,6 +69,14 @@ namespace SomeBasicEFApp.Web
                     var xmlPath = typeof(Startup).Assembly.Location.Replace(".dll",".xml").Replace(".exe", ".xml");
                     if (File.Exists(xmlPath))
                         options.IncludeXmlComments(xmlPath);
+                    var types = new[] {typeof(CustomerId), typeof(OrderId), typeof(ProductId)};
+                    foreach (var type in types)
+                    {
+                        options.MapType(type,() => new OpenApiSchema { 
+                            Type = "string", 
+                            Example = new OpenApiString(Activator.CreateInstance(type, 1).ToString() )});
+                    }
+
                 });
             }
         }
@@ -85,7 +95,7 @@ namespace SomeBasicEFApp.Web
         {
             // Add framework services.
             services.AddDbContext<CoreDbContext>(options =>
-                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+                ConfigureDbContext(options));
 
             _swagger.ConfigureServices(services);
             services.AddIdentity<ApplicationUser, IdentityRole>(options =>
@@ -99,8 +109,14 @@ namespace SomeBasicEFApp.Web
 #endif
                 }).AddEntityFrameworkStores<CoreDbContext>()
                 .AddDefaultTokenProviders();
-            services.AddControllersWithViews();
+            services.AddControllersWithViews().AddApplicationPart(typeof(Startup).Assembly);
         }
+
+        protected virtual void ConfigureDbContext(DbContextOptionsBuilder options)
+        {
+            options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"));
+        }
+
         ///
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -129,6 +145,11 @@ namespace SomeBasicEFApp.Web
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
             });
+            OnConfigured(app, env);
+        }
+
+        protected virtual void OnConfigured(IApplicationBuilder app, IWebHostEnvironment env)
+        {
         }
     }
 }

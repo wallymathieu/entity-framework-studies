@@ -1,9 +1,4 @@
 namespace SomeBasicEFApp.Web.Models
 {
-    public class OrderModel
-    {
-        public string Id { get; set; }
-        public ProductModel[] Products { get; set; }
-        public CustomerModel Customer { get; set; }
-    }
+    public record OrderModel(string Id, ProductModel[] Products, CustomerModel? Customer);
 }

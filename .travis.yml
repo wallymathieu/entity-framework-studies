@@ -1,5 +1,5 @@
 language: csharp
-dotnet: 5.0.203 
+dotnet: 6.0.100
 mono:
   - latest
 os:

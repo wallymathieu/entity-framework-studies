@@ -39,11 +39,11 @@ namespace SomeBasicEFApp.Web.Data
             base.OnModelCreating(builder);
         }
 
-        public DbSet<Customer> Customers { get; set; }
-        public DbSet<Order> Orders { get; set; }
-        public DbSet<Product> Products { get; set; }
+        public DbSet<Customer> Customers { get; init; }
+        public DbSet<Order> Orders { get; init;  }
+        public DbSet<Product> Products { get; init; }
 
-        public DbSet<ProductOrder> ProductOrders { get; set; }
+        public DbSet<ProductOrder> ProductOrders { get; init; }
 
         public Customer? GetCustomer(CustomerId customerId) => 
             Customers.SingleOrDefault(customer => customer.Id == customerId);

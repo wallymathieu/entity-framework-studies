@@ -7,16 +7,16 @@ namespace SomeBasicEFApp.Web.Entities
     public class Product
     {
         ///
-        public float Cost { get; set; }
+        public float Cost { get; init; }
         ///
-        public string Name { get; set; }
+        public string? Name { get; init; }
         ///
-        public IList<ProductOrder> ProductOrders { get; set; }
+        public IList<ProductOrder> ProductOrders { get; init; } = new List<ProductOrder>();
         ///
-        public ProductId Id { get; set; }
+        public ProductId Id { get; init; }
         ///
-        public int Version { get; set; }
+        public int Version { get; init; }
         ///
-        public ProductType Type { get; set; } = new ProductType(null);
+        public ProductType Type { get; init; } = new ProductType(null);
     }
 }
