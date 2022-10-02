@@ -1,11 +1,10 @@
-namespace SomeBasicEFApp.Web.ValueTypes
+namespace SomeBasicEFApp.Web.ValueTypes;
+
+/// <summary>
+/// Product type
+/// </summary>
+public record ProductType(string? Type): IValueType
 {
-    /// <summary>
-    /// Product type
-    /// </summary>
-    public record ProductType(string? Type): IValueType
-    {
-        /// <inheritdoc/>
-        public override string? ToString() => Type;
-    }
+    /// <inheritdoc/>
+    public override string? ToString() => Type;
 }

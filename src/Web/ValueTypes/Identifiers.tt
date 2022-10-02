@@ -9,12 +9,11 @@ using System.Text.Json.Serialization;
 using Saithe;
 using SaitheSystemTextJson;
 
-namespace SomeBasicEFApp.Web.ValueTypes
-{
+namespace SomeBasicEFApp.Web.ValueTypes;
 
 <#
 var types = new []{
-    new {Name="CustomerId", Prefix="customer-"}, 
+    new {Name="CustomerId", Prefix="customer-"},
     new {Name="OrderId", Prefix="order-"},
     new {Name= "ProductId", Prefix="product-"}};
 foreach (var typeT in types){
@@ -22,27 +21,26 @@ var type =typeT.Name;
 var prefix = typeT.Prefix;
 #>
     ///
-    [TypeConverter(typeof(ParseTypeConverter<<#= type #>>)),
-     JsonConverter(typeof(ParseTypeSystemTextJsonConverter<<#= type #>>))]
-    public record struct <#= type #> (int Value) : IValueType
+[TypeConverter(typeof(ParseTypeConverter<<#= type #>>)),
+ JsonConverter(typeof(ParseTypeSystemTextJsonConverter<<#= type #>>))]
+public record struct <#= type #> (int Value) : IValueType
+{
+    ///
+    public override string ToString()=>$"<#= prefix #>{Value}";
+    ///
+    public static <#= type #> Parse(string value)
     {
-        ///
-        public override string ToString()=>$"<#= prefix #>{Value}";
-        ///
-        public static <#= type #> Parse(string value)
-        {
-            if (string.IsNullOrEmpty(value))
-                throw new ArgumentException("Missing value");
-            if (!value.StartsWith("<#= prefix #>", StringComparison.InvariantCultureIgnoreCase))
-                throw new ArgumentException($"Expected '{value}' to start with prefix '<#= prefix #>'");
-            return new <#= type #>(Int32.TryParse(value.Substring("<#= prefix #>".Length), out var val)
-                    ? val
-                    : throw new ArgumentException());
-        }
-        ///
-        public static implicit operator <#= type #>(int d) => new <#= type #>(d);
+        if (string.IsNullOrEmpty(value))
+            throw new ArgumentException("Missing value");
+        if (!value.StartsWith("<#= prefix #>", StringComparison.InvariantCultureIgnoreCase))
+            throw new ArgumentException($"Expected '{value}' to start with prefix '<#= prefix #>'");
+        return new <#= type #>(Int32.TryParse(value.Substring("<#= prefix #>".Length), out var val)
+                ? val
+                : throw new ArgumentException());
     }
+    ///
+    public static implicit operator <#= type #>(int d) => new <#= type #>(d);
+}
 <#
 }
 #>
-}
