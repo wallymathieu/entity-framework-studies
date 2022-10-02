@@ -8,90 +8,89 @@ using SomeBasicEFApp.Web.Models;
 using SomeBasicEFApp.Web.ValueTypes;
 using Microsoft.AspNetCore.Http;
 
-namespace SomeBasicEFApp.Web.Controllers.v1
+namespace SomeBasicEFApp.Web.Controllers.v1;
+
+[Route("/api/v1/customers")]
+[ApiController]
+[ApiExplorerSettings(GroupName = "v1")]
+public class CustomersController : ControllerBase
 {
-    [Route("/api/v1/customers")]
-    [ApiController]
-    [ApiExplorerSettings(GroupName = "v1")]
-    public class CustomersController : ControllerBase
+    private readonly CoreDbContext _context;
+
+    public CustomersController(CoreDbContext context)
     {
-        private readonly CoreDbContext _context;
+        _context = context;
+    }
 
-        public CustomersController(CoreDbContext context)
+    // GET: Customers
+    [HttpGet]
+    [Produces(typeof(Customer[]))]
+    public async Task<IActionResult> Index()
+    {
+        return Ok(await _context.Customers.ToListAsync());
+    }
+
+    // GET: Customers/Details/5
+    [HttpGet("{id}")]
+    [ProducesResponseType(typeof(Customer),StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(void),StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(void),StatusCodes.Status404NotFound)]
+    [ProducesDefaultResponseType()]
+    public async Task<IActionResult> Details(CustomerId? id)
+    {
+        if (id == null)
         {
-            _context = context;
+            return BadRequest();
         }
 
-        // GET: Customers
-        [HttpGet]
-        [Produces(typeof(Customer[]))]
-        public async Task<IActionResult> Index()
+        var customer = await _context.Customers
+            .SingleOrDefaultAsync(m => m.Id == id);
+        if (customer == null)
         {
-            return Ok(await _context.Customers.ToListAsync());
+            return NotFound();
         }
 
-        // GET: Customers/Details/5
-        [HttpGet("{id}")]
-        [ProducesResponseType(typeof(Customer),StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(void),StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(typeof(void),StatusCodes.Status404NotFound)]
-        [ProducesDefaultResponseType()]
-        public async Task<IActionResult> Details(CustomerId? id)
-        {
-            if (id == null)
-            {
-                return BadRequest();
-            }
+        return Ok(customer);
+    }
 
-            var customer = await _context.Customers
-                .SingleOrDefaultAsync(m => m.Id == id);
-            if (customer == null)
-            {
-                return NotFound();
-            }
+    [HttpPost("")]
+    [Produces(typeof(Customer))]
+    public async Task<IActionResult> Create([FromBody] EditCustomer model)
+    {
+        var customer = new Customer {Firstname = model.Firstname, Lastname = model.Lastname};
+        await _context.Customers.AddAsync(customer);
+        await _context.SaveChangesAsync();
+        return Ok(customer);
+    }
 
-            return Ok(customer);
-        }
-
-        [HttpPost("")]
-        [Produces(typeof(Customer))]
-        public async Task<IActionResult> Create([FromBody] EditCustomer model)
-        {
-            var customer = new Customer {Firstname = model.Firstname, Lastname = model.Lastname};
-            await _context.Customers.AddAsync(customer);
-            await _context.SaveChangesAsync();
-            return Ok(customer);
-        }
-
-        [HttpPut("{id}")]
-        [Produces(typeof(Customer))]
-        [ProducesResponseType(typeof(Customer),StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(void),StatusCodes.Status404NotFound)]
-        [ProducesDefaultResponseType]
-        public async Task<IActionResult> Edit(CustomerId id, [FromBody] EditCustomer model)
-        {
-            var customer = await _context.GetCustomerAsync(id);
-            if (customer == null) return NotFound();
-            customer.Firstname = model.Firstname;
-            customer.Lastname = model.Lastname;
-            await _context.SaveChangesAsync();
-            return Ok(customer);
-        }
+    [HttpPut("{id}")]
+    [Produces(typeof(Customer))]
+    [ProducesResponseType(typeof(Customer),StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(void),StatusCodes.Status404NotFound)]
+    [ProducesDefaultResponseType]
+    public async Task<IActionResult> Edit(CustomerId id, [FromBody] EditCustomer model)
+    {
+        var customer = await _context.GetCustomerAsync(id);
+        if (customer == null) return NotFound();
+        customer.Firstname = model.Firstname;
+        customer.Lastname = model.Lastname;
+        await _context.SaveChangesAsync();
+        return Ok(customer);
+    }
 
 
-        // POST: Customers/Delete/5
-        [HttpDelete("{id}")]
-        [Produces(typeof(void))]
-        [ProducesResponseType(typeof(void),StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(void),StatusCodes.Status404NotFound)]
-        [ProducesDefaultResponseType]
-        public async Task<IActionResult> DeleteConfirmed(CustomerId id)
-        {
-            var customer = await _context.Customers.SingleOrDefaultAsync(m => m.Id == id);
-            if (customer is null) return NotFound();
-            _context.Customers.Remove(customer);
-            await _context.SaveChangesAsync();
-            return Ok();
-        }
+    // POST: Customers/Delete/5
+    [HttpDelete("{id}")]
+    [Produces(typeof(void))]
+    [ProducesResponseType(typeof(void),StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(void),StatusCodes.Status404NotFound)]
+    [ProducesDefaultResponseType]
+    public async Task<IActionResult> DeleteConfirmed(CustomerId id)
+    {
+        var customer = await _context.Customers.SingleOrDefaultAsync(m => m.Id == id);
+        if (customer is null) return NotFound();
+        _context.Customers.Remove(customer);
+        await _context.SaveChangesAsync();
+        return Ok();
     }
 }

@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 
-namespace Web.Controllers;
+namespace SomeBasicEFApp.Web.Controllers;
 
 public class ManageController : Controller
 {
