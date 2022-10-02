@@ -2,6 +2,8 @@ namespace CoreFs
 
 open System
 open System.Collections.Generic
+open System.Text.Json.Serialization
+open FSharpPlus
 
 type OrderId = OrderId of int
 with override this.ToString()= match this with OrderId id->id.ToString()
@@ -23,23 +25,35 @@ type ProductOrder(order:Order,product:Product)=
     //member val ProductId = if isNull product then ProductId 0 else product.ProductId with get, set
 and [<AllowNullLiteral>] Order(orderId:OrderId,orderDate:DateTime,customer:Customer,version:int) =
     new()=Order(OrderId 0,DateTime.MinValue,null,0)
+    [<JsonPropertyName("id")>]
     member val OrderId =orderId with get, set
     member val OrderDate =orderDate with get, set
+    [<JsonIgnore>]
     member val Customer : Customer=customer with get, set
+    [<JsonIgnore>]
     member val Products =List<ProductOrder>() with get, set
+    [<JsonPropertyName("products")>]
+    member this.OrderProducts = this.Products |> ResizeArray.map (fun op->op.Product)
+    [<JsonIgnore>]
     member val Version = version with get, set
 
 and [<AllowNullLiteral>] Customer(customerId:CustomerId,firstname:string,lastname:string,version:int)=
     new()=Customer(CustomerId 0,"","",0)
+    [<JsonPropertyName("id")>]
     member val CustomerId  =customerId with get, set
     member val Firstname =firstname with get, set
     member val Lastname =lastname with get, set
+    [<JsonIgnore>]
     member val Orders = List<Order>() with get, set
+    [<JsonIgnore>]
     member val Version = version with get, set
 and [<AllowNullLiteral>] Product(productId:ProductId,cost:float,productName:string,version:int)=
     new()=Product(ProductId 0,0.0,"",0)
+    [<JsonPropertyName("id")>]
     member val ProductId =productId with get, set
     member val Cost =cost with get, set
     member val ProductName = productName with get, set
+    [<JsonIgnore>]
     member val Orders = List<ProductOrder>() with get, set
+    [<JsonIgnore>]
     member val Version = version with get, set
