@@ -10,31 +10,12 @@ namespace CSharpTypes;
 public struct CustomerId : IEquatable<CustomerId>
 {
     public readonly long Value;
+    public CustomerId(long value) => this.Value = value;
 
-    public CustomerId(long value)
-    {
-        this.Value = value;
-    }
+    public bool Equals(CustomerId other) => Equals(Value, other.Value);
+    public override bool Equals(object? obj) => obj is CustomerId id && Equals(id);
 
-    public readonly static CustomerId Empty = new CustomerId();
+    public override int GetHashCode() => Value.GetHashCode();
 
-    public bool Equals(CustomerId other)
-    {
-        if (ReferenceEquals(null, other)) return false;
-        return Equals(Value, other.Value);
-    }
-    public override bool Equals(object obj)
-    {
-        if (obj is CustomerId)
-            return Equals((CustomerId)obj);
-        return false;
-    }
-    public override int GetHashCode()
-    {
-        return Value.GetHashCode();
-    }
-    public override string ToString()
-    {
-        return Value.ToString();
-    }
+    public override string ToString() => Value.ToString();
 }

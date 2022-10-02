@@ -37,7 +37,7 @@ type ``Serialize and deserialize struct type``() =
                                  Id = CustomerId(1) })
     Assert.Equal(expected, result)
 
-  //[<Fact>]
+  [<Fact>]
   member this.Struct_SystemTextJson_Nullable() = 
     let data = @"{""ProductDescription"":""Description"",""CustomerId"":1,""ProductId"":""ProductId/2"",""OrderId"":3}"
     let result = JsonSerializer.Deserialize<CustomerOrder>(data)
@@ -57,7 +57,7 @@ type ``Serialize and deserialize struct type``() =
 
   [<Fact>]
   member this.Struct_SystemTextJson_serialize_Nullable() = 
-    let expected = @"{""ProductDescription"":""Description"",""CustomerId"":1,""ProductId"":""ProductId/2"",""OrderId"":""3""}"
+    let expected = @"{""ProductDescription"":""Description"",""CustomerId"":1,""ProductId"":""ProductId/2"",""OrderId"":3}"
     let result = 
       JsonSerializer.Serialize({ ProductDescription = "Description"
                                  CustomerId = Nullable<CustomerId>(CustomerId(1))

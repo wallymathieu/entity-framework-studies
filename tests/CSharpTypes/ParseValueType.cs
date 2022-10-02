@@ -11,10 +11,7 @@ public class ParseValueType : IEquatable<ParseValueType>
 {
     public readonly string Value;
 
-    public ParseValueType(string value)
-    {
-        Value = value;
-    }
+    public ParseValueType(string value) => Value = value;
 
     public static ParseValueType Parse(string value)
     {
@@ -25,18 +22,9 @@ public class ParseValueType : IEquatable<ParseValueType>
 
     public override string ToString() => $"P_{Value}";
 
-    public override bool Equals(object obj)
-    {
-        return Value.Equals(obj as ParseValueType);
-    }
-    public override int GetHashCode()
-    {
-        return Value.GetHashCode();
-    }
+    public override bool Equals(object? obj) => obj is ParseValueType type && Equals(type);
 
-    public bool Equals(ParseValueType other)
-    {
-        if (ReferenceEquals(null, other)) return false;
-        return Value.Equals(other.Value);
-    }
+    public override int GetHashCode() => Value.GetHashCode();
+
+    public bool Equals(ParseValueType? other) => !ReferenceEquals(null, other) && Value.Equals(other.Value);
 }

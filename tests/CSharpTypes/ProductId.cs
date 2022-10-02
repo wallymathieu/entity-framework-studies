@@ -11,35 +11,19 @@ public struct ProductId: IEquatable<ProductId>
 {
     public readonly long Value;
 
-    public ProductId(long value)
-    {
-        this.Value = value;
-    }
+    public ProductId(long value) => Value = value;
 
-    public readonly static ProductId Empty = new ProductId();
+    public bool Equals(ProductId other) => Equals(Value, other.Value);
 
-    public bool Equals(ProductId other)
-    {
-        if (ReferenceEquals(null, other)) return false;
-        return Equals(Value, other.Value);
-    }
-    public override bool Equals(object obj)
-    {
-        if (obj is ProductId)
-            return Equals((ProductId)obj);
-        return false;
-    }
-    public override int GetHashCode()
-    {
-        return Value.GetHashCode();
-    }
-    public override string ToString()
-    {
-        return $"ProductId/{Value}";
-    }
+    public override bool Equals(object? obj) => obj is ProductId id && Equals(id);
+
+    public override int GetHashCode() => Value.GetHashCode();
+
+    public override string ToString() => $"ProductId/{Value}";
+
     public static bool TryParse(string str, out ProductId result) 
     {
-        result = Empty;
+        result = default;
         if (string.IsNullOrEmpty(str))
         {
             return false;
