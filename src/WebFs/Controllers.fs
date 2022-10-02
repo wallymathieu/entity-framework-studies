@@ -20,20 +20,23 @@ type HomeController () =
 type CustomersController (context:ICoreDbContext) =
     inherit ControllerBase()
 
-    [<HttpGet>]
-    member this.Get() = task{ // here you normally want filtering based on query parameters (in order to get better perf)
+    [<HttpGet;
+      Produces(typeof<Customer[]>)>]
+    member this.Get() = task { // here you normally want filtering based on query parameters (in order to get better perf)
         let! result= context.Customers.ToListAsync()
         return ActionResult<_>(result) }
 
-    [<HttpGet("{id}")>]
-    member this.Get([<FromRoute>] id:CustomerId) =task{
+    [<HttpGet("{id}");
+      Produces(typeof<Customer>)>]
+    member this.Get([<FromRoute>] id:CustomerId) = task {
         let! customer = context.Customers.FindAsync id
         return
             if isNull customer then this.NotFound() :> AR
             else this.Ok(customer) :> AR }
 
-    [<HttpPost>]
-    member this.Post([<FromBody>] value:EditCustomer) =task{
+    [<HttpPost;
+      Produces(typeof<Customer>)>]
+    member this.Post([<FromBody>] value:EditCustomer) = task {
          let customer = Customer(customerId= CustomerId 0,lastname =value.Lastname, firstname=value.Firstname, version=0)
          //customer.Lastname <- value.Lastname
          //customer.Firstname <- value.Firstname
@@ -41,8 +44,9 @@ type CustomersController (context:ICoreDbContext) =
          do! context.SaveChangesAsync()
          return this.Ok(customer) :> AR }
 
-    [<HttpPut("{id}")>]
-    member this.Put([<FromRoute>] id:CustomerId, [<FromBody>] value:EditCustomer ) =task{
+    [<HttpPut("{id}");
+      Produces(typeof<Customer>)>]
+    member this.Put([<FromRoute>] id:CustomerId, [<FromBody>] value:EditCustomer ) = task {
         let! customer = context.Customers.FindAsync id
         if isNull customer then return this.NotFound() :> AR
         else
@@ -51,8 +55,9 @@ type CustomersController (context:ICoreDbContext) =
             do! context.SaveChangesAsync()
             return this.Ok(customer) :> AR }
 
-    [<HttpDelete("{id}")>]
-    member this.Delete([<FromRoute>] id:CustomerId) =task{
+    [<HttpDelete("{id}");
+      Produces(typeof<Customer>)>]
+    member this.Delete([<FromRoute>] id:CustomerId) = task {
         let! customer = context.Customers.FindAsync id
         if isNull customer then return this.NotFound() :> AR
         else
@@ -66,7 +71,8 @@ type CustomersController (context:ICoreDbContext) =
 type OrdersController (context:ICoreDbContext) =
     inherit ControllerBase()
 
-    [<HttpGet("")>]
+    [<HttpGet("");
+      Produces(typeof<Order[]>)>]
     member this.Index() = task { // here you normally want filtering based on query parameters (in order to get better perf)
         let! orders=context.Orders
                         .Include(fun o->o.Customer)
@@ -74,14 +80,16 @@ type OrdersController (context:ICoreDbContext) =
                         .ToListAsync()
         return this.Ok orders }
 
-    [<HttpPost("")>]
+    [<HttpPost("");
+      Produces(typeof<Order>)>]
     member this.Post() = task {
         let order = Order(orderId=OrderId 0, orderDate=DateTime.UtcNow, customer=null, version=0)
         do! context.AddAsync order
         do! context.SaveChangesAsync()
         return this.Ok order }
 
-    [<HttpPost("{id}/products")>]
+    [<HttpPost("{id}/products");
+      Produces(typeof<Order>)>]
     member this.PostProduct([<FromRoute>] id:OrderId, [<FromBody>] body:AddProductToOrderModel) = task {
         let! order=context.Orders
                         .Include(fun o->o.Customer)
@@ -100,24 +108,28 @@ type OrdersController (context:ICoreDbContext) =
 type ProductsController (context:ICoreDbContext) =
     inherit ControllerBase()
 
-    [<HttpGet("")>]
+    [<HttpGet("");
+      Produces(typeof<Product[]>)>]
     member this.Index() = task{ // here you normally want filtering based on query parameters (in order to get better perf)
         let! products=context.Products.ToListAsync()
         return this.Ok products }
-    [<HttpGet("{id}")>]
-    member this.Get([<FromRoute>] id:ProductId) =task{
+    [<HttpGet("{id}");
+      Produces(typeof<Product>)>]
+    member this.Get([<FromRoute>] id:ProductId) = task {
         let! product = context.Products.FindAsync id
         return
             if isNull product then this.NotFound() :> AR
             else this.Ok(product) :> AR }
-    [<HttpPost>]
-    member this.Post([<FromBody>] value:EditProduct) =task{
+    [<HttpPost;
+      Produces(typeof<Product>)>]
+    member this.Post([<FromBody>] value:EditProduct) = task {
          let product = Product(productId=ProductId 0,productName=value.Name, cost=value.Cost, version=0)
          do! context.AddAsync product
          do! context.SaveChangesAsync()
          return this.Ok(product) :> AR }
-    [<HttpPut("{id}")>]
-    member this.Put([<FromRoute>] id:ProductId, [<FromBody>] value:EditProduct) =task{
+    [<HttpPut("{id}");
+      Produces(typeof<Product>)>]
+    member this.Put([<FromRoute>] id:ProductId, [<FromBody>] value:EditProduct) = task {
          let! product = context.Products.FindAsync id
          product.ProductName <- value.Name
          product.Cost <- value.Cost

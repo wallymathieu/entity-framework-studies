@@ -1,5 +1,7 @@
 module WebFs.Swagger
 open System
+open CoreFs
+open Microsoft.OpenApi.Any
 open Microsoft.OpenApi.Models
 open Swashbuckle.AspNetCore.Swagger
 open Microsoft.AspNetCore.Builder
@@ -31,5 +33,12 @@ type SwaggerConfig()=
                                     Email = "developers@somecompany.com",
                                     Url = Uri("https://somecompany.com")))
 
-            options.SwaggerDoc("v1", info);
-        ) |> ignore
+            options.SwaggerDoc("v1", info)
+            let types = [ (typeof<CustomerId>, string <| CustomerId 1)
+                          (typeof<OrderId>, string <| OrderId 2)
+                          (typeof<ProductId>, string <| ProductId 3)]
+            for typ, defaultVal in types do
+                options.MapType(typ,fun () -> OpenApiSchema(
+                    Type = "String",
+                    Example= OpenApiString(defaultVal)))
+        )
