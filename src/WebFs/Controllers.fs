@@ -29,7 +29,7 @@ type CustomersController (context:ICoreDbContext) =
 
     [<HttpGet("{id}")>]
     member this.Get(id:int) =task{
-        let! customer = context.Customers.FindAsync(id)
+        let! customer = context.Customers.FindAsync (CustomerId id)
         return 
             if isNull customer then this.NotFound() :> AR
             else this.Ok(Mapper.mapCustomer customer) :> AR
@@ -47,7 +47,7 @@ type CustomersController (context:ICoreDbContext) =
 
     [<HttpPut("{id}")>]
     member this.Put(id:int, [<FromBody>] value:EditCustomer ) =task{
-        let! customer = context.Customers.FindAsync(id)
+        let! customer = context.Customers.FindAsync (CustomerId id)
         if isNull customer then return this.NotFound() :> AR
         else
             customer.Lastname <- value.Lastname
@@ -58,7 +58,7 @@ type CustomersController (context:ICoreDbContext) =
 
     [<HttpDelete("{id}")>]
     member this.Delete(id:int) =task{
-        let! customer = context.Customers.FindAsync(id)
+        let! customer = context.Customers.FindAsync (CustomerId id)
         if isNull customer then return this.NotFound() :> AR
         else
             context.Customers.Remove customer |> ignore
@@ -117,6 +117,13 @@ type ProductsController (context:ICoreDbContext) =
         let! products=context.Products.ToListAsync()
         return this.Ok (map Mapper.mapProduct products)
     }
+    [<HttpGet("{id}")>]
+    member this.Get(id:int) =task{
+        let! product = context.Products.FindAsync (ProductId id)
+        return 
+            if isNull product then this.NotFound() :> AR
+            else this.Ok(Mapper.mapProduct product) :> AR
+    }
     [<HttpPost>]
     member this.Post([<FromBody>] value:EditProduct) =task{
          let product = Product(productId=ProductId 0,productName=value.Name, cost=value.Cost, version=0)
@@ -126,7 +133,7 @@ type ProductsController (context:ICoreDbContext) =
     }
     [<HttpPut("{id}")>]
     member this.Put(id:int,[<FromBody>] value:EditProduct) =task{
-         let! product = context.Products.FindAsync(id)
+         let! product = context.Products.FindAsync (ProductId id)
          product.ProductName <- value.Name
          product.Cost <- value.Cost
          do! context.SaveChangesAsync()

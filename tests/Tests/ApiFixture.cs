@@ -26,7 +26,12 @@ namespace SomeBasicEFApp.Tests
         public void Dispose() 
         {
             _testServer.Dispose();
-            if (File.Exists(db)) try{ File.Delete(db); }catch{ }
+            if (!File.Exists(db)) return;
+            try{ File.Delete(db); }
+            catch
+            {
+                // ignored
+            }
         }
         public TestServer Server=>_testServer;
 
@@ -38,16 +43,13 @@ namespace SomeBasicEFApp.Tests
             }
             protected override void ConfigureDbContext(DbContextOptionsBuilder options)
             {
-                if (File.Exists(db)) try{ File.Delete(db); }catch{ }
                 options.UseSqlite("Data Source=" + db);
             }
             protected override void OnConfigured(IApplicationBuilder app, IWebHostEnvironment env)
             {
-                using (var serviceScope = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>().CreateScope())
-                {
-                    var context = serviceScope.ServiceProvider.GetRequiredService<CoreDbContext>();
-                    context.Database.Migrate();
-                }
+                using var serviceScope = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>().CreateScope();
+                var context = serviceScope.ServiceProvider.GetRequiredService<CoreDbContext>();
+                context.Database.Migrate();
             }
         }
     }

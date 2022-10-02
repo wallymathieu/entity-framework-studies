@@ -17,9 +17,9 @@ let main argv =
       }
     let printHelp () =
       printfn "Usage:"
-      printfn "    --connection connection_string (Default: %s)" defaultArgs.connection
-      printfn "    --processor processor_id (Default: %s)" defaultArgs.processor
-      printfn "    --operation operation (Default: %s)" defaultArgs.operation
+      printfn $"    --connection connection_string (Default: %s{defaultArgs.connection})"
+      printfn $"    --processor processor_id (Default: %s{defaultArgs.processor})"
+      printfn $"    --operation operation (Default: %s{defaultArgs.operation})"
       exit 1
     let rec parseArgs b args = 
       match args with
@@ -28,7 +28,7 @@ let main argv =
       | "--processor" :: processor :: xs -> parseArgs { b with processor = processor } xs
       | "--operation" :: operation :: xs -> parseArgs { b with operation = operation } xs
       | invalidArgs ->
-        printfn "error: invalid arguments %A" invalidArgs
+        printfn $"error: invalid arguments %A{invalidArgs}"
         printHelp()
 
     let args = argv
