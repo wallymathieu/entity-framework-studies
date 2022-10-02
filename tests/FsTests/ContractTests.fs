@@ -22,10 +22,10 @@ let dbConn = "Data Source=" + db
     
 
 type TestStartup (config) =
-    inherit Startup (config) with
-        override self.ConfigureDbContext options =
-            let migrationRunner = MigrationRunner.create dbConn "sqlite"
-            migrationRunner.MigrateUp ()
+    inherit Startup (config)
+    override self.ConfigureDbContext options =
+        let migrationRunner = MigrationRunner.create dbConn "sqlite"
+        migrationRunner.MigrateUp ()
 let createTestServer () =
     new TestServer(WebHostBuilder()
         .UseKestrel()
