@@ -1,4 +1,4 @@
-﻿namespace WebFs.Controllers
+namespace WebFs.Controllers
 
 open System
 open Microsoft.AspNetCore.Mvc
