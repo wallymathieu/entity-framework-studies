@@ -19,18 +19,10 @@ namespace SomeBasicEFApp.Web
     ///
     public class Startup
     {
-        private SwaggerConfig _swagger;
-        private IWebHostEnvironment _env;
+        private readonly SwaggerConfig _swagger;
 
         class SwaggerConfig
         {
-            private IWebHostEnvironment env;
-
-            public SwaggerConfig(IWebHostEnvironment env)
-            {
-                this.env = env;
-            }
-
             ///
             public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
             {
@@ -72,8 +64,8 @@ namespace SomeBasicEFApp.Web
                     var types = new[] {typeof(CustomerId), typeof(OrderId), typeof(ProductId)};
                     foreach (var type in types)
                     {
-                        options.MapType(type,() => new OpenApiSchema { 
-                            Type = "string", 
+                        options.MapType(type,() => new OpenApiSchema {
+                            Type = "string",
                             Example = new OpenApiString(Activator.CreateInstance(type, 1).ToString() )});
                     }
 
@@ -84,8 +76,7 @@ namespace SomeBasicEFApp.Web
         public Startup(IConfiguration configuration, IWebHostEnvironment env)
         {
             Configuration = configuration;
-            _env = env;
-            _swagger = new SwaggerConfig(env);
+            _swagger = new SwaggerConfig();
         }
         ///
         public IConfiguration Configuration { get; }

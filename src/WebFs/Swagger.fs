@@ -8,17 +8,17 @@ open Microsoft.Extensions.DependencyInjection
 ///
 type SwaggerConfig()=
     ///
-    member __.Configure(app:IApplicationBuilder)=
+    member _.Configure(app:IApplicationBuilder)=
         // Enable middleware to serve generated Swagger as a JSON endpoint
         app.UseSwagger(fun c ->  c.RouteTemplate <- "swagger/{documentName}/swagger.json" ) |> ignore
 
         app.UseSwaggerUI(fun c ->
-        
+
             c.SwaggerEndpoint("/swagger/v1/swagger.json", "API");
             c.EnableDeepLinking();
         ) |> ignore
     ///
-    member __.ConfigureServices(services:IServiceCollection)=
+    member _.ConfigureServices(services:IServiceCollection)=
         services.AddSwaggerGen(fun options -> ()) |> ignore
 
         services.ConfigureSwaggerGen(fun options ->
