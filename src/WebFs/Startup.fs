@@ -20,20 +20,22 @@ type Startup private () =
     new (configuration: IConfiguration) as this =
         Startup() then
         this.Configuration <- configuration
-
+    abstract member ConfigureDbContext: DbContextOptionsBuilder ->unit
+    default this.ConfigureDbContext(options) =
+      options.UseSqlServer(this.Configuration.GetConnectionString("DefaultConnection")) |> ignore
+    abstract OnConfigured: IApplicationBuilder * IWebHostEnvironment -> unit
+    default this.OnConfigured (_, _) = ()
     // This method gets called by the runtime. Use this method to add services to the container.
     member this.ConfigureServices(services: IServiceCollection) =
         // Add framework services.
-        services.AddControllersWithViews() |> ignore
+        services.AddControllersWithViews().AddApplicationPart(typeof<Startup>.Assembly) |> ignore
 
-        services.AddDbContext<CoreDbContext>(fun options ->
-                                                 options.UseSqlServer(this.Configuration.GetConnectionString("DefaultConnection")) |> ignore
-                                            ) 
+        services.AddDbContext<CoreDbContext>(this.ConfigureDbContext)
                 .AddScoped<ICoreDbContext,CoreDbContext>()
                 |> swagger.ConfigureServices
     // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
     member this.Configure(app: IApplicationBuilder, env: IWebHostEnvironment) =
-        if (env.IsDevelopment()) then
+        if env.IsDevelopment() then
             app.UseDeveloperExceptionPage() |> ignore
         else
             app.UseHsts() |> ignore

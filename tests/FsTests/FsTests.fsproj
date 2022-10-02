@@ -16,6 +16,7 @@
             <Link>TestData\TestData.xml</Link>
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </Content>
+        <Compile Include="ContractTests.fs" />
     </ItemGroup>
     <ItemGroup>
         <PackageReference Update="FSharp.Core" Version="6.0.1" />
@@ -27,6 +28,7 @@
         <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="6.0.0" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="6.0.0" />
         <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.0.0" />
+        <PackageReference Include="Microsoft.AspNetCore.TestHost" Version="6.0.0" />
         <PackageReference Include="xunit" Version="2.4.1" />
         <PackageReference Include="xunit.runner.visualstudio" Version="2.4.3">
           <PrivateAssets>all</PrivateAssets>
