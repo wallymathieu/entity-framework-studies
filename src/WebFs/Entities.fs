@@ -1,21 +1,54 @@
 namespace CoreFs
-
 open System
 open System.Collections.Generic
-open System.ComponentModel
+open System.Text.Json.Serialization
 open Saithe
 
-[<TypeConverter(typeof<ParseTypeConverter<OrderId>>)>]
-type OrderId = OrderId of int
-with override this.ToString()= match this with OrderId id->id.ToString()
-     
-type ProductId = ProductId of int
-with override this.ToString()= match this with ProductId id->id.ToString()
-type CustomerId = CustomerId of int
-with override this.ToString()= match this with CustomerId id->id.ToString()
-module OrderId =begin let unwrap (OrderId id)=id end
-module ProductId =begin let unwrap (ProductId id)=id end
-module CustomerId =begin let unwrap (CustomerId id)=id end
+type ValueTypeJsonConverter<'T when 'T :> obj>() =
+  inherit JsonConverter<'T>()
+  let mapping = ValueTypeMapping<'T>()
+  let t = typeof<'T>
+  override this.CanConvert(objectType) =
+    objectType = t
+  override this.Read(reader, objectType, _) : 'T =
+    if (objectType = t) then
+      let v = reader.GetString ()
+      mapping.Parse(v) :?> 'T
+    else if (Nullable.GetUnderlyingType(objectType) = t) then
+      let v = reader.GetString ()
+      if isNull v then
+        Unchecked.defaultof<'T>
+      else
+        mapping.Parse(v) :?> 'T
+    else failwithf $"Cant handle type %s{objectType.Name}, expects %s{t.Name} (1)"
+
+  override this.Write(writer, value, _) =
+    writer.WriteStringValue(string <| mapping.ToRaw(value))
+
+open FSharpPlus
+
+[<JsonConverter(typeof<ValueTypeJsonConverter<OrderId>>)>]
+type OrderId (value:int) =
+    member _.Value = value
+    override this.ToString() = $"order-%i{value}"
+    static member TryParse value = trySscanf "order-%i" value |> map OrderId
+    static member Parse value = match OrderId.TryParse value with | Some v -> v | _ -> raise ( ArgumentException "Failed to parse" )
+
+[<JsonConverter(typeof<ValueTypeJsonConverter<ProductId>>)>]
+type ProductId (value:int) =
+    member _.Value = value
+    override this.ToString() = $"product-%i{value}"
+    static member TryParse value = trySscanf "product-%i" value |> map ProductId
+    static member Parse value = match ProductId.TryParse value with | Some v -> v | _ -> raise ( ArgumentException "Failed to parse" )
+[<JsonConverter(typeof<ValueTypeJsonConverter<CustomerId>>)>]
+type CustomerId (value:int) =
+    member _.Value = value
+    override this.ToString() = $"customer-%i{value}"
+    static member TryParse value = trySscanf "customer-%i" value |> map CustomerId
+    static member Parse value = match CustomerId.TryParse value with | Some v -> v | _ -> raise ( ArgumentException "Failed to parse" )
+module OrderId =begin let unwrap (id: OrderId) = id.Value end
+module ProductId =begin let unwrap (id: ProductId) = id.Value end
+module CustomerId =begin let unwrap (id: CustomerId) = id.Value end
 
 [<AllowNullLiteral>]
 type ProductOrder(order:Order,product:Product)=
