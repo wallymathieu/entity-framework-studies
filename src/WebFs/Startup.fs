@@ -23,8 +23,6 @@ type Startup private () =
     abstract member ConfigureDbContext: DbContextOptionsBuilder ->unit
     default this.ConfigureDbContext(options) =
       options.UseSqlServer(this.Configuration.GetConnectionString("DefaultConnection")) |> ignore
-    abstract OnConfigured: IApplicationBuilder * IWebHostEnvironment -> unit
-    default this.OnConfigured (_, _) = ()
     // This method gets called by the runtime. Use this method to add services to the container.
     member this.ConfigureServices(services: IServiceCollection) =
         // Add framework services.

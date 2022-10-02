@@ -26,9 +26,6 @@ type TestStartup (config) =
         override self.ConfigureDbContext options =
             let migrationRunner = MigrationRunner.create dbConn "sqlite"
             migrationRunner.MigrateUp ()
-            options.UseSqlite dbConn |> ignore
-        override self.OnConfigured (_, _) =
-            ()
 let createTestServer () =
     new TestServer(WebHostBuilder()
         .UseKestrel()
