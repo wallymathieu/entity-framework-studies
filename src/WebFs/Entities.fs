@@ -2,7 +2,10 @@ namespace CoreFs
 
 open System
 open System.Collections.Generic
+open System.ComponentModel
+open Saithe
 
+[<TypeConverter(typeof<ParseTypeConverter<OrderId>>)>]
 type OrderId = OrderId of int
 with override this.ToString()= match this with OrderId id->id.ToString()
      
