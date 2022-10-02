@@ -24,15 +24,15 @@ namespace SomeBasicEFApp.Web.Controllers.v1
 
         // GET: Customers
         [HttpGet]
-        [Produces(typeof(CustomerModel[]))]
+        [Produces(typeof(Customer[]))]
         public async Task<IActionResult> Index()
         {
-            return Ok(await _context.Customers.Select(c=>Mappers.Map(c)).ToListAsync());
+            return Ok(await _context.Customers.ToListAsync());
         }
 
         // GET: Customers/Details/5
         [HttpGet("{id}")]
-        [ProducesResponseType(typeof(CustomerModel),StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(Customer),StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(void),StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(void),StatusCodes.Status404NotFound)]
         [ProducesDefaultResponseType()]
@@ -50,22 +50,22 @@ namespace SomeBasicEFApp.Web.Controllers.v1
                 return NotFound();
             }
 
-            return Ok(Mappers.Map(customer));
+            return Ok(customer);
         }
 
         [HttpPost("")]
-        [Produces(typeof(CustomerModel))]
+        [Produces(typeof(Customer))]
         public async Task<IActionResult> Create([FromBody] EditCustomer model)
         {
             var customer = new Customer {Firstname = model.Firstname, Lastname = model.Lastname};
             await _context.Customers.AddAsync(customer);
             await _context.SaveChangesAsync();
-            return Ok(Mappers.Map(customer));
+            return Ok(customer);
         }
 
         [HttpPut("{id}")]
-        [Produces(typeof(CustomerModel))]
-        [ProducesResponseType(typeof(CustomerModel),StatusCodes.Status200OK)]
+        [Produces(typeof(Customer))]
+        [ProducesResponseType(typeof(Customer),StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(void),StatusCodes.Status404NotFound)]
         [ProducesDefaultResponseType]
         public async Task<IActionResult> Edit(CustomerId id, [FromBody] EditCustomer model)
@@ -75,7 +75,7 @@ namespace SomeBasicEFApp.Web.Controllers.v1
             customer.Firstname = model.Firstname;
             customer.Lastname = model.Lastname;
             await _context.SaveChangesAsync();
-            return Ok(Mappers.Map(customer));
+            return Ok(customer);
         }
 
 

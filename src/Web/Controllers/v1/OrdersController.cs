@@ -2,6 +2,7 @@ using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SomeBasicEFApp.Web.Data;
+using SomeBasicEFApp.Web.Entities;
 using SomeBasicEFApp.Web.Models;
 
 namespace SomeBasicEFApp.Web.Controllers.Api
@@ -16,7 +17,7 @@ namespace SomeBasicEFApp.Web.Controllers.Api
         public OrdersController(CoreDbContext context) => _context = context;
 
         [HttpGet("")]
-        [Produces(typeof(OrderModel[]))]
+        [Produces(typeof(Order[]))]
         public IActionResult Index()
         {// here you normally want filtering based on query parameters (in order to get better perf)
             return Ok(
@@ -25,7 +26,6 @@ namespace SomeBasicEFApp.Web.Controllers.Api
                         .Include(o=>o.Customer)
                         .Include(o=>o.ProductOrders)
                         .ThenInclude(po=>po.Product)
-                    .Select(Mappers.Map)
                     .ToArray());
         }
     }

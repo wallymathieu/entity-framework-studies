@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SomeBasicEFApp.Web.Commands;
 using SomeBasicEFApp.Web.Data;
+using SomeBasicEFApp.Web.Entities;
 using SomeBasicEFApp.Web.Models;
 using SomeBasicEFApp.Web.ValueTypes;
 
@@ -20,17 +21,16 @@ namespace SomeBasicEFApp.Web.Controllers.v1
         public ProductsController(CoreDbContext context) => _context = context;
 
         [HttpGet("")]
-        [Produces(typeof(ProductModel[]))]
+        [Produces(typeof(Product[]))]
         public IActionResult Index()
         {// here you normally want filtering based on query parameters (in order to get better perf)
             return Ok(
                 _context
                     .Products
-                    .Select(Mappers.Map)
                     .ToArray());
         }
         [HttpGet("{id}")]
-        [ProducesResponseType(typeof(ProductModel),StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(Product),StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(void),StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(void),StatusCodes.Status404NotFound)]
         [ProducesDefaultResponseType()]
@@ -48,11 +48,11 @@ namespace SomeBasicEFApp.Web.Controllers.v1
                 return NotFound();
             }
 
-            return Ok(Mappers.Map(product));
+            return Ok(product);
         }
 
         [HttpPost("")]
-        [Produces(typeof(ProductModel))]
+        [Produces(typeof(Product))]
         public async Task<IActionResult> Post(EditProductModel model)
         {
             var handler = new CreateProductCommandHandler(_context);
@@ -60,8 +60,8 @@ namespace SomeBasicEFApp.Web.Controllers.v1
                 Name: model.Name,
                 Cost: model.Cost
             ));
-            return Ok(Mappers.Map(product));
+            return Ok(product);
         }
-        
+
     }
 }
