@@ -1,20 +1,41 @@
 namespace CoreFs
-
 open System
 open System.Collections.Generic
+open System.ComponentModel
+open System.ComponentModel.DataAnnotations.Schema
 open System.Text.Json.Serialization
 open FSharpPlus
+open Saithe
+open SaitheSystemTextJson
 
-type OrderId = OrderId of int
-with override this.ToString()= match this with OrderId id->id.ToString()
-     
-type ProductId = ProductId of int
-with override this.ToString()= match this with ProductId id->id.ToString()
-type CustomerId = CustomerId of int
-with override this.ToString()= match this with CustomerId id->id.ToString()
-module OrderId =begin let unwrap (OrderId id)=id end
-module ProductId =begin let unwrap (ProductId id)=id end
-module CustomerId =begin let unwrap (CustomerId id)=id end
+[<JsonConverter(typeof<ParseTypeSystemTextJsonConverter<OrderId>>);
+  TypeConverter(typeof<ParseTypeConverter<OrderId>>)>]
+type OrderId = | OrderId of int
+with
+    member self.Value = match self with OrderId v -> v
+    override this.ToString() = $"order-%i{this.Value}"
+    static member TryParse value = trySscanf "order-%i" value |> map OrderId
+    static member Parse value = match OrderId.TryParse value with | Some v -> v | _ -> raise ( ArgumentException "Failed to parse" )
+
+[<JsonConverter(typeof<ParseTypeSystemTextJsonConverter<ProductId>>);
+  TypeConverter(typeof<ParseTypeConverter<ProductId>>)>]
+type ProductId = | ProductId of int
+with
+    member self.Value = match self with ProductId v -> v
+    override this.ToString() = $"product-%i{this.Value}"
+    static member TryParse value = trySscanf "product-%i" value |> map ProductId
+    static member Parse value = match ProductId.TryParse value with | Some v -> v | _ -> raise ( ArgumentException "Failed to parse" )
+[<JsonConverter(typeof<ParseTypeSystemTextJsonConverter<CustomerId>>);
+  TypeConverter(typeof<ParseTypeConverter<CustomerId>>)>]
+type CustomerId = | CustomerId of int
+with
+    member self.Value = match self with CustomerId v -> v
+    override this.ToString() = $"customer-%i{this.Value}"
+    static member TryParse value = trySscanf "customer-%i" value |> map CustomerId
+    static member Parse value = match CustomerId.TryParse value with | Some v -> v | _ -> raise ( ArgumentException "Failed to parse" )
+module OrderId =begin let unwrap (id: OrderId) = id.Value end
+module ProductId =begin let unwrap (id: ProductId) = id.Value end
+module CustomerId =begin let unwrap (id: CustomerId) = id.Value end
 
 [<AllowNullLiteral>]
 type ProductOrder(order:Order,product:Product)=
@@ -28,11 +49,10 @@ and [<AllowNullLiteral>] Order(orderId:OrderId,orderDate:DateTime,customer:Custo
     [<JsonPropertyName("id")>]
     member val OrderId =orderId with get, set
     member val OrderDate =orderDate with get, set
-    [<JsonIgnore>]
     member val Customer : Customer=customer with get, set
     [<JsonIgnore>]
     member val Products =List<ProductOrder>() with get, set
-    [<JsonPropertyName("products")>]
+    [<JsonPropertyName("products");NotMapped>]
     member this.OrderProducts = this.Products |> ResizeArray.map (fun op->op.Product)
     [<JsonIgnore>]
     member val Version = version with get, set

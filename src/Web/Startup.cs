@@ -94,8 +94,7 @@ namespace SomeBasicEFApp.Web
         public void ConfigureServices(IServiceCollection services)
         {
             // Add framework services.
-            services.AddDbContext<CoreDbContext>(options =>
-                ConfigureDbContext(options));
+            services.AddDbContext<CoreDbContext>(ConfigureDbContext);
 
             _swagger.ConfigureServices(services);
             services.AddIdentity<ApplicationUser, IdentityRole>(options =>

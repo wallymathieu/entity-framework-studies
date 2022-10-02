@@ -30,7 +30,7 @@ module TestData=
 
         for customer in db.Customers |> Array.map toCustomer do
             session.Add customer |> ignore
-        
+
         for order in db.Orders |> Array.map toOrder do
             session.Add order |> ignore
         for product in db.Products |> Array.map toProduct do
@@ -54,6 +54,7 @@ type CustomerDataTests()=
 
     [<Fact>]
     member this.Can_get_customer_by_id()=task{
+        let! cs = this.Session.Customers.ToArrayAsync()
         let! c = this.Session.Customers.FindAsync (CustomerId 1)
         Assert.NotNull c }
 
@@ -67,7 +68,7 @@ type CustomerDataTests()=
         let orderId= OrderId 1
         let! order = this.Session.Orders.IncludeProducts().FirstAsync(fun o->o.OrderId=orderId)
         Assert.Contains(order.Products, fun p -> p.Product.ProductId = yoyoId) }
-        
+
 module InMemory=
     let fixtureOptions=lazy(
         let db = sprintf "customer_data_tests_%O" <| Guid.NewGuid()
