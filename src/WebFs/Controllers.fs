@@ -14,9 +14,9 @@ type HomeController () =
     [<HttpGet("")>]
     member this.Index() = this.Redirect "/swagger"
 
-[<Route("/api/v1/customers")>]
-[<ApiController>]
-[<ApiExplorerSettings(GroupName = "v1")>]
+[<Route("/api/v1/customers");
+  ApiController;
+  ApiExplorerSettings(GroupName = "v1")>]
 type CustomersController (context:ICoreDbContext) =
     inherit ControllerBase()
 
@@ -38,8 +38,6 @@ type CustomersController (context:ICoreDbContext) =
       Produces(typeof<Customer>)>]
     member this.Post([<FromBody>] value:EditCustomer) = task {
          let customer = Customer(customerId= CustomerId 0,lastname =value.Lastname, firstname=value.Firstname, version=0)
-         //customer.Lastname <- value.Lastname
-         //customer.Firstname <- value.Firstname
          let! _ = context.AddAsync customer
          do! context.SaveChangesAsync()
          return this.Ok(customer) :> AR }
@@ -65,9 +63,9 @@ type CustomersController (context:ICoreDbContext) =
             do! context.SaveChangesAsync()
             return this.Ok(customer) :> AR }
 
-[<Route("/api/v1/orders")>]
-[<ApiController>]
-[<ApiExplorerSettings(GroupName = "v1")>]
+[<Route("/api/v1/orders");
+  ApiController;
+  ApiExplorerSettings(GroupName = "v1")>]
 type OrdersController (context:ICoreDbContext) =
     inherit ControllerBase()
 
@@ -102,9 +100,9 @@ type OrdersController (context:ICoreDbContext) =
             do! context.SaveChangesAsync()
             return this.Ok order :> AR }
 
-[<Route("/api/v1/products")>]
-[<ApiController>]
-[<ApiExplorerSettings(GroupName = "v1")>]
+[<Route("/api/v1/products");
+  ApiController;
+  ApiExplorerSettings(GroupName = "v1")>]
 type ProductsController (context:ICoreDbContext) =
     inherit ControllerBase()
 
