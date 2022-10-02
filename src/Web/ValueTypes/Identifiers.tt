@@ -5,7 +5,9 @@
 <#@ import namespace="System.Collections.Generic" #>
 using System;
 using System.ComponentModel;
+using System.Text.Json.Serialization;
 using Saithe;
+using SaitheSystemTextJson;
 
 namespace SomeBasicEFApp.Web.ValueTypes
 {
@@ -20,7 +22,8 @@ var type =typeT.Name;
 var prefix = typeT.Prefix;
 #>
     ///
-    [TypeConverter(typeof(ParseTypeConverter<<#= type #>>))]
+    [TypeConverter(typeof(ParseTypeConverter<<#= type #>>)),
+     JsonConverter(typeof(ParseTypeSystemTextJsonConverter<<#= type #>>))]
     public record struct <#= type #> (int Value) : IValueType
     {
         ///
