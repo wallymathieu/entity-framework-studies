@@ -64,8 +64,8 @@ with
 and[<CLIMutable>] Customer = {
     [<JsonPropertyName("id"); Key>]
     CustomerId:CustomerId
-    Firstname:string
-    Lastname:string
+    mutable Firstname:string
+    mutable Lastname:string
     [<JsonIgnore>]
     Version:int
     [<JsonIgnore>]
@@ -80,10 +80,11 @@ with
         Orders = List<_>() }
 and [<CLIMutable>] Product = {
     [<JsonPropertyName("id"); Key>]
-    ProductId:ProductId
-    Cost:float
-    ProductName:string
-    Version:int
+    ProductId: ProductId
+    mutable Cost: float
+    [<JsonPropertyName("name")>]
+    mutable ProductName: string
+    Version: int
     [<JsonIgnore>]
     Orders: List<ProductOrder>
 }

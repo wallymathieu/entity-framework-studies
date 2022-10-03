@@ -5,7 +5,6 @@ open Microsoft.AspNetCore.Mvc
 open Microsoft.EntityFrameworkCore
 open EntityFrameworkCore.FSharp.DbContextHelpers
 open CoreFs
-
 open WebFs.Domain
 open WebFs.Models
 type AR = IActionResult
@@ -29,37 +28,37 @@ type CustomersController (context: CoreDbContext) =
 
     [<HttpGet("{id}");
       Produces(typeof<Customer>)>]
-    member this.Get([<FromRoute>] id: CustomerId) = task {
-        match! tryFindEntityTaskAsync context id with
+    member this.Get([<FromRoute>] id: CustomerId) = async {
+        match! tryFindEntityAsync context id with
         | Some (customer:Customer) -> return this.Ok(customer) :> AR
         | None -> return this.NotFound() :> AR }
 
     [<HttpPost;
       Produces(typeof<Customer>)>]
-    member this.Post([<FromBody>] value: EditCustomer) = task {
+    member this.Post([<FromBody>] value: EditCustomer) = async {
          let customer = { Customer.Default with Lastname =value.Lastname; Firstname=value.Firstname }
-         let! _ = context.AddAsync customer
-         do! saveChangesTaskAsync context
+         do! addEntityAsync context customer
+         do! saveChangesAsync context
          return this.Ok(customer) :> AR }
 
     [<HttpPut("{id}");
       Produces(typeof<Customer>)>]
-    member this.Put([<FromRoute>] id: CustomerId, [<FromBody>] value: EditCustomer ) = task {
-        match! tryFindEntityTaskAsync context id with
+    member this.Put([<FromRoute>] id: CustomerId, [<FromBody>] value: EditCustomer ) = async {
+        match! tryFindEntityAsync context id with
         | Some (customer:Customer) ->
-            let next = { customer with Lastname = value.Lastname; Firstname = value.Firstname }
-            addEntity context next
-            do! saveChangesTaskAsync context
+            customer.Lastname <- value.Lastname
+            customer.Firstname <- value.Firstname
+            do! saveChangesAsync context
             return this.Ok(customer) :> AR
         | None -> return this.NotFound() :> AR }
 
     [<HttpDelete("{id}");
       Produces(typeof<Customer>)>]
-    member this.Delete([<FromRoute>] id: CustomerId) = task {
-        match! tryFindEntityTaskAsync context id with
+    member this.Delete([<FromRoute>] id: CustomerId) = async {
+        match! tryFindEntityAsync context id with
         | Some (customer:Customer) ->
             removeEntity context customer
-            do! saveChangesTaskAsync context
+            do! saveChangesAsync context
             return this.Ok(customer) :> AR
         | None -> return this.NotFound() :> AR }
 
@@ -80,28 +79,28 @@ type OrdersController (context: CoreDbContext) =
 
     [<HttpPost("");
       Produces(typeof<Order>)>]
-    member this.Post() = task {
+    member this.Post() = async {
         let order = Order.Create DateTime.UtcNow Unchecked.defaultof<_>
-        do! addEntityTaskAsync context order
-        do! saveChangesTaskAsync context
+        do! addEntityAsync context order
+        do! saveChangesAsync context
         return this.Ok order }
 
     [<HttpPost("{id}/products");
       Produces(typeof<Order>)>]
-    member this.PostProduct([<FromRoute>] id:OrderId, [<FromBody>] body:AddProductToOrderModel) = task {
+    member this.PostProduct([<FromRoute>] id:OrderId, [<FromBody>] body:AddProductToOrderModel) = async {
         let! maybeOrder =
                     context.Orders
                         .Include(fun o->o.Customer)
                         .IncludeProducts()
-                        .TryFirstTaskAsync(fun o->o.OrderId=id)
-        let! maybeProduct = tryFindEntityTaskAsync context body.ProductId
+                        .TryFirstAsync(fun o->o.OrderId=id)
+        let! maybeProduct = tryFindEntityAsync context body.ProductId
         match (maybeOrder,maybeProduct) with
         | None,_
         | _,None
              -> return this.NotFound() :> AR
         | Some (order:Order), Some (product:Product) ->
             order.Products.Add (ProductOrder.Create (order, product))
-            do! saveChangesTaskAsync context
+            do! saveChangesAsync context
             return this.Ok order :> AR }
 
 [<Route("/api/v1/products");
@@ -117,24 +116,24 @@ type ProductsController (context: CoreDbContext) =
         return this.Ok products }
     [<HttpGet("{id}");
       Produces(typeof<Product>)>]
-    member this.Get([<FromRoute>] id:ProductId) = task {
-        match! tryFindEntityTaskAsync context id with
+    member this.Get([<FromRoute>] id:ProductId) = async {
+        match! tryFindEntityAsync context id with
         | Some (product:Product) -> return this.Ok(product) :> AR
         | None -> return this.NotFound() :> AR }
     [<HttpPost;
       Produces(typeof<Product>)>]
-    member this.Post([<FromBody>] value:EditProduct) = task {
+    member this.Post([<FromBody>] value:EditProduct) = async {
          let product = { Product.Default with ProductName=value.Name; Cost=value.Cost }
-         do! addEntityTaskAsync context product
-         do! saveChangesTaskAsync context
+         do! addEntityAsync context product
+         do! saveChangesAsync context
          return this.Ok(product) :> AR }
     [<HttpPut("{id}");
       Produces(typeof<Product>)>]
-    member this.Put([<FromRoute>] id:ProductId, [<FromBody>] value:EditProduct) = task {
-        match! tryFindEntityTaskAsync context id with
+    member this.Put([<FromRoute>] id:ProductId, [<FromBody>] value:EditProduct) = async {
+        match! tryFindEntityAsync context id with
         | Some (product:Product) ->
-            let next = { product with ProductName = value.Name; Cost = value.Cost }
-            do! addEntityTaskAsync context next
-            do! saveChangesTaskAsync context
-            return this.Ok(next) :> AR
+            product.ProductName <- value.Name
+            product.Cost <- value.Cost
+            do! saveChangesAsync context
+            return this.Ok(product) :> AR
         | None -> return this.NotFound() :> AR }
