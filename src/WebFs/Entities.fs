@@ -2,6 +2,7 @@ namespace CoreFs
 open System
 open System.Collections.Generic
 open System.ComponentModel
+open System.ComponentModel.DataAnnotations
 open System.ComponentModel.DataAnnotations.Schema
 open System.Text.Json.Serialization
 open FSharpPlus
@@ -37,43 +38,59 @@ module OrderId =begin let unwrap (id: OrderId) = id.Value end
 module ProductId =begin let unwrap (id: ProductId) = id.Value end
 module CustomerId =begin let unwrap (id: CustomerId) = id.Value end
 
-[<AllowNullLiteral>]
-type ProductOrder(order:Order,product:Product)=
-    new()=ProductOrder(null, null)
-    member val Order : Order=order with get, set
-    //member val OrderId = if isNull order then OrderId 0 else order.OrderId with get, set
-    member val Product : Product=product with get, set
-    //member val ProductId = if isNull product then ProductId 0 else product.ProductId with get, set
-and [<AllowNullLiteral>] Order(orderId:OrderId,orderDate:DateTime,customer:Customer,version:int) =
-    new()=Order(OrderId 0,DateTime.MinValue,null,0)
-    [<JsonPropertyName("id")>]
-    member val OrderId =orderId with get, set
-    member val OrderDate =orderDate with get, set
-    member val Customer : Customer=customer with get, set
+[<CLIMutable>]
+type ProductOrder = { Order:Order; Product:Product }
+with
+    static member Create (order,product) = { Order = order; Product = product }
+and [<CLIMutable>] Order = {
+    [<JsonPropertyName("id"); Key>]
+    OrderId:OrderId
+    OrderDate:DateTime
+    Customer:Customer option
     [<JsonIgnore>]
-    member val Products =List<ProductOrder>() with get, set
+    Version:int
+    [<JsonIgnore>]
+    Products: List<ProductOrder>
+}
+with
     [<JsonPropertyName("products");NotMapped>]
     member this.OrderProducts = this.Products |> ResizeArray.map (fun op->op.Product)
+    static member Default = {
+        OrderId = OrderId 0
+        OrderDate = DateTime.MinValue
+        Version = 0
+        Customer = None
+        Products = List<_>() }
+and[<CLIMutable>] Customer = {
+    [<JsonPropertyName("id"); Key>]
+    CustomerId:CustomerId
+    Firstname:string
+    Lastname:string
     [<JsonIgnore>]
-    member val Version = version with get, set
-
-and [<AllowNullLiteral>] Customer(customerId:CustomerId,firstname:string,lastname:string,version:int)=
-    new()=Customer(CustomerId 0,"","",0)
-    [<JsonPropertyName("id")>]
-    member val CustomerId  =customerId with get, set
-    member val Firstname =firstname with get, set
-    member val Lastname =lastname with get, set
+    Version:int
     [<JsonIgnore>]
-    member val Orders = List<Order>() with get, set
+    Orders: List<Order>
+}
+with
+    static member Default = {
+        CustomerId = CustomerId 0
+        Firstname = ""
+        Lastname = ""
+        Version = 0
+        Orders = List<_>() }
+and [<CLIMutable>] Product = {
+    [<JsonPropertyName("id"); Key>]
+    ProductId:ProductId
+    Cost:float
+    ProductName:string
+    Version:int
     [<JsonIgnore>]
-    member val Version = version with get, set
-and [<AllowNullLiteral>] Product(productId:ProductId,cost:float,productName:string,version:int)=
-    new()=Product(ProductId 0,0.0,"",0)
-    [<JsonPropertyName("id")>]
-    member val ProductId =productId with get, set
-    member val Cost =cost with get, set
-    member val ProductName = productName with get, set
-    [<JsonIgnore>]
-    member val Orders = List<ProductOrder>() with get, set
-    [<JsonIgnore>]
-    member val Version = version with get, set
+    Orders: List<ProductOrder>
+}
+with
+    static member Default = {
+        ProductId = ProductId 0
+        Cost = 0
+        ProductName = ""
+        Version = 0
+        Orders = List<_>() }

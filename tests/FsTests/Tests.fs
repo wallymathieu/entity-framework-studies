@@ -4,6 +4,7 @@ open System
 open Xunit
 open FSharp.Data
 open Microsoft.EntityFrameworkCore
+open EntityFrameworkCore.FSharp.DbContextHelpers
 open WebFs.Domain
 open System.IO
 open System.Linq
@@ -16,14 +17,22 @@ module TestData=
 
     let fillDb (options:DbContextOptions)=
         use session = new CoreDbContext(options)
-        let toCustomer (o : TestData.Customer) =
-            Customer(customerId=CustomerId o.Id,version=o.Version,firstname=o.Firstname,lastname=o.Lastname)
+        let toCustomer (o : TestData.Customer) = { Customer.Default with
+                                                    CustomerId = CustomerId o.Id
+                                                    Version = o.Version
+                                                    Firstname = o.Firstname
+                                                    Lastname = o.Lastname }
+        let toOrder (o : TestData.Order) = { Order.Default with
+                                              OrderId = OrderId o.Id
+                                              Version = o.Version
+                                              Customer = tryFindEntity session (CustomerId o.Customer)
+                                              OrderDate = o.OrderDate.DateTime }
 
-        let toOrder (o : TestData.Order)=
-            Order(orderId=OrderId o.Id,version=o.Version,customer=session.Customers.Find(CustomerId o.Customer),orderDate=o.OrderDate.DateTime)
-
-        let toProduct (o : TestData.Product)=
-            Product(productId=ProductId o.Id,version=o.Version,productName=o.Name,cost=float o.Cost)
+        let toProduct (o : TestData.Product) = { Product.Default with
+                                                  ProductId = ProductId o.Id
+                                                  Version = o.Version
+                                                  ProductName = o.Name
+                                                  Cost = float o.Cost }
 
         use f = File.Open("TestData/TestData.xml", FileMode.Open, FileAccess.Read, FileShare.Read)
         let db = TestData.Load(f)
@@ -43,7 +52,7 @@ module TestData=
             let product=session.Products.Find(ProductId o.Product)
             (order,product)
         for (order,product) in db.OrderProducts |> Array.map toOrderProduct do
-            let orderProduct = ProductOrder (order, product)
+            let orderProduct = ProductOrder.Create (order, product)
             order.Products.Add orderProduct
         session.SaveChanges() |> ignore
 let yoyoId= ProductId 1

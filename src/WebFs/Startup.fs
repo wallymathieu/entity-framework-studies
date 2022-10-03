@@ -29,7 +29,6 @@ type Startup private () =
         services.AddControllersWithViews().AddApplicationPart(typeof<Startup>.Assembly) |> ignore
 
         services.AddDbContext<CoreDbContext>(this.ConfigureDbContext)
-                .AddScoped<ICoreDbContext,CoreDbContext>()
                 |> swagger.ConfigureServices
     // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
     member this.Configure(app: IApplicationBuilder, env: IWebHostEnvironment) =
