@@ -1,7 +1,6 @@
-﻿namespace SomeBasicEFApp.Web.ValueTypes
-{
-    /// <summary>
-    /// 
-    /// </summary>
-    public interface IValueType { }
-}
+﻿namespace SomeBasicEFApp.Web.ValueTypes;
+
+/// <summary>
+///
+/// </summary>
+public interface IValueType { }

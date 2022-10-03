@@ -1,12 +1,11 @@
 using Microsoft.AspNetCore.Mvc;
 
-namespace Web.Controllers
+namespace SomeBasicEFApp.Web.Controllers;
+
+public class ManageController : Controller
 {
-    public class ManageController : Controller
+    public IActionResult Index()
     {
-        public IActionResult Index()
-        {
-            throw new System.NotImplementedException();
-        }
+        throw new System.NotImplementedException();
     }
 }
