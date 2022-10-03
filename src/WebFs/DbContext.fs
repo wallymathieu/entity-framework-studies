@@ -22,7 +22,9 @@ type FSharpValueConverter()=
 
 type CoreDbContext(options:DbContextOptions)=
     inherit DbContext(options)
-    default this.OnModelCreating(modelBuilder:ModelBuilder)=
+    default this.OnConfiguring(options: DbContextOptionsBuilder) =
+        options.UseFSharpTypes() |> ignore
+    default this.OnModelCreating(modelBuilder:ModelBuilder) =
         modelBuilder.RegisterOptionTypes()
         let orderIdConverter = FSharpValueConverter.Create(OrderId, OrderId.unwrap)
         let productIdConverter = FSharpValueConverter.Create(ProductId, ProductId.unwrap)
