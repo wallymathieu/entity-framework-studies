@@ -2,13 +2,13 @@
 using System.ComponentModel;
 using System.Text.Json.Serialization;
 using Saithe;
-using SaitheSystemTextJson;
+using Saithe.SystemTextJson;
 
 namespace SomeBasicEFApp.Web.ValueTypes;
 
     ///
 [TypeConverter(typeof(ParseTypeConverter<CustomerId>)),
- JsonConverter(typeof(ParseTypeSystemTextJsonConverter<CustomerId>))]
+ JsonConverter(typeof(ParseTypeJsonConverter<CustomerId>))]
 public record struct CustomerId (int Value) : IValueType
 {
     ///
@@ -29,7 +29,7 @@ public record struct CustomerId (int Value) : IValueType
 }
     ///
 [TypeConverter(typeof(ParseTypeConverter<OrderId>)),
- JsonConverter(typeof(ParseTypeSystemTextJsonConverter<OrderId>))]
+ JsonConverter(typeof(ParseTypeJsonConverter<OrderId>))]
 public record struct OrderId (int Value) : IValueType
 {
     ///
@@ -50,7 +50,7 @@ public record struct OrderId (int Value) : IValueType
 }
     ///
 [TypeConverter(typeof(ParseTypeConverter<ProductId>)),
- JsonConverter(typeof(ParseTypeSystemTextJsonConverter<ProductId>))]
+ JsonConverter(typeof(ParseTypeJsonConverter<ProductId>))]
 public record struct ProductId (int Value) : IValueType
 {
     ///

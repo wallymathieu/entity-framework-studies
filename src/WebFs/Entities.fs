@@ -6,9 +6,9 @@ open System.ComponentModel.DataAnnotations.Schema
 open System.Text.Json.Serialization
 open FSharpPlus
 open Saithe
-open SaitheSystemTextJson
+open Saithe.SystemTextJson
 
-[<JsonConverter(typeof<ParseTypeSystemTextJsonConverter<OrderId>>);
+[<JsonConverter(typeof<ParseTypeJsonConverter<OrderId>>);
   TypeConverter(typeof<ParseTypeConverter<OrderId>>)>]
 type OrderId = | OrderId of int
 with
@@ -17,7 +17,7 @@ with
     static member TryParse value = trySscanf "order-%i" value |> map OrderId
     static member Parse value = match OrderId.TryParse value with | Some v -> v | _ -> raise ( ArgumentException "Failed to parse" )
 
-[<JsonConverter(typeof<ParseTypeSystemTextJsonConverter<ProductId>>);
+[<JsonConverter(typeof<ParseTypeJsonConverter<ProductId>>);
   TypeConverter(typeof<ParseTypeConverter<ProductId>>)>]
 type ProductId = | ProductId of int
 with
@@ -25,7 +25,7 @@ with
     override this.ToString() = $"product-%i{this.Value}"
     static member TryParse value = trySscanf "product-%i" value |> map ProductId
     static member Parse value = match ProductId.TryParse value with | Some v -> v | _ -> raise ( ArgumentException "Failed to parse" )
-[<JsonConverter(typeof<ParseTypeSystemTextJsonConverter<CustomerId>>);
+[<JsonConverter(typeof<ParseTypeJsonConverter<CustomerId>>);
   TypeConverter(typeof<ParseTypeConverter<CustomerId>>)>]
 type CustomerId = | CustomerId of int
 with
