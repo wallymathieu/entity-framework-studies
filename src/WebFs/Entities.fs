@@ -46,7 +46,7 @@ and [<CLIMutable>] Order = {
     [<JsonPropertyName("id"); Key>]
     OrderId:OrderId
     OrderDate:DateTime
-    Customer:Customer option
+    Customer:Customer
     [<JsonIgnore>]
     Version:int
     [<JsonIgnore>]
@@ -55,11 +55,11 @@ and [<CLIMutable>] Order = {
 with
     [<JsonPropertyName("products");NotMapped>]
     member this.OrderProducts = this.Products |> ResizeArray.map (fun op->op.Product)
-    static member Default = {
+    static member Create orderDate customer = {
         OrderId = OrderId 0
-        OrderDate = DateTime.MinValue
+        OrderDate = orderDate
         Version = 0
-        Customer = None
+        Customer = customer
         Products = List<_>() }
 and[<CLIMutable>] Customer = {
     [<JsonPropertyName("id"); Key>]

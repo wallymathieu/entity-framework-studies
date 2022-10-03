@@ -81,7 +81,7 @@ type OrdersController (context: CoreDbContext) =
     [<HttpPost("");
       Produces(typeof<Order>)>]
     member this.Post() = task {
-        let order = { Order.Default with OrderDate=DateTime.UtcNow }
+        let order = Order.Create DateTime.UtcNow Unchecked.defaultof<_>
         do! addEntityTaskAsync context order
         do! saveChangesTaskAsync context
         return this.Ok order }

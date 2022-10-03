@@ -22,11 +22,9 @@ module TestData=
                                                     Version = o.Version
                                                     Firstname = o.Firstname
                                                     Lastname = o.Lastname }
-        let toOrder (o : TestData.Order) = { Order.Default with
+        let toOrder (o : TestData.Order) = { Order.Create o.OrderDate.DateTime (findEntity session (CustomerId o.Customer)) with
                                               OrderId = OrderId o.Id
-                                              Version = o.Version
-                                              Customer = tryFindEntity session (CustomerId o.Customer)
-                                              OrderDate = o.OrderDate.DateTime }
+                                              Version = o.Version }
 
         let toProduct (o : TestData.Product) = { Product.Default with
                                                   ProductId = ProductId o.Id
