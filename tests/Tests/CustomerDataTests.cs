@@ -129,7 +129,7 @@ public abstract class CustomerDataTests : IDisposable
             {
                 var product = session.GetProduct(productId);
                 var order = session.GetOrder(orderId);
-                session.ProductOrders.Add(new ProductOrder ( Id: 0, Order: order, Product: product ));
+                session.ProductOrders.Add(new ProductOrder { Order= order, Product= product });
             });
 
             import.ParseIntProperty("Order", "Customer", (orderId, customerId) =>
