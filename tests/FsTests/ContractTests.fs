@@ -6,10 +6,8 @@ open Microsoft.AspNetCore.Hosting
 open Microsoft.AspNetCore.TestHost
 open Microsoft.EntityFrameworkCore
 open Microsoft.Extensions.Configuration
-open Microsoft.Extensions.DependencyInjection
 open Newtonsoft.Json.Linq
 open WebFs
-open WebFs.Domain
 open Xunit
 open FsMigrations
 
@@ -19,7 +17,7 @@ let tryRemoveDbFile () =
         try IO.File.Delete(db)
         with _ -> ()
 let dbConn = "Data Source=" + db
-    
+
 
 type TestStartup (config) =
     inherit Startup (config)
@@ -48,6 +46,12 @@ let postJsonAsync (client: HttpClient) (url:string) (body:string) =
       response.EnsureSuccessStatusCode () |> ignore
       return! response.Content.ReadAsStringAsync () }
 ///
+let putJsonAsync (client: HttpClient) (url:string) (body:string) =
+   task {
+      let! response = client.PutAsync (url, new StringContent(body, Encoding.UTF8, appJson))
+      response.EnsureSuccessStatusCode () |> ignore
+      return! response.Content.ReadAsStringAsync () }
+///
 let getJsonAsync (client: HttpClient) (url:string) =
     task {
       let! response = client.GetAsync url
@@ -56,12 +60,12 @@ let getJsonAsync (client: HttpClient) (url:string) =
 
 type ContractTests (fixture:ApiFixture) =
     interface IClassFixture<ApiFixture>
-    
+
     [<Fact>] member _.``Can save and get customer`` ()
         = task {
             use client = fixture.Server.CreateClient()
             let! createdCustomer = postJsonAsync client "/api/v1/customers" """{"firstname":"Test","lastname":"TRest"}"""
-            let obj = JObject.Parse createdCustomer 
+            let obj = JObject.Parse createdCustomer
             let id = obj.["id"].Value<string> ()
             Assert.NotNull id
             let! customerJson = getJsonAsync client ("/api/v1/customers/"+id)
@@ -75,6 +79,13 @@ type ContractTests (fixture:ApiFixture) =
             let id = obj.["id"].Value<string> ()
             Assert.NotNull id
             let! productJson = getJsonAsync client ("/api/v1/products/"+id)
-            
+
             let productId = (JObject.Parse productJson).["id"].Value<string> ()
-            Assert.Equal (id, productId) }
+            Assert.Equal (id, productId)
+
+            let! _ = putJsonAsync client ("/api/v1/products/"+id) """{"name":"Test2","cost":11}"""
+            let! productJson = getJsonAsync client ("/api/v1/products/"+id)
+            let productJson' = JObject.Parse productJson
+            let name = productJson'["name"].Value<string> ()
+
+            Assert.Equal ("Test2", name) }
