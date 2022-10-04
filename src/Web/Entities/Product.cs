@@ -5,7 +5,7 @@ using SomeBasicEFApp.Web.ValueTypes;
 namespace SomeBasicEFApp.Web.Entities;
 
 ///
-public class Product
+public record Product
 {
     ///
     public float Cost { get; init; }
