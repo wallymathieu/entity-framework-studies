@@ -11,7 +11,6 @@ namespace SomeBasicEFApp.Web.Entities;
 public class Order
 {
     ///
-    [JsonIgnore]
     public Customer? Customer { get; set; }
     ///
     public DateTime OrderDate { get; init; }
