@@ -13,7 +13,7 @@ public class Product
     public string? Name { get; init; }
     ///
     [JsonIgnore]
-    public IList<ProductOrder> ProductOrders { get; init; } = new List<ProductOrder>();
+    public IList<Order> Orders { get; init; } = new List<Order>();
     ///
     public ProductId Id { get; init; }
     ///

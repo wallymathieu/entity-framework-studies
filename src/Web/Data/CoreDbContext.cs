@@ -24,6 +24,9 @@ public class CoreDbContext : IdentityDbContext<ApplicationUser>
                 .OwnsOne(o => o.Type,
                     t=>t.Property(pt=>pt.Type).HasColumnName("ProductType"))
                 .UsePropertyAccessMode(PropertyAccessMode.Field);
+            entity.HasMany(p => p.Orders)
+                .WithMany(o => o.Products)
+                .UsingEntity<ProductOrder>();
 
         });
         builder.Entity<Customer>(entity =>

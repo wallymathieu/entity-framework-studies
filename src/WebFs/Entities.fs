@@ -3,7 +3,6 @@ open System
 open System.Collections.Generic
 open System.ComponentModel
 open System.ComponentModel.DataAnnotations
-open System.ComponentModel.DataAnnotations.Schema
 open System.Text.Json.Serialization
 open FSharpPlus
 open Saithe
@@ -37,7 +36,6 @@ with
 module OrderId =begin let unwrap (id: OrderId) = id.Value end
 module ProductId =begin let unwrap (id: ProductId) = id.Value end
 module CustomerId =begin let unwrap (id: CustomerId) = id.Value end
-
 [<CLIMutable>]
 type ProductOrder = { Order:Order; Product:Product }
 with
@@ -50,11 +48,9 @@ and [<CLIMutable>] Order = {
     [<JsonIgnore>]
     Version:int
     [<JsonIgnore>]
-    Products: List<ProductOrder>
+    Products: Product seq
 }
 with
-    [<JsonPropertyName("products");NotMapped>]
-    member this.OrderProducts = this.Products |> ResizeArray.map (fun op->op.Product)
     static member Create orderDate customer = {
         OrderId = OrderId 0
         OrderDate = orderDate
@@ -69,7 +65,7 @@ and[<CLIMutable>] Customer = {
     [<JsonIgnore>]
     Version:int
     [<JsonIgnore>]
-    Orders: List<Order>
+    Orders: Order seq
 }
 with
     static member Default = {
@@ -86,7 +82,7 @@ and [<CLIMutable>] Product = {
     mutable ProductName: string
     Version: int
     [<JsonIgnore>]
-    Orders: List<ProductOrder>
+    Orders: Order seq
 }
 with
     static member Default = {

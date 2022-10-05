@@ -23,8 +23,7 @@ public class OrdersController : ControllerBase
             _context
                 .Orders
                 .Include(o=>o.Customer)
-                .Include(o=>o.ProductOrders)
-                .ThenInclude(po=>po.Product)
+                .Include(o=>o.Products)
                 .ToArray());
     }
 }
