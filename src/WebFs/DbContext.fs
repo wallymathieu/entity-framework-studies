@@ -37,14 +37,17 @@ type CoreDbContext(options:DbContextOptions)=
                     .Property(fun o->o.CustomerId).HasColumnName("Id")
                     .HasConversion(customerIdConverter)
                     .UsePropertyAccessMode(PropertyAccessMode.PreferProperty) |> ignore
-        modelBuilder.Entity<Product>()
-                    .Property(fun o->o.ProductId).HasColumnName("Id")
-                    .HasConversion(productIdConverter)
-                    .UsePropertyAccessMode(PropertyAccessMode.PreferProperty) |> ignore
-        modelBuilder.Entity<Product>()
-                    .Property(fun o->o.ProductName).HasColumnName("Name") |> ignore
-        modelBuilder.Entity<Product>()
-                    .Property(fun o->o.Cost) |> ignore
+        modelBuilder.Entity<Product>(fun e->
+                        e.Property(fun o->o.Cost) |> ignore
+                        e.Property(fun o->o.ProductName).HasColumnName("Name") |> ignore
+                        e.Property(fun o->o.ProductId).HasColumnName("Id")
+                         .HasConversion(productIdConverter)
+                         .UsePropertyAccessMode(PropertyAccessMode.PreferProperty) |> ignore
+                        e.HasMany<Order>(fun p->p.Orders)
+                         .WithMany(fun o->o.Products)
+                         .UsingEntity<ProductOrder>() |> ignore
+                    ) |> ignore
+
         modelBuilder.Entity<ProductOrder>()
                     .ToTable("OrdersToProducts")
                     .HasKey([| "ProductId"; "OrderId" |]) |> ignore
@@ -53,14 +56,16 @@ type CoreDbContext(options:DbContextOptions)=
     [<DefaultValue>]val mutable private customers: DbSet<Customer>
     [<DefaultValue>]val mutable private orders: DbSet<Order>
     [<DefaultValue>]val mutable private products: DbSet<Product>
+    [<DefaultValue>]val mutable private productOrders: DbSet<ProductOrder>
     member this.Customers with get()=this.customers and set v = this.customers<-v
     member this.Orders with get()=this.orders and set v = this.orders<-v
     member this.Products with get()=this.products and set v = this.products<-v
+    member this.ProductOrders with get()=this.productOrders and set v = this.productOrders<-v
 
 
 [<Extension>]
 type QueryableExtensions()=
     [<Extension>]
     static member IncludeProducts(self:IQueryable<Order>) =
-        self.Include(fun o->o.Products).Include("Products.Product")
+        self.Include(fun o->o.Products)
 

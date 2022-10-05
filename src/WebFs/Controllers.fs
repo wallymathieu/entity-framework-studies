@@ -99,7 +99,7 @@ type OrdersController (context: CoreDbContext) =
         | _,None
              -> return this.NotFound() :> AR
         | Some (order:Order), Some (product:Product) ->
-            order.Products.Add (ProductOrder.Create (order, product))
+            do! addEntityAsync context (ProductOrder.Create (order, product))
             do! saveChangesAsync context
             return this.Ok order :> AR }
 

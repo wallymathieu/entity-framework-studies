@@ -36,12 +36,12 @@ module TestData=
         let db = TestData.Load(f)
 
         for customer in db.Customers |> Array.map toCustomer do
-            session.Add customer |> ignore
+            addEntity session customer
 
         for order in db.Orders |> Array.map toOrder do
-            session.Add order |> ignore
+            addEntity session order
         for product in db.Products |> Array.map toProduct do
-            session.Add product |> ignore
+            addEntity session product
         session.SaveChanges() |> ignore
         use session = new CoreDbContext(options)
         let toOrderProduct(o : TestData.OrderProduct)=
@@ -51,7 +51,7 @@ module TestData=
             (order,product)
         for (order,product) in db.OrderProducts |> Array.map toOrderProduct do
             let orderProduct = ProductOrder.Create (order, product)
-            order.Products.Add orderProduct
+            addEntity session orderProduct
         session.SaveChanges() |> ignore
 let yoyoId= ProductId 1
 [<AbstractClass>]
@@ -74,7 +74,7 @@ type CustomerDataTests()=
     member this.Order_contains_product()=task{
         let orderId= OrderId 1
         let! order = this.Session.Orders.IncludeProducts().FirstAsync(fun o->o.OrderId=orderId)
-        Assert.Contains(order.Products, fun p -> p.Product.ProductId = yoyoId) }
+        Assert.Contains(order.Products, fun p -> p.ProductId = yoyoId) }
 
 module InMemory=
     let fixtureOptions=lazy(
