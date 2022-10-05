@@ -21,9 +21,6 @@ public class Order
     [JsonIgnore]
     public int Version { get; init; }
     ///
-    [JsonIgnore]
-    public IList<ProductOrder> ProductOrders { get; init; } = new List<ProductOrder>();
+    public IList<Product> Products { get; init; } = new List<Product>();
 
-    [NotMapped]
-    public IEnumerable<Product> Products => ProductOrders.Select(po => po.Product).ToArray();
 }

@@ -61,26 +61,24 @@ public abstract class CustomerDataTests : IDisposable
     {
         OrderId orderId = 1;
         var o = DbContext.Orders
-            .Include(order => order.ProductOrders)
-            .ThenInclude(po => po.Product)
+            .Include(order => order.Products)
             .Single(order => order.Id == orderId);
-        Assert.NotNull(o.ProductOrders);
-        Assert.Contains(o.ProductOrders, p => p.Product?.Id == yoyoId);
+        Assert.NotNull(o.Products);
+        Assert.Contains(o.Products, p => p.Id == yoyoId);
     }
 
     [Fact]
     public void ProductsWithOrders()
     {
         var products = DbContext.Products
-                .Include(p => p.ProductOrders)
-                .ThenInclude(po => po.Order)
+                .Include(p => p.Orders)
                 .WhereThereAreOrders(
                     from: new DateTime(2008, 5, 29),
                     to: new DateTime(2008, 6, 2))
                 .ToArray()
             ;
         var orderIds = products
-            .SelectMany(p => p.ProductOrders.Select(po => po.Order?.Id))
+            .SelectMany(p => p.Orders.Select(o => o.Id))
             .Distinct();
         Assert.Equal(4, Assert.Single(orderIds));
     }

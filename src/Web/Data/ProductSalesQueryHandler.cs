@@ -11,8 +11,8 @@ public static class ProductSalesQueryHandler
     /// </summary>
     public static IQueryable<Product> WhereThereAreOrders(
         this IQueryable<Product> self, DateTime @to, DateTime @from) =>
-        self.Where(p => p.ProductOrders.Any(po =>
-            po.Order!=null
-            && @from <= po.Order.OrderDate
-            && po.Order.OrderDate <= @to));
+        self.Where(p =>
+            p.Orders.Any(o =>
+                @from <= o.OrderDate
+                && o.OrderDate <= @to));
 }
