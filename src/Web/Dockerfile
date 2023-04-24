@@ -1,6 +1,6 @@
-FROM mcr.microsoft.com/dotnet/sdk:6.0
+FROM mcr.microsoft.com/dotnet/sdk:7.0
 ENV PATH $PATH:/root/.dotnet/tools
-RUN dotnet tool install -g dotnet-ef --version 6.0.0
+RUN dotnet tool install -g dotnet-ef --version 7.0.5
 COPY . /app
 WORKDIR /app
 RUN ["dotnet", "restore"]
