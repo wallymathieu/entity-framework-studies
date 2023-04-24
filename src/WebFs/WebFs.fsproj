@@ -3,10 +3,8 @@
     <TargetFramework>net7</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Update="FSharp.Core" Version="6.0.5" />
     <PackageReference Include="EntityFrameworkCore.FSharp" Version="6.0.7" />
     <PackageReference Include="Saithe.SystemTextJson" Version="3.0.0-alpha-1" />
-    <PackageReference Update="FSharp.Core" Version="6.0.5" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Entities.fs" />
@@ -16,14 +14,14 @@
     <Compile Include="Swagger.fs" />
     <Compile Include="Startup.fs" />
     <Compile Include="Program.fs" />
-    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.3" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.0" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="6.0.0">
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.5" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="7.0.5">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="6.0.0" />
-    <PackageReference Include="FluentMigrator" Version="3.3.1" />
-    <PackageReference Include="FSharpPlus" Version="1.2.2" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="7.0.5" />
+    <PackageReference Include="FluentMigrator" Version="3.3.2" />
+    <PackageReference Include="FSharpPlus" Version="1.4.1" />
   </ItemGroup>
 </Project>
