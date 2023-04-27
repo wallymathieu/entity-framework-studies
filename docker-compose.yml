@@ -16,7 +16,7 @@ services:
   webf:
     build:
       context: src/WebFs
-      dockerfile: Dockerfile   
+      dockerfile: Dockerfile
     environment:
       ASPNETCORE_ENVIRONMENT: Development
       ASPNETCORE_URLS: http://0.0.0.0:80
@@ -29,7 +29,7 @@ services:
   webf-migrations:
     build:
       context: migrations/FsMigrations
-      dockerfile: Dockerfile   
+      dockerfile: Dockerfile
     environment:
       PASSWORD: "EF_test_PASSWORD123"
       SERVER: "db"
@@ -41,6 +41,7 @@ services:
     build:
       context: ./db/
       dockerfile: Dockerfile
+    platform: linux/amd64
     ports:
       - "1433:1433"
     environment:
