@@ -6,6 +6,7 @@ services:
       context: .
       dockerfile: Dockerfile
 
+    platform: linux/amd64
     volumes:
       - ../..:/workspaces:cached
 
@@ -22,10 +23,8 @@ services:
     # (Adding the "ports" property to this file will not forward from a Codespace.)
 
   db:
-    build:
-      context: ../db/
-      dockerfile: Dockerfile
-    image: mcr.microsoft.com/mssql/server:2019-latest
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    platform: linux/amd64
     restart: unless-stopped
     environment:
       SA_PASSWORD: "EF_test_PASSWORD123"
