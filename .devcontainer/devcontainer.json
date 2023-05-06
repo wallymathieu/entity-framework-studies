@@ -20,13 +20,13 @@
 			"settings": {
 				"mssql.connections": [
 					{
-						"server": "localhost,1433",
-						"database": "master",
+						"server": "db",
+						"database": "",
 						"authenticationType": "SqlLogin",
 						"user": "sa",
 						"password": "EF_test_PASSWORD123",
 						"emptyPasswordInput": false,
-						"savePassword": false,
+						"savePassword": true,
 						"profileName": "mssql-container"
 					}
 				]
