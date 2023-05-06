@@ -8,7 +8,7 @@ services:
     environment:
       ASPNETCORE_ENVIRONMENT: Development
       ASPNETCORE_URLS: http://0.0.0.0:80
-      ConnectionStrings__DefaultConnection: "Server=db;Database=ef_core_studies;MultipleActiveResultSets=true;User Id=sa;Password=EF_test_PASSWORD123"
+      ConnectionStrings__DefaultConnection: ${Web__DefaultConnection}
     ports:
       - "8000:80"
     depends_on:
@@ -20,9 +20,19 @@ services:
     environment:
       ASPNETCORE_ENVIRONMENT: Development
       ASPNETCORE_URLS: http://0.0.0.0:80
-      ConnectionStrings__DefaultConnection: "Server=db;Database=ef_core_studies_fsharp;MultipleActiveResultSets=true;User Id=sa;Password=EF_test_PASSWORD123"
+      ConnectionStrings__DefaultConnection: ${WebFs__DefaultConnection}
     ports:
       - "8001:80"
     depends_on:
       - db
       - webf-migrations
+  webf-migrations:
+    build:
+      context: migrations/FsMigrations
+      dockerfile: Dockerfile
+    environment:
+      PASSWORD: ${SA_PASSWORD}
+      SERVER: "db"
+      DATABASE: "ef_core_studies_fsharp"
+    depends_on:
+      - db

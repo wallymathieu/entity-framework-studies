@@ -2,17 +2,6 @@
 version: "3.4"
 services:
 
-  webf-migrations:
-    build:
-      context: migrations/FsMigrations
-      dockerfile: Dockerfile
-    environment:
-      PASSWORD: "EF_test_PASSWORD123"
-      SERVER: "db"
-      DATABASE: "ef_core_studies_fsharp"
-    depends_on:
-      - db
-
   db:
     build:
       context: ./db/
@@ -21,5 +10,5 @@ services:
     ports:
       - "1433:1433"
     environment:
-      SA_PASSWORD: "EF_test_PASSWORD123"
+      SA_PASSWORD: ${SA_PASSWORD}
       ACCEPT_EULA: "Y"
