@@ -1,35 +1,18 @@
-version: '3'
-
+version: '3.4'
 services:
+  # Update this to the name of the service you want to work with in your docker-compose.yml file
   app:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    image: mcr.microsoft.com/devcontainers/dotnet:0-7.0
 
-    platform: linux/amd64
     volumes:
+      # Update this to wherever you want VS Code to mount the folder of your project
       - ..:/workspaces:cached
+
+    # Uncomment the next four lines if you will use a ptrace-based debugger like C++, Go, and Rust.
+    # cap_add:
+    #   - SYS_PTRACE
+    # security_opt:
+    #   - seccomp:unconfined
 
     # Overrides default command so things don't shut down after the process ends.
     command: sleep infinity
-
-    # Runs app on the same network as the database container, allows "forwardPorts" in devcontainer.json function.
-    network_mode: service:db
-
-    # Uncomment to connect as root instead. More info: https://aka.ms/dev-containers-non-root.
-    # user: root
-
-    # Use "forwardPorts" in **devcontainer.json** to forward an app port locally.
-    # (Adding the "ports" property to this file will not forward from a Codespace.)
-
-  db:
-    image: mcr.microsoft.com/mssql/server:2022-latest
-    platform: linux/amd64
-    restart: unless-stopped
-    environment:
-      SA_PASSWORD: "EF_test_PASSWORD123"
-      ACCEPT_EULA: Y
-    ports:
-      - "1433:1433"
-    # Add "forwardPorts": ["1433"] to **devcontainer.json** to forward MSSQL locally.
-    # (Adding the "ports" property to this file will not forward from a Codespace.)
