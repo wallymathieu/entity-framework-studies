@@ -18,4 +18,3 @@ services:
     command: sleep infinity
     depends_on:
       - db
-      - webf-migrations
