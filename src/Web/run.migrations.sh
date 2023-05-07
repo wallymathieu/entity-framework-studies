@@ -1,6 +1,5 @@
 
 #!/bin/bash
-set -e
 pushd $(dirname "${0}") > /dev/null
 source ../../.env
 export ASPNETCORE_ENVIRONMENT=Development
