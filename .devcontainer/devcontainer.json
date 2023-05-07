@@ -24,7 +24,7 @@
 						"database": "",
 						"authenticationType": "SqlLogin",
 						"user": "sa",
-						"password": "${localEnv:SA_PASSWORD}",
+						"password": "EF_test_PASSWORD123",
 						"emptyPasswordInput": false,
 						"savePassword": true,
 						"profileName": "mssql-container"
