@@ -2,7 +2,10 @@
 // README at: https://github.com/devcontainers/templates/tree/main/src/dotnet-mssql
 {
 	"name": "C# (.NET) and MS SQL",
-	"dockerComposeFile": "docker-compose.yml",
+	"dockerComposeFile": [
+		"../docker-compose.yml",
+		"../docker-compose.devcontainer.yml"
+	],
 	"service": "app",
 	"workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
 
@@ -17,13 +20,13 @@
 			"settings": {
 				"mssql.connections": [
 					{
-						"server": "localhost,1433",
-						"database": "master",
+						"server": "db",
+						"database": "",
 						"authenticationType": "SqlLogin",
 						"user": "sa",
 						"password": "EF_test_PASSWORD123",
 						"emptyPasswordInput": false,
-						"savePassword": false,
+						"savePassword": true,
 						"profileName": "mssql-container"
 					}
 				]
@@ -49,7 +52,7 @@
 	// }
 
 	// postCreateCommand.sh parameters: $1=SA password, $2=dacpac path, $3=sql script(s) path
-	"postCreateCommand": "bash .devcontainer/mssql/postCreateCommand.sh 'EF_test_PASSWORD123' './bin/Debug/' './.devcontainer/mssql/'"
+	"postCreateCommand": "dotnet tool restore"
 
 	// Uncomment to connect as root instead. More info: https://aka.ms/dev-containers-non-root.
 	// "remoteUser": "root"
