@@ -8,7 +8,15 @@
 	],
 	"service": "app",
 	"workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
-
+	"secrets": {
+		"EF_STUDIES_SA_PASSWORD": {
+			"description": "Password for SQL server.",
+			"documentationUrl": "https://hub.docker.com/_/microsoft-mssql-server"
+		}
+	},
+	"containerEnv":{
+		"SA_PASSWORD":"${localEnv:EF_STUDIES_SA_PASSWORD}"
+	},
 	// Features to add to the dev container. More info: https://containers.dev/features.
 	// "features": {},
 
@@ -24,7 +32,7 @@
 						"database": "",
 						"authenticationType": "SqlLogin",
 						"user": "sa",
-						"password": "EF_test_PASSWORD123",
+						"password": "${localEnv:EF_STUDIES_SA_PASSWORD}",
 						"emptyPasswordInput": false,
 						"savePassword": true,
 						"profileName": "mssql-container"
