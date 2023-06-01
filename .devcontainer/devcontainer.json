@@ -50,7 +50,7 @@
 	//			"protocol": "https"
 	//		}
 	// }
-
+	"runServices": ["db"],
 	// postCreateCommand.sh parameters: $1=SA password, $2=dacpac path, $3=sql script(s) path
 	"postCreateCommand": "dotnet tool restore"
 
